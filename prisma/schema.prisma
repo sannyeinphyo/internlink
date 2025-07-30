@@ -1,0 +1,177 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  admin
+  company
+  university
+  teacher
+  student
+}
+
+enum Status {
+  pending
+  approved
+  declined
+}
+
+enum ApplicationStatus {
+  applied
+  accepted
+  rejected
+}
+
+model User {
+  id            Int             @id @default(autoincrement())
+  name          String
+  email         String          @unique
+  password      String
+  image         String?         @db.LongText
+  role          Role
+  status        Status          @default(pending)
+  verified      Boolean         @default(false)
+  otp           String?
+  otpExpiresAt  DateTime?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  company       Company?
+  university    University?
+  teacher       Teacher?
+  student       Student?
+  notifications Notification[]
+  savedPosts    SavedPost[]
+  PasswordReset PasswordReset[]
+}
+
+model Company {
+  id           Int     @id @default(autoincrement())
+  user_id      Int     @unique
+  name         String
+  image        String? @db.LongText
+  website      String?
+  facebook     String?
+  description  String?
+  location     String
+  contact_info String
+
+  user  User             @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  posts InternshipPost[]
+}
+
+model University {
+  id           Int       @id @default(autoincrement())
+  user_id      Int       @unique
+  name         String
+  address      String
+  contact_info String
+  website      String?
+  user         User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  teachers     Teacher[]
+  students     Student[]
+}
+
+model Teacher {
+  id            Int        @id @default(autoincrement())
+  user_id       Int        @unique
+  university_id Int
+  department    String
+  user          User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  university    University @relation(fields: [university_id], references: [id], onDelete: Cascade)
+}
+
+model Student {
+  id            Int     @id @default(autoincrement())
+  user_id       Int     @unique
+  university_id Int
+  batch_year    Int
+  major         String
+  skills        String?
+  facebook      String?
+  linkedIn      String?
+  Github        String?
+
+  user         User                    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  university   University              @relation(fields: [university_id], references: [id], onDelete: Cascade)
+  applications InternshipApplication[]
+}
+
+model InternshipPost {
+  id                   Int       @id @default(autoincrement())
+  company_id           Int
+  title                String
+  description          String
+  requirements         String
+  paid                 Boolean
+  salary               Int?
+  location             String
+  start_date           DateTime
+  end_date             DateTime
+  createdAt            DateTime  @default(now())
+  job_type             String?
+  application_deadline DateTime?
+  benefits             String?
+  contact_email        String?
+  remote               Boolean?
+  positions            Int?
+  responsibilities     String?
+
+  company      Company                 @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  applications InternshipApplication[]
+  savedPosts   SavedPost[]
+}
+
+model InternshipApplication {
+  id         Int               @id @default(autoincrement())
+  post_id    Int
+  student_id Int
+  status     ApplicationStatus
+  applied_at DateTime          @default(now())
+
+  post    InternshipPost @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  student Student        @relation(fields: [student_id], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  user_id   Int
+  title     String
+  body      String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model SavedPost {
+  id                 Int      @id @default(autoincrement())
+  user_id            Int
+  internship_post_id Int
+  createdAt          DateTime @default(now())
+
+  user           User           @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  internshipPost InternshipPost @relation(fields: [internship_post_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, internship_post_id])
+}
+
+model PartnerCompany {
+  id        Int      @id @default(autoincrement())
+  name      String
+  logoPath  String   @db.LongText
+  createdAt DateTime @default(now())
+}
+
+model PasswordReset {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int      @unique
+  otp       String
+  otpExpiry DateTime
+  createdAt DateTime @default(now())
+}

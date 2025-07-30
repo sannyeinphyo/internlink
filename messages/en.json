@@ -1,0 +1,240 @@
+{
+  "HomePage": {
+    "title": "Welcome",
+    "about": "Hello and welcome!"
+  },
+  "NavBar": {
+    "Home": "Home",
+    "Contact": "Contact",
+    "About": "About",
+    "BrowseJobs": "Browse Internships",
+    "Applications": "Applications",
+    "Login": "Login",
+    "Signup": "Sign Up",
+    "aletforlanguage": "Click to change language",
+    "Logout": "Logout"
+  },
+  "about_us": {
+    "heading": "About InternLink",
+    "heading_description": "InternLink is a platform that connects students, companies, and educational institutions across Myanmar to streamline internship opportunities.",
+    "heaing_description2": "Whether you’re a student seeking real-world experience, a company offering valuable learning opportunities, or a university guiding students toward success, InternLink is built to empower all parties involved effectively.",
+
+    "mission": "Our Mission",
+    "mission_description": "Empowering students by providing access to real-world experiences through trusted internships. Helping companies discover passionate talents and build future-ready teams.",
+
+    "vision": "Our Vision",
+    "vision_description": "To become Myanmar’s leading internship platform that connects, supports, and transforms student and organizational journeys into meaningful career pathways.",
+
+    "why_internLink": "Why Choose InternLink?",
+    "why_internlink_description": {
+      "text1": "Seamless internship application process",
+      "text2": "Verified student and company profiles",
+      "text3": "Role-specific dashboards (Student, Teacher, Company, Admin)",
+      "text4": "Notifications, saved job posts, and tracking tools",
+      "text5": "Secure login and intuitive navigation",
+      "text6": "Built with modern technologies (Next.js, Node.js, MySQL, Prisma)"
+    }
+  },
+  "StudentDashboard": {
+    "BrowseJobs": "Browse Internships",
+    "Signup": "Sign Up",
+    "HeaderText": "Search and Apply",
+    "HeaderText2": "Start your internship journey",
+    "HowItWorks": "How It Works",
+    "WhatIsLinkIn": "InternLink helps you land the right internship step-by-step with ease."
+  },
+  "steps": {
+    "step1": {
+      "title": "Create Profile",
+      "description": "Build your student profile to showcase your skills and interests."
+    },
+    "step2": {
+      "title": "Browse Jobs",
+      "description": "Explore hundreds of internships from trusted companies."
+    },
+    "step3": {
+      "title": "Apply & Connect",
+      "description": "Apply directly and get connected with hiring managers."
+    }
+  },
+  "PopularCategories": {
+    "title": "Popular Categories",
+    "description": "Find internships across industries that match your career goals.",
+    "categories": {
+      "softwareDevelopment": "Software Development",
+      "graphicDesign": "Graphic Design",
+      "frontendDevelopment": "Frontend Development",
+      "finance": "Finance",
+      "dataScience": "Data Science",
+      "backend": "Backend Development"
+    },
+    "featuredTitle": "Featured Internships",
+    "featuredDescription": "Explore top internship opportunities tailored for students in tech, design, marketing and more."
+  },
+  "footer": {
+    "connectMeaningfulInternships": "Connecting students with meaningful internship opportunities",
+    "Contact": "Contact",
+    "About": "About",
+    "privacy": "Privacy",
+    "terms": "Terms and Conditions"
+  },
+  "Jobs": {
+    "BrowseJobs": "Browse Jobs",
+    "Description": "Explore a variety of internship opportunities tailored for students. translate to burmese in formal way .",
+    "success": "Applying for internship successful",
+    "label1": "Available Internships",
+    "label2": "Already Applied",
+    "label3": "Rejected",
+    "error": "Failed to apply for internship.",
+    "title": "Confirm To Apply",
+    "text": "Are you sure?",
+    "confirm": "Apply",
+    "cancel": "Cancle"
+  },
+  "login": {
+    "loading": "Loading...",
+    "wrong": " Wrong Email or Password",
+    "continue": "Please log in to continue",
+    "success": "Login Sucessful",
+    "welcome": "Welcome Back!",
+    "greeting": "Log in to access internships, manage applications, and connect with top companies.",
+    "login": "Login",
+    "email": "Email",
+    "password": "Password",
+    "submit": "submit",
+    "noaccount": "Don’t have an account? ",
+    "Signup": "Sign Up",
+    "forgetpassword": "Forget Password"
+  },
+  "greeting": {
+    "welcomeMessage": "Welcome to InternLink 👋",
+    "introMessage": "Register as a Student or a Company and get started!",
+    "studentFeatures": "🎓 Students can add university, skills, batch year, and more.",
+    "companyFeatures": "🏢 Companies can showcase location, contact, and descriptions.",
+    "registerButton": "Register",
+    "roleSelectionLabel": "Select Your Role To Register:",
+    "roles": {
+      "student": "Student",
+      "company": "Company"
+    }
+  },
+  "formFields": {
+    "name": "Name ",
+    "cname": "Company Name",
+    "email": "Email ",
+    "password": "Password ",
+    "profileImageUrl": "Profile Image URL",
+    "batchYear": "Batch Year ",
+    "major": "Major ",
+    "skills": "Skills",
+    "university": "University ",
+    "facebookUrl": "Facebook URL",
+    "linkedInUrl": "LinkedIn URL",
+    "location": "Location",
+    "contact": "Contact",
+    "description": "Description",
+    "website": "Website"
+  },
+  "authmenu": {
+    "title": "Confirm Logout",
+    "text": "Are you sure you want to logout?",
+    "confirm": "Logout",
+    "cancel": "cancle"
+  },
+  "status": {
+    "applied": "applied",
+    "accepted": "accepted",
+    "rejected": "rejected",
+    "default": "default",
+    "title": "Your Job Applications",
+    "headers": {
+      "no": "No.",
+      "internshipTitle": "Internship Title",
+      "applicationStatus": "Application Status",
+      "appliedAt": "Applied Date",
+      "actions": "Actions"
+    }
+  },
+
+  "company_setting": {
+    "heading": "Company Setting",
+    "sub_heading": "Manage your company  account settings. Select the options below to update your profile or change your password.",
+    "profile_settings": "Profile Settings",
+    "profile_settings_description": "Update your company profile information.",
+    "change_password": "Change Password",
+    "change_password_description": "Change your  account password.",
+    "delete_company_account": "Delete Company Account",
+    "delete_company_account_description": "warning: This action is irreversible. Deleting your company account will remove all associated with it.",
+    "deletecompanny_button": "Delete Company ",
+    "confirm_delete": "Confirm Delete",
+    "message": "Are you sure you want to permanently delete your company account? This action cannot be undone.",
+    "cancel": "Cancel",
+    "confirm": "Delete"
+  },
+  "company_dashboard": {
+    "heading": "Company Dashboard",
+    "heading_description": "Overview and application stat for 2025",
+    "sub_heading": {
+      "total_applications": "Total Applications",
+      "total_jobs_posts": "Total Job Posts",
+      "total_saved_posts": "Total Saved Posts",
+      "total_accepted": " Total Accepted",
+      "total_rejected": "Total Rejected"
+    }
+  },
+  "student_applications": {
+    "tabel_heading": "Student Applications",
+    "no": "No",
+    "student_name": "Student Name",
+    "email": "Email",
+    "applied_on": "Applied On",
+    "status": "Status",
+    "post": "Post",
+    "action": "Action",
+    "view": "View"
+  },
+  "university_setting": {
+    "heading": "University Settings",
+    "sub_heading": "Manage your university's account and preferences.",
+    "profile_settings": "Profile Settings",
+    "profile_settings_description": "Update your university profile details.",
+    "change_password": "Change Password",
+    "change_password_description": "Secure your account with a new password.",
+    "delete_university_account": "Delete University Account",
+    "delete_university_account_description": "This action is irreversible. All data will be lost.",
+    "deleteuniversity_button": "Delete University",
+    "confirm_delete": "Are you sure?",
+    "message": "Deleting this will remove all university data permanently.",
+    "confirm": "Yes, delete",
+    "cancel": "Cancel"
+  },
+  "internshipPost": {
+  "header": "Create Internship Post",
+  "subHeader": "Fill in the required details about the internship opportunity.",
+  "sections": {
+    "basicInfo": " Basic Info",
+    "expectations": " Expectations",
+    "salaryWorkMode": " Salary & Work Mode",
+    "scheduleLocation": " Schedule & Location",
+    "additionalInfo": "Additional Info"
+  },
+  "fields": {
+    "title": "Title ",
+    "jobType": "Job Type",
+    "description": "Description",
+    "responsibilities": "Responsibilities",
+    "requirements": "Requirements",
+    "paid": "Paid",
+    "salary":"Salary",
+    "remote": "Remote",
+    "location": "Location",
+    "positions": "Number Of Positions",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "applicationDeadline": "Application Deadline",
+    "benefits": "Benefits",
+    "contactEmail": "Contact Email"
+  },
+  "submitButton": "Submit Internship Post"
+}
+}
