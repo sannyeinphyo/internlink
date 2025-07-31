@@ -1,7 +1,5 @@
-// src/schemas/adminCreateAccount.js
 import * as yup from "yup";
 
-// Base schema with common fields
 const baseUserSchema = yup.object().shape({
   name: yup.string().required("Name is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
@@ -12,7 +10,6 @@ const baseUserSchema = yup.object().shape({
   website: yup.string().url("Must be a valid URL").nullable(),
 });
 
-// Schema for Company creation
 export const companySchema = baseUserSchema.shape({
   role: yup.string().oneOf(["company"], "Role must be 'company'").required(),
   location: yup.string().required("Location is required"),
@@ -22,7 +19,6 @@ export const companySchema = baseUserSchema.shape({
   address: yup.string().notRequired(),
 });
 
-// Schema for University creation
 export const universitySchema = baseUserSchema.shape({
   role: yup
     .string()
@@ -35,7 +31,6 @@ export const universitySchema = baseUserSchema.shape({
   facebook: yup.string().url("Must be a valid URL").nullable(),
 });
 
-// This combined schema dynamically use for client-side validation
 export const combinedAccountSchema = yup.object().shape({
   name: yup.string().required("Name is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
@@ -60,8 +55,8 @@ export const combinedAccountSchema = yup.object().shape({
     otherwise: (schema) => schema.notRequired().nullable(),
   }),
   website: yup.string().url("Must be a valid URL").nullable(),
+  
   facebook: yup.string().when("role", {
-    // <--- MODIFIED HERE
     is: (val) => val === "company",
     then: (schema) => schema.url("Must be a valid URL").nullable(),
     otherwise: (schema) => schema.url("Must be a valid URL").nullable(),

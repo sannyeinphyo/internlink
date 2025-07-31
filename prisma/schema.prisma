@@ -56,7 +56,7 @@ model Company {
   image        String? @db.LongText
   website      String?
   facebook     String?
-  description  String?
+  description  String? @db.MediumText
   location     String
   contact_info String
 

@@ -129,7 +129,7 @@ export default function ViewStudentsPage() {
               <Card
                 elevation={3}
                 sx={{
-                  width: "100%",
+                  width: 320,
                   height: 320,
                   p: 6,
                   bgcolor: "blue.50",

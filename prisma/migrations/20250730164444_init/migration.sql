@@ -22,7 +22,7 @@ CREATE TABLE `Company` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `user_id` INTEGER NOT NULL,
     `name` VARCHAR(191) NOT NULL,
-    `image` VARCHAR(191) NULL,
+    `image` LONGTEXT NULL,
     `website` VARCHAR(191) NULL,
     `facebook` VARCHAR(191) NULL,
     `description` VARCHAR(191) NULL,

@@ -50,7 +50,6 @@ export default function AuthMenu() {
   };
 
   if (!session?.user) {
-    // Show login/signup buttons if not logged in
     return (
       <>
         <Link href={`/${locale}/login`}>
@@ -67,38 +66,36 @@ export default function AuthMenu() {
     <>
       <NotificationBell userId={session?.user?.id}/>
 
-      <IconButton
-        onClick={handleProfileClick}
-        sx={{
-          color: "textmain.main",
-          p: 0,
-          boxShadow: 2,
-          border: "2px solid #4242425e",
-          transition: "transform .3s ",
-          "&:hover": {
-            transform: "scale(1.15)",
-          },
-        }}
-        size="large"
-        aria-controls={open ? "profile-menu" : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? "true" : undefined}
-      >
-        {profileImage ? (
-          <img
-            src={profileImage.image}
-            alt=""
-            style={{
-              width: 55,
-              height: 55,
-              borderRadius: "50%",
-              objectFit: "cover",
-            }}
-          />
-        ) : (
-          <AccountCircleIcon sx={{ fontSize: 30 }} />
-        )}
-      </IconButton>
+ <IconButton
+  onClick={handleProfileClick}
+  sx={{
+    color: "textmain.main",
+    p: 0,
+    boxShadow: 2,
+    border: "2px solid #4242425e",
+    transition: "transform .3s",
+    "&:hover": {
+      transform: "scale(1.15)",
+    },
+  }}
+  size="large"
+  aria-controls={open ? "profile-menu" : undefined}
+  aria-haspopup="true"
+  aria-expanded={open ? "true" : undefined}
+>
+  <img
+    src={profileImage?.image || "/placeholder-image.jpg"}
+    alt="Profile"
+    style={{
+      width: 55,
+      height: 55,
+      borderRadius: "50%",
+      objectFit: "cover",
+    }}
+  />
+</IconButton>
+
+
 
       <Menu
         id="profile-menu"

@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useState, useEffect} from "react"
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import {
@@ -17,6 +16,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  Chip,
 } from "@mui/material";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import SchoolIcon from "@mui/icons-material/School";
@@ -25,12 +25,25 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function UniversityStudentDetailPage({ params }) {
-  const { id , locale } = useParams();
+  const { id, locale } = useParams();
   const router = useRouter();
   const { data: session, status } = useSession();
   const [studentData, setStudentData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const SKILL_COLORS = [
+    "#1976d2", // Blue
+    "#388e3c", // Green
+    "#d32f2f", // Red
+    "#f57c00", // Orange
+    "#7b1fa2", // Purple
+    "#0097a7", // Teal
+    "#fbc02d", // Yellow
+  ];
+
+  function getColorByIndex(index) {
+    return SKILL_COLORS[index % SKILL_COLORS.length];
+  }
 
   useEffect(() => {
     const fetchStudentDetails = async () => {
@@ -50,7 +63,9 @@ export default function UniversityStudentDetailPage({ params }) {
       setLoading(true);
       setError(null);
       try {
-        const response = await axios.get(`/api/university/student/${id}`);
+        const response = await axios.get(`/api/university/student/${id}`, {
+          withCredentials: true,
+        });
         if (response.data && response.data.data) {
           setStudentData(response.data.data);
         } else {
@@ -243,15 +258,36 @@ export default function UniversityStudentDetailPage({ params }) {
                   <ListItemText
                     primary="Skills"
                     secondary={
-                      student.skills &&
-                      typeof student.skills === "string" &&
-                      student.skills.length > 0
-                        ? student.skills
-                            .split(",")
-                            .map((skill) => skill.trim())
+                      student.skills && student.skills.length > 0 ? (
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexWrap: "wrap",
+                            gap: 1,
+                            mt: 0.5,
+                          }}
+                        >
+                          {(typeof student.skills === "string"
+                            ? student.skills.split(",").map((s) => s.trim())
+                            : student.skills
+                          )
                             .filter(Boolean)
-                            .join(", ")
-                        : "N/A"
+                            .map((skill, idx) => (
+                              <Chip
+                                key={idx}
+                                label={skill}
+                                size="small"
+                                sx={{
+                                  backgroundColor: getColorByIndex(idx),
+                                  color: "white",
+                                  fontWeight: 600,
+                                }}
+                              />
+                            ))}
+                        </Box>
+                      ) : (
+                        "N/A"
+                      )
                     }
                   />
                 </ListItem>

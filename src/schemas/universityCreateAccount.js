@@ -79,11 +79,13 @@ export const combinedUniversityAccountSchema = yup.object().shape({
     then: (schema) => schema.required("Major is required"),
     otherwise: (schema) => schema.notRequired().nullable(),
   }),
-  skills: yup.string().when("role", {
+  skills: yup.array().of(yup.string()).when("role", {
     is: "student",
-    then: (schema) => schema.nullable(),
-    otherwise: (schema) => schema.notRequired().nullable(),
+    then: (schema) =>
+      schema.min(1, "Please add at least one skill").required(),
+    otherwise: (schema) => schema.notRequired(),
   }),
+
   facebook: yup.string().when("role", {
     is: "student",
     then: (schema) => schema.url("Must be a valid URL").nullable(),

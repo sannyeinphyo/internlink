@@ -1,14 +1,14 @@
-// src/app/api/university/teacher/route.js
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import * as yup from "yup";
 import { teacherSchema } from "@/schemas/universityCreateAccount";
-import { getServerSession } from "next-auth"; 
-import { authOptions } from "@/lib/auth"; 
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function POST(req) {
   const session = await getServerSession(authOptions);
+
   if (!session || session.user.role !== "university" || !session.user.id) {
     return NextResponse.json(
       { message: "You are not authorized" },
@@ -16,22 +16,41 @@ export async function POST(req) {
     );
   }
 
+  // Fetch the university record for this user
+  const university = await prisma.university.findUnique({
+    where: { user_id: session.user.id },
+  });
+
+  if (!university) {
+    return NextResponse.json(
+      { message: "University not found for your account." },
+      { status: 404 }
+    );
+  }
+
+  const sessionUniversityId = university.id;
+
   try {
     const body = await req.json();
     await teacherSchema.validate(body, { abortEarly: false });
 
     const { name, email, password, role, university_id, department } = body;
 
-    if (session.user.id !== university_id) {
+    // Security check: submitted university_id must match session university
+    if (parseInt(university_id, 10) !== sessionUniversityId) {
+      console.warn(
+        `API: University ${sessionUniversityId} attempted to create teacher for university ${university_id}. Unauthorized.`
+      );
       return NextResponse.json(
         {
           message:
-            "Unauthorized: Account creation must be for your university.",
+            "Unauthorized: You can only create teachers for your own university.",
         },
         { status: 403 }
       );
     }
 
+    // Check if user with email exists
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
@@ -59,8 +78,8 @@ export async function POST(req) {
     await prisma.teacher.create({
       data: {
         user_id: user.id,
-        university_id: university_id,
-        department: department,
+        university_id: sessionUniversityId, 
+        department,
       },
     });
 
@@ -89,28 +108,42 @@ export async function POST(req) {
   }
 }
 
-export async function GET() {
+export async function GET(req) {
   const session = await getServerSession(authOptions);
-  if (
-    !session ||
-    session.user.role !== "university" ||
-    !session.user.id
-  ) {
+
+  if (!session || session.user.role !== "university" || !session.user.id) {
     return NextResponse.json(
       { message: "You are not authorized" },
       { status: 401 }
     );
   }
+
+  const university = await prisma.university.findUnique({
+    where: { user_id: session.user.id },
+  });
+
+  if (!university) {
+    return NextResponse.json(
+      { message: "University not found for your account." },
+      { status: 404 }
+    );
+  }
+
+  const sessionUniversityId = university.id;
+
   try {
     const teachers = await prisma.user.findMany({
       where: {
         role: "teacher",
         teacher: {
-          university_id: session.user.id,
+          university_id: sessionUniversityId,
         },
       },
       include: {
         teacher: true,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
 

@@ -1,4 +1,4 @@
-"use server";
+// "use server"; // Only include this if you are using Next.js App Router route handlers
 
 import { NextResponse } from "next/server";
 import { pdf } from "@react-pdf/renderer";
@@ -44,43 +44,41 @@ export async function POST(req) {
       universityName = teacher.university.name;
     }
 
+
     if (user.role === "admin" && university_id) {
       const uni = await prisma.university.findUnique({ where: { id: university_id } });
       if (uni) {
         universityIdToFilter = uni.id;
         universityName = uni.name;
         if (department) {
-          departmentToFilter = department;
+          departmentToFilter = department; 
         }
       }
     }
 
-    const applications = await prisma.internshipApplication.findMany({
-      where: {
-        ...(status ? { status } : {}),
-        student: {
-          ...(batch_year ? { batch_year } : {}),
-          ...(universityIdToFilter ? { university_id: universityIdToFilter } : {}),
-          ...(departmentToFilter ? { major: departmentToFilter } : {}),
-        },
-      },
+const applications = await prisma.internshipApplication.findMany({
+  where: {
+    ...(status ? { status } : {}),
+    student: {
+      ...(batch_year ? { batch_year: parseInt(batch_year) } : {}), // Ensure number
+      ...(universityIdToFilter ? { university_id: universityIdToFilter } : {}),
+      ...(departmentToFilter ? { major: departmentToFilter } : {}),
+    },
+  },
+  include: {
+    student: {
+      include: { user: true },
+    },
+    post: {
       include: {
-        student: {
-          include: {
-            user: true,
-          },
-        },
-        post: {
-          include: {
-            company: {
-              include: {
-                user: true,
-              },
-            },
-          },
+        company: {
+          include: { user: true },
         },
       },
-    });
+    },
+  },
+});
+
 
     const reportData = applications.map((app) => ({
       studentName: app.student.user.name,
@@ -92,7 +90,8 @@ export async function POST(req) {
       <InternshipReportPdf
         reportData={reportData}
         university={universityName}
-        batch_year={batch_year || "All Batches"}
+        batch={batch_year ? `Batch ${batch_year}` : "All Batches"}
+        logo={"http://localhost:3000/uni/ucsh.jpg"} 
       />
     );
 

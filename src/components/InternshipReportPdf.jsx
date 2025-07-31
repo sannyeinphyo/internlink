@@ -6,13 +6,11 @@ import {
   StyleSheet,
   Image,
 } from "@react-pdf/renderer";
-const logo = "http://localhost:3000/uni/ucsh.jpg";
 
 const styles = StyleSheet.create({
   page: {
     padding: 24,
     fontSize: 12,
-
   },
   header: {
     justifyContent: "space-between",
@@ -92,16 +90,18 @@ function formatDateTime(date) {
 export default function InternshipReportPdf({
   reportData,
   university = "Example University",
-  batch = "Batch 2025",
-  logo = "http://localhost:3000/uni/ucsh.jpg",
+  batch = "All Batches",
+  logo,
 }) {
   const now = new Date();
+
+  const dataToRender = Array.isArray(reportData) ? reportData : [];
 
   return (
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={{ alignItems: "center", marginBottom: 10 }}>
-          <Image src={logo} style={styles.logo} />
+          {logo && <Image src={logo} style={styles.logo} />}
         </View>
 
         <View style={{ alignItems: "flex-end", marginBottom: 10 }}>
@@ -113,24 +113,21 @@ export default function InternshipReportPdf({
           University: {university} | Batch of Report: {batch}
         </Text>
 
-        <View style={styles.table}>
-          <View style={styles.row}>
-            <Text style={styles.headerCell}>No</Text>
-            <Text style={styles.headerCell}>Student</Text>
-            <Text style={styles.headerCell}>Company</Text>
-            <Text style={styles.headerCell}>Status</Text>
-          </View>
+        <View style={styles.row}>
+          <Text style={styles.headerCell}>No</Text>
+          <Text style={styles.headerCell}>Student</Text>
+          <Text style={styles.headerCell}>Batch</Text>
+          <Text style={styles.headerCell}>Company</Text>
+          <Text style={styles.headerCell}>Status</Text>
 
-          {reportData.map((row, i) => (
+          {dataToRender.map((row, i) => (
             <View
-              style={[
-                styles.row,
-                i % 2 === 0 ? styles.evenRow : null, 
-              ]}
+              style={[styles.row, i % 2 === 0 ? styles.evenRow : null]}
               key={i}
             >
-              <Text style={[styles.cell]}>{i + 1}</Text>
+              <Text style={styles.cell}>{i + 1}</Text>
               <Text style={styles.cell}>{row.studentName}</Text>
+              <Text style={styles.cell}>{row.batchYear}</Text> {/* New cell */}
               <Text style={styles.cell}>{row.companyName || "—"}</Text>
               <Text
                 style={{

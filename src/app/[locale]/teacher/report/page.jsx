@@ -40,22 +40,27 @@ export default function TeacherReportGenerator() {
     fetchData();
   }, []);
 
-  const handleGenerate = async () => {
-    setLoading(true);
-    try {
-      const filters = {};
-      if (batch) filters.batch_year = batch;
-      if (status) filters.status = status;
+const handleGenerate = async () => {
+  setLoading(true);
+  setReportData(null); // Clear previous data
+  
+  try {
+    const filters = {
+      batch_year: batch || undefined, // Send undefined instead of empty string
+      status: status || undefined
+    };
 
-      const res = await axios.post("/api/teacher/report", filters);
-      setReportData(res.data); // Save report data to state
-    } catch (error) {
-      console.error(error);
-      alert("Failed to generate report");
-    } finally {
-      setLoading(false);
-    }
-  };
+    const res = await axios.post("/api/teacher/report", filters);
+    console.log("API response:", res.data); // Add this to see what's returned
+    
+    setReportData(Array.isArray(res.data) ? res.data : []);
+  } catch (error) {
+    console.error("Generation error:", error.response?.data || error.message);
+    setReportData([]);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <Card
@@ -168,13 +173,23 @@ export default function TeacherReportGenerator() {
             )}
           </Button>
 
-          {reportData && (
+          {!loading && reportData && reportData.length > 0 && (
             <TeacherReportDownload
               reportData={reportData}
               university={universityName}
               batch={batch ? `Batch ${batch}` : "All Batches"}
               logo={"http://localhost:3000/uni/ucsh.jpg"}
             />
+          )}
+
+          {!loading && reportData && reportData.length === 0 && (
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mt: 2, textAlign: "center" }}
+            >
+              No internship records found for the selected filters.
+            </Typography>
           )}
         </Stack>
 

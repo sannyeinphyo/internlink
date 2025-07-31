@@ -1,4 +1,3 @@
-// src/app/[locale]/university/create/page.jsx
 "use client";
 
 import {
@@ -13,7 +12,10 @@ import {
   Paper,
   Stack,
   Typography,
+  Autocomplete,
+  Chip,
 } from "@mui/material";
+
 import { useEffect, useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm, Controller } from "react-hook-form";
@@ -22,6 +24,42 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 
 import { combinedUniversityAccountSchema } from "@/schemas/universityCreateAccount";
+
+const skillOptions = [
+  "React",
+  "Vue.js",
+  "Angular",
+  "Svelte",
+  "Next.js",
+  "Tailwind CSS",
+  "Bootstrap",
+  "JavaScript",
+  "TypeScript",
+  "CSS",
+  "HTML",
+  "Node.js",
+  "Express",
+  "Django",
+  "Flask",
+  "Ruby on Rails",
+  "Laravel",
+  "Spring Boot",
+  "ASP.NET",
+  "PHP",
+  "Python",
+  "Java",
+  "C#",
+  "React Native",
+  "Flutter",
+  "Swift",
+  "Kotlin",
+  "MySQL",
+  "PostgreSQL",
+  "MongoDB",
+  "Redis",
+  "SQLite",
+  "Oracle",
+];
 
 const ROLES = [
   { value: "teacher", label: "Teacher" },
@@ -57,7 +95,7 @@ export default function UniversityCreateAccount() {
       department: "",
       batch_year: "",
       major: "",
-      skills: "",
+      skills: [], // Initialize skills as an empty array to match Autocomplete's default
       facebook: "",
       linkedIn: "",
     },
@@ -65,34 +103,38 @@ export default function UniversityCreateAccount() {
 
   const selectedRole = watch("role");
 
-useEffect(() => {
-  if (status === "authenticated" && session?.user?.id) {
-    const currentUserId = session.user.id;
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.id) {
+      const currentUserId = session.user.id;
 
-    const fetchUniversityName = async () => {
-      try {
-        const response = await axios.get(
-          `/api/university/get-university-name/${currentUserId}`
-        );
+      const fetchUniversityName = async () => {
+        try {
+          const response = await axios.get(
+            `/api/university/get-university-name/${currentUserId}`
+          );
 
-        if (response.status === 200 && response.data?.name && response.data?.id) {
-          setUniversityName(response.data.name);
-          setValue("university_id", response.data.id); // ✅ Set the university_id here
-        } else {
+          if (
+            response.status === 200 &&
+            response.data?.name &&
+            response.data?.id
+          ) {
+            setUniversityName(response.data.name);
+            setValue("university_id", response.data.id);
+          } else {
+            setUniversityName("Error loading name");
+            toast.error("Failed to fetch university name or ID.");
+          }
+        } catch (error) {
           setUniversityName("Error loading name");
-          toast.error("Failed to fetch university name or ID.");
+          toast.error("Failed to load university info.");
         }
-      } catch (error) {
-        setUniversityName("Error loading name");
-        toast.error("Failed to load university info.");
-      }
-    };
+      };
 
-    fetchUniversityName();
-  } else if (status === "unauthenticated") {
-    setUniversityName("Not authorized");
-  }
-}, [status, session, setValue]);
+      fetchUniversityName();
+    } else if (status === "unauthenticated") {
+      setUniversityName("Not authorized");
+    }
+  }, [status, session, setValue]);
 
   useEffect(() => {
     reset((prev) => ({
@@ -100,7 +142,7 @@ useEffect(() => {
       department: "",
       batch_year: "",
       major: "",
-      skills: "",
+      skills: [], // Reset to an empty array
       facebook: "",
       linkedIn: "",
     }));
@@ -112,28 +154,34 @@ useEffect(() => {
       console.log("onSubmit function triggered!");
       console.log("Form Data Submitted:", formData);
 
+      // Convert skills array to a comma-separated string if it's not empty
+      const skillsString =
+        formData.skills && formData.skills.length > 0
+          ? formData.skills.join(", ")
+          : "";
+
       const bodyData = {
         name: formData.name,
         email: formData.email,
         password: formData.password,
         role: formData.role,
-        university_id: formData.university_id, 
+        university_id: parseInt(formData.university_id, 10),
         ...(formData.department && { department: formData.department }),
         ...(formData.batch_year && {
-          batch_year: parseInt(formData.batch_year),
+          batch_year: parseInt(formData.batch_year, 10),
         }),
         ...(formData.major && { major: formData.major }),
-        ...(formData.skills && { skills: formData.skills }),
+        ...(skillsString && { skills: skillsString }), // Use the converted string
         ...(formData.facebook && { facebook: formData.facebook }),
         ...(formData.linkedIn && { linkedIn: formData.linkedIn }),
-        status: "approved", 
+        status: "approved",
       };
 
       let apiPath;
       if (formData.role === "teacher") {
-        apiPath = "/api/university/teacher"; // API route for teacher creation
+        apiPath = "/api/university/teacher";
       } else if (formData.role === "student") {
-        apiPath = "/api/university/student"; // API route for student creation
+        apiPath = "/api/university/student";
       } else {
         throw new Error("Invalid role selected. Please choose a role.");
       }
@@ -153,7 +201,7 @@ useEffect(() => {
           department: "",
           batch_year: "",
           major: "",
-          skills: "",
+          skills: [], // Reset to an empty array
           facebook: "",
           linkedIn: "",
         });
@@ -164,6 +212,7 @@ useEffect(() => {
       }
     } catch (err) {
       console.error("Submission error:", err);
+      console.log("Submitting skills:", formData.skills); // This will still log the array before conversion
 
       if (axios.isAxiosError(err)) {
         if (err.response) {
@@ -201,11 +250,11 @@ useEffect(() => {
       email: "",
       password: "",
       role: "",
-      university_id: session?.user?.university_id || "", // Keep the university_id after reset
+      university_id: session?.user?.university_id || "",
       department: "",
       batch_year: "",
       major: "",
-      skills: "",
+      skills: [], // Reset to an empty array
       facebook: "",
       linkedIn: "",
     });
@@ -270,7 +319,7 @@ useEffect(() => {
                   {...field}
                   labelId="role-label"
                   label="Role"
-                  value={field.value || ""} // Ensure controlled component value
+                  value={field.value || ""}
                 >
                   {ROLES.map((role, index) => (
                     <MenuItem key={index} value={role.value}>
@@ -287,9 +336,9 @@ useEffect(() => {
             label="University Name"
             fullWidth
             sx={{ mb: 2 }}
-            value={universityName} // Display fetched name
+            value={universityName}
             InputProps={{
-              readOnly: true, // Make it read-only
+              readOnly: true,
             }}
             error={!!errors.university_id}
             helperText={errors.university_id?.message}
@@ -297,13 +346,25 @@ useEffect(() => {
 
           {selectedRole === "teacher" && (
             <TextField
+              select
               label="Department"
               fullWidth
               sx={{ mb: 2 }}
               {...register("department")}
               error={!!errors.department}
               helperText={errors.department?.message}
-            />
+            >
+              {[
+                "Computer Science",
+                "Information Technology",
+                "Business",
+                "Engineering",
+              ].map((dept) => (
+                <MenuItem key={dept} value={dept}>
+                  {dept}
+                </MenuItem>
+              ))}
+            </TextField>
           )}
 
           {selectedRole === "student" && (
@@ -340,14 +401,47 @@ useEffect(() => {
                   <FormHelperText>{errors.major?.message}</FormHelperText>
                 </FormControl>
               </Box>
-              <TextField
-                label="Skills (comma-separated)"
-                fullWidth
-                sx={{ mb: 2 }}
-                {...register("skills")}
-                error={!!errors.skills}
-                helperText={errors.skills?.message}
-              />
+              <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.skills}>
+                <Controller
+                  name="skills"
+                  control={control}
+                  defaultValue={[]} // Ensure default value is an empty array
+                  render={({ field: { onChange, value } }) => (
+                    <Autocomplete
+                      multiple
+                      freeSolo
+                      options={skillOptions}
+                      value={value || []} // Ensure value is an array for Autocomplete
+                      onChange={(_, data) => onChange(data)}
+                      renderTags={(value, getTagProps) =>
+                        value.map((option, index) => (
+                          <Chip
+                            {...getTagProps({ index })}
+                            key={option}
+                            label={option}
+                            sx={{
+                              height: 25,
+                              borderRadius: 1,
+                              border: "1px solid blue",
+                              backgroundColor: "#ebfffa",
+                            }}
+                          />
+                        ))
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Skills"
+                          placeholder="Type and press enter..."
+                          error={!!errors.skills}
+                          helperText={errors.skills?.message}
+                        />
+                      )}
+                    />
+                  )}
+                />
+              </FormControl>
+
               <Box display="flex" gap={2} mb={2}>
                 <TextField
                   label="Facebook URL"
@@ -367,7 +461,6 @@ useEffect(() => {
             </>
           )}
 
-          {/* Submit and Cancel buttons */}
           <Stack direction="row" spacing={2} mt={3}>
             <Button
               variant="contained"

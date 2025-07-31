@@ -91,7 +91,6 @@ export default function UniversityStudentList() {
     }
   }, [session, sessionStatus]);
 
-  // ==== DELETE STUDENT FUNCTION ====
   const handleDeleteStudent = async (studentId) => {
     toast.warn(
       ({ closeToast }) => (

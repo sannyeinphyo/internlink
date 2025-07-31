@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 export async function GET(request, { params }) {
+  // Get session
   const session = await getServerSession(authOptions);
 
   if (!session || session.user.role !== "university") {
@@ -13,18 +14,36 @@ export async function GET(request, { params }) {
     );
   }
 
-  const universityIdFromSession = session.user.id;
-  if (!universityIdFromSession) {
-    console.warn(
-      "API: University session found, but university_id is missing."
-    );
+  // Get user id from session (university user)
+  const universityUserId =
+    typeof session.user.id === "string"
+      ? parseInt(session.user.id, 10)
+      : session.user.id;
+
+  if (!universityUserId) {
     return NextResponse.json(
-      { message: "University ID not found in session." },
+      { message: "University user ID not found in session." },
       { status: 403 }
     );
   }
 
   try {
+    // Find the university record for this user
+    const university = await prisma.university.findUnique({
+      where: { user_id: universityUserId },
+    });
+
+    if (!university) {
+      return NextResponse.json(
+        { message: "University not found for this user." },
+        { status: 403 }
+      );
+    }
+
+    // Extract university id to filter students by
+    const universityIdFromSession = university.id;
+
+    // Get student id param from route params
     const { id } = params;
 
     if (!id) {
@@ -42,7 +61,8 @@ export async function GET(request, { params }) {
       );
     }
 
-    const studentUser = await prisma.user.findUnique({
+    // Query the student user with the university constraint
+    const studentUser = await prisma.user.findFirst({
       where: {
         id: studentUserId,
         role: "student",
@@ -53,7 +73,7 @@ export async function GET(request, { params }) {
       include: {
         student: {
           include: {
-            university: true, 
+            university: true,
           },
         },
       },

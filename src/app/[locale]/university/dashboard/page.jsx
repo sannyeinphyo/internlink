@@ -1,18 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Grid,
   Card,
   CardContent,
   Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
   CssBaseline,
   Container,
   CircularProgress,
@@ -20,24 +13,45 @@ import {
   MenuItem,
   Select,
   Box,
-  Stack,
+  // Stack, // Not used, can be removed
+  FormControl,
+  InputLabel,
+  CardHeader,
+  List,          // Added for Latest Users
+  ListItem,      // Added for Latest Users
+  ListItemText,  // Added for Latest Users
+  Divider,       // Added for Latest Users
 } from "@mui/material";
 import SchoolIcon from "@mui/icons-material/School";
 import GroupIcon from "@mui/icons-material/Group";
 import MailIcon from "@mui/icons-material/Mail";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+
+// Import Chart.js components
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
   Tooltip,
   Legend,
-  ResponsiveContainer,
-  Cell,
-} from "recharts";
+} from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+// You might have installed this previously, if not, install: npm install chartjs-plugin-datalabels
+import ChartDataLabels from 'chartjs-plugin-datalabels'; // Assuming you still want this for the bar chart
+
+// Register Chart.js components and the datalabels plugin
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ChartDataLabels // Register the datalabels plugin
+);
 
 const StatCard = ({ icon, label, value, cardColor }) => (
   <Card
@@ -48,21 +62,25 @@ const StatCard = ({ icon, label, value, cardColor }) => (
       boxShadow: 3,
       transition: "transform 0.2s ease",
       "&:hover": { transform: "scale(1.03)", boxShadow: 6 },
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      p: 2,
     }}
     elevation={4}
   >
-    <CardContent>
-      <Stack direction="row" spacing={2} alignItems="center">
+    <CardContent sx={{ display: 'flex', alignItems: 'center', p: 1, '&:last-child': { pb: 1 } }}>
+      <Box sx={{ mr: 2, display: 'flex', alignItems: 'center' }}>
         {icon}
-        <Box>
-          <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-            {label}
-          </Typography>
-          <Typography variant="h5" fontWeight="bold">
-            {value ?? "-"}
-          </Typography>
-        </Box>
-      </Stack>
+      </Box>
+      <Box>
+        <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+          {label}
+        </Typography>
+        <Typography variant="h5" fontWeight="bold">
+          {value ?? "-"}
+        </Typography>
+      </Box>
     </CardContent>
   </Card>
 );
@@ -99,28 +117,107 @@ export default function UniversityDashboard() {
   };
 
   useEffect(() => {
-    if (session?.user) fetchDashboardData(selectedYear);
-  }, [session, selectedYear]);
-
-  const applicationStatusData = dashboardData?.applicationStatusData || [];
-  const latestStudents = (dashboardData?.latestUsers || []).filter(user => {
-  if (user.role !== "student") return false;
-  if (!user.createdAt) return false;
-  const userYear = new Date(user.createdAt).getFullYear();
-  return userYear === selectedYear;
-});
-
-  const COLORS = ["blue", "green", "red"];
-const availableYears = React.useMemo(() => {
-  if (!dashboardData?.latestUsers) return [];
-  const yearsSet = new Set();
-  dashboardData.latestUsers.forEach(user => {
-    if (user.createdAt) {
-      yearsSet.add(new Date(user.createdAt).getFullYear());
+    if (status === "authenticated" && session?.user) {
+      fetchDashboardData(selectedYear);
+    } else if (status === "unauthenticated") {
+      setLoading(false);
+      setError("You must be logged in to view this dashboard.");
     }
-  });
-  return Array.from(yearsSet).sort((a, b) => b - a);
-}, [dashboardData]);
+  }, [session, selectedYear, status]);
+
+
+  const applicationStatusChartData = useMemo(() => {
+    const data = dashboardData?.applicationStatusData || [];
+    const chartData = {
+      labels: data.map(item => item.name),
+      datasets: [
+        {
+          label: 'Number of Applications',
+          data: data.map(item => item.value),
+          backgroundColor: [
+            'rgba(25, 118, 210, 0.8)',
+            'rgba(56, 142, 60, 0.8)', 
+            'rgba(211, 47, 47, 0.8)',  
+          ],
+          borderColor: [
+            'rgba(25, 118, 210, 1)',
+            'rgba(56, 142, 60, 1)',
+            'rgba(211, 47, 47, 1)',
+          ],
+          borderWidth: 1,
+        },
+      ],
+    };
+    return chartData;
+  }, [dashboardData]);
+
+  const applicationStatusBarOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+        display: false,
+      },
+      title: {
+        display: false,
+      },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            let label = context.dataset.label || '';
+            if (label) {
+              label += ': ';
+            }
+            const value = context.parsed.y;
+            const total = context.dataset.data.reduce((sum, val) => sum + val, 0);
+            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) + '%' : '0%';
+            return `${label}${value} (${percentage})`;
+          }
+        }
+      },
+      datalabels: {
+        anchor: 'end',
+        align: 'top',
+        color: '#666',
+        font: {
+          weight: 'bold'
+        },
+        formatter: function(value, context) {
+          return value;
+        },
+        display: function(context) {
+          return context.dataset.data[context.dataIndex] > 0;
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+      },
+      y: {
+        beginAtZero: true,
+        ticks: {
+          precision: 0,
+        },
+      },
+    },
+  };
+
+  const availableYears = useMemo(() => {
+    const years = dashboardData?.allAvailableYears;
+    if (years && years.length > 0) {
+      return years;
+    }
+    const fallbackYears = [];
+    const current = new Date().getFullYear();
+    for (let i = -2; i <= 2; i++) {
+        fallbackYears.push(current + i);
+    }
+    return fallbackYears.sort((a, b) => b - a);
+  }, [dashboardData]);
 
 
   if (status === "loading" || loading) {
@@ -129,34 +226,15 @@ const availableYears = React.useMemo(() => {
         maxWidth="lg"
         sx={{
           display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "80vh",
-          flexDirection: "column",
+          justifyContent:"center",
+          alignItems:"center",
+          minHeight:"80vh",
+          flexDirection:"column",
           gap: 2,
         }}
       >
         <CircularProgress />
         <Typography variant="h6">Loading dashboard...</Typography>
-      </Container>
-    );
-  }
-
-  if (!session) {
-    return (
-      <Container
-        maxWidth="lg"
-        sx={{
-          textAlign: "center",
-          minHeight: "80vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Alert severity="warning" sx={{ width: "100%" }}>
-          You must be logged in to view this dashboard.
-        </Alert>
       </Container>
     );
   }
@@ -182,14 +260,34 @@ const availableYears = React.useMemo(() => {
     );
   }
 
+  if (!dashboardData) {
+    return (
+        <Container
+            maxWidth="lg"
+            sx={{
+                minHeight: "80vh",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 2,
+            }}
+        >
+            <Alert severity="info" sx={{ width: "100%" }}>
+                No dashboard data available.
+            </Alert>
+        </Container>
+    );
+  }
+
+
   return (
-    <Container maxWidth="lg" sx={{ pb: 4 }}>
+    <Container maxWidth="lg" sx={{ py: 4 }}>
       <CssBaseline />
       <Box
         display="flex"
         justifyContent="space-between"
         alignItems="center"
-        mt={4}
         mb={3}
         flexWrap="wrap"
         gap={2}
@@ -197,19 +295,21 @@ const availableYears = React.useMemo(() => {
         <Typography variant="h4" fontWeight="bold" component="h1">
           University Dashboard
         </Typography>
-        <Select
-        label="Year"
-          value={selectedYear}
-          onChange={(e) => setSelectedYear(e.target.value)}
-          size="small"
-          sx={{ minWidth: 120 }}
-        >
-          {availableYears.map((year) => (
-            <MenuItem key={year} value={year}>
-              {year}
-            </MenuItem>
-          ))}
-        </Select>
+        <FormControl variant="outlined" size="small" sx={{ minWidth: 120 }}>
+          <InputLabel id="year-select-label">Year</InputLabel>
+          <Select
+            labelId="year-select-label"
+            value={selectedYear}
+            label="Year"
+            onChange={(e) => setSelectedYear(e.target.value)}
+          >
+            {availableYears.map((year) => (
+              <MenuItem key={year} value={year}>
+                {year}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </Box>
 
       <Grid container spacing={3} mb={4} justifyContent={"center"}>
@@ -217,93 +317,88 @@ const availableYears = React.useMemo(() => {
           <StatCard
             icon={<SchoolIcon fontSize="large" color="primary" />}
             label="Total Teachers"
-            value={dashboardData?.totalTeachers ?? "-"}
+            value={dashboardData?.totalTeachers ?? 0}
             cardColor="#E3F2FD"
           />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <StatCard
-            icon={<GroupIcon fontSize="large" color="primary" />}
+            icon={<GroupIcon fontSize="large" color="success" />}
             label="Total Students"
-            value={dashboardData?.totalStudents ?? "-"}
-            cardColor="#F1F8E9"
+            value={dashboardData?.totalStudents ?? 0}
+            cardColor="#E8F5E9"
           />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <StatCard
-            icon={<MailIcon fontSize="large" color="primary" />}
+            icon={<MailIcon fontSize="large" color="warning" />}
             label="Applications Submitted"
-            value={dashboardData?.totalApplicationsSubmitted ?? "-"}
-            cardColor="#FFF3E0"
+            value={dashboardData?.totalApplicationsSubmitted ?? 0}
+            cardColor="#FFFDE7"
           />
         </Grid>
       </Grid>
 
-      <Grid container spacing={3} display={"flex"} flexDirection={"column"}>
-        <Grid item xs={12} md={6}>
-          <Card elevation={4} sx={{ borderRadius: 3, height: "100%" }}>
-            <CardContent>
-              <Typography variant="h6" fontWeight="bold" mb={2}>
-                Application Status Breakdown
-              </Typography>
-              {applicationStatusData.length ? (
-                <ResponsiveContainer width="100%" height={280}>
-                  <BarChart
-                    data={applicationStatusData}
-                    margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis allowDecimals={false} />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="value" fill="#1976d2">
-                      {applicationStatusData.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
-                        />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
+
+      <Grid container spacing={3}>
+        <Grid item xs={12} width={"100%"}> 
+          <Card elevation={4} sx={{ borderRadius: 3, height: "100%", display: 'flex', flexDirection: 'column' }}>
+            <CardHeader
+              title={<Typography variant="h6" fontWeight="bold">Application Status Breakdown</Typography>}
+              subheader={<Typography variant="subtitle2" color="text.secondary">Total applications by status for the year {selectedYear}</Typography>}
+            />
+            <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 350 }}>
+              {applicationStatusChartData.datasets[0].data.some(value => value > 0) ? (
+                <Box sx={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Bar data={applicationStatusChartData} options={applicationStatusBarOptions} />
+                </Box>
               ) : (
                 <Typography color="text.secondary" textAlign="center" mt={4}>
-                  No application data available.
+                  No application data available for {selectedYear}.
                 </Typography>
               )}
             </CardContent>
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={6}>
-          <Card elevation={4} sx={{ borderRadius: 3, height: "100%" }}>
-            <CardContent>
-              <Typography variant="h6" fontWeight="bold" gutterBottom>
-                Latest Users Added
-              </Typography>
-              {latestStudents.length ? (
-                <TableContainer component={Paper} elevation={0}>
-                  <Table size="small" aria-label="latest users table">
-                    <TableHead>
-                      <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
-                        <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
-                        <TableCell sx={{ fontWeight: "bold" }}>Role</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {latestStudents.map((user, i) => (
-                        <TableRow key={i} hover tabIndex={-1}>
-                          <TableCell>{user.name}</TableCell>
-                          <TableCell>{user.role}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+
+           <Grid item xs={12} width={"100%"}>  
+          <Card elevation={4} sx={{ borderRadius: 3, height: "100%", display: 'flex', flexDirection: 'column' }}>
+            <CardHeader
+              title={<Typography variant="h6" fontWeight="bold">Latest User Registrations</Typography>}
+              subheader={<Typography variant="subtitle2" color="text.secondary">Recently added teachers and students for {selectedYear}</Typography>}
+            />
+            <CardContent sx={{ flexGrow: 1, overflowY: 'auto' }}> {/* Added overflowY for scroll if many users */}
+              {dashboardData?.latestUsers && dashboardData.latestUsers.length > 0 ? (
+                <List dense> {/* dense makes list items smaller */}
+                  {dashboardData.latestUsers.map((user, index) => (
+                    <React.Fragment key={user.id}>
+                   <ListItem disablePadding>
+                        <ListItemText
+                          primary={
+                            <Typography variant="body1" fontWeight="medium">
+                              {user.name}
+                            </Typography>
+                          }
+                          secondary={ 
+                            <Box component="div"> 
+                              <Typography variant="body2" color="text.secondary" component="div"> {/* Make this a div */}
+                                {user.role} &bull; {new Date(user.createdAt).toLocaleDateString()}
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary" component="div"> {/* Make this a div */}
+                                {user.email}
+                              </Typography>
+                            </Box>
+                          }
+                        />
+                      </ListItem>
+                      {index < dashboardData.latestUsers.length - 1 && <Divider component="li" />}
+                    </React.Fragment>
+                  ))}
+                </List>
               ) : (
-                <Typography color="text.secondary" textAlign="center" py={3}>
-                  No recent users found.
+                <Typography color="text.secondary" textAlign="center" mt={4}>
+                  No new user registrations for {selectedYear}.
                 </Typography>
               )}
             </CardContent>

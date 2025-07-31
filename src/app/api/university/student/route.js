@@ -1,8 +1,10 @@
+// src/app/api/university/student/route.js
+
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import * as yup from "yup";
-import { studentSchema } from "@/schemas/universityCreateAccount"; 
+import { studentSchema } from "@/schemas/universityCreateAccount"; // Ensure this import is correct
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
@@ -29,22 +31,9 @@ export async function POST(req) {
     );
   }
 
-  const sessionUniversityId = session.user.id;
-  if (session.user.role === "university" && !sessionUniversityId) {
-    console.error(
-      "API: University session found but university_id is missing for POST request."
-    );
-    return NextResponse.json(
-      {
-        message:
-          "University ID not found in your session. Please log in again.",
-      },
-      { status: 403 }
-    );
-  }
-
   try {
     const body = await req.json();
+    // This line will now correctly validate 'skills' as a string
     await studentSchema.validate(body, { abortEarly: false });
 
     const {
@@ -52,31 +41,49 @@ export async function POST(req) {
       email,
       password,
       role,
-      university_id, 
+      university_id: submittedUniversityId,
       batch_year,
       major,
-      skills,
+      skills, // 'skills' is now a string from the frontend
       facebook,
       linkedIn,
     } = body;
 
-  
-    if (
-      session.user.role === "university" &&
-      sessionUniversityId !== university_id
-    ) {
-      console.warn(
-        `API: University ${sessionUniversityId} attempted to create student for university ${university_id}. Unauthorized.`
+    const userId = session.user.id;
+    const university = await prisma.university.findUnique({
+      where: { user_id: userId },
+    });
+
+    if (!university) {
+      console.error(
+        `API: University not found for user ID ${userId} during student creation.`
       );
       return NextResponse.json(
         {
           message:
-            "Unauthorized: Account creation must be for your university.",
+            "University not found for your user account. Please contact admin.",
+        },
+        { status: 404 }
+      );
+    }
+
+    const university_id = university.id;
+
+    if (
+      session.user.role === "university" &&
+      parseInt(submittedUniversityId, 10) !== university_id
+    ) {
+      console.warn(
+        `API: University ${university_id} attempted to create student for university ${submittedUniversityId}. Unauthorized.`
+      );
+      return NextResponse.json(
+        {
+          message:
+            "Unauthorized: You can only create students for your own university.",
         },
         { status: 403 }
       );
     }
- 
 
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -99,23 +106,21 @@ export async function POST(req) {
         name,
         email,
         password: hashedPassword,
-        role: "student", 
+        role: "student",
         status: "approved",
         verified: true,
       },
     });
 
-
     await prisma.student.create({
       data: {
         user_id: user.id,
         university_id: university_id,
-        batch_year: parseInt(batch_year, 10), 
+        batch_year: parseInt(batch_year, 10),
         major: major,
-        skills: skills || null, 
+        skills: Array.isArray(skills) ? skills.join(", ") : skills || null,
         facebook: facebook || null,
         linkedIn: linkedIn || null,
-        // Github: github || null,
       },
     });
 
@@ -127,7 +132,7 @@ export async function POST(req) {
         message: "Successfully created student account",
         user_id: user.id,
       },
-      { status: 201 } 
+      { status: 201 }
     );
   } catch (error) {
     console.error("API Error Creating Student Account:", error);
@@ -147,14 +152,10 @@ export async function POST(req) {
   }
 }
 
-
 export async function GET(request) {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    console.warn(
-      "API: Unauthorized GET attempt to /api/university/student - No session."
-    );
     return NextResponse.json(
       { message: "You are not authenticated." },
       { status: 401 }
@@ -162,30 +163,31 @@ export async function GET(request) {
   }
 
   if (session.user.role !== "university" && session.user.role !== "admin") {
-    console.warn(
-      `API: Unauthorized GET attempt to /api/university/student - Role: ${session.user.role}.`
-    );
     return NextResponse.json(
       { message: "You are not authorized to access this resource." },
       { status: 403 }
     );
   }
 
-  const sessionUniversityId = session.user.id;
-  if (session.user.role === "university" && !sessionUniversityId) {
-    console.error(
-      "API: University session found but university_id is missing for GET request."
-    );
-    return NextResponse.json(
-      { message: "University ID not found in session." },
-      { status: 403 }
-    );
+  let sessionUniversityId = null;
+
+  if (session.user.role === "university") {
+    const university = await prisma.university.findUnique({
+      where: { user_id: session.user.id },
+    });
+
+    if (!university) {
+      return NextResponse.json(
+        { message: "University not found for your account." },
+        { status: 404 }
+      );
+    }
+
+    sessionUniversityId = university.id;
   }
 
   try {
-    const whereClause = {
-      role: "student",
-    };
+    const whereClause = { role: "student" };
 
     if (session.user.role === "university") {
       whereClause.student = {
@@ -207,11 +209,6 @@ export async function GET(request) {
       },
     });
 
-    console.log(
-      `API: Fetched ${students.length} students for university ID: ${
-        sessionUniversityId || "All (Admin)"
-      }.`
-    );
     return NextResponse.json(
       {
         message: "Students fetched successfully for university.",

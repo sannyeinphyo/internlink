@@ -1,7 +1,6 @@
 import * as yup from "yup";
 
 export const registerSchema = yup.object().shape({
-  // Common to all
   email: yup.string().email("Invalid email format").required("Email is required"),
 
   password: yup
@@ -14,7 +13,6 @@ export const registerSchema = yup.object().shape({
     .oneOf(["student", "company", "teacher"], "Invalid role")
     .required("Role is required"),
 
-  // Conditional for STUDENT
   batch_year: yup.number().when("role", {
     is: "student",
     then: (schema) =>
@@ -52,14 +50,12 @@ export const registerSchema = yup.object().shape({
   facebook: yup.string().url("Invalid URL").nullable(),
   linkedIn: yup.string().url("Invalid URL").nullable(),
 
-  // Conditional for TEACHER
   department: yup.string().when("role", {
     is: "teacher",
     then: (schema) => schema.required("Department is required"),
     otherwise: (schema) => schema.notRequired(),
   }),
 
-  // Conditional for COMPANY
   name: yup.string().when("role", {
     is: "company",
     then: (schema) => schema.required("Company name is required"),
