@@ -13,6 +13,7 @@ import {
   CircularProgress,
   Divider,
 } from "@mui/material";
+import TeacherReportDownload from "@/components/TeacherReportDownload";
 
 const statuses = ["", "applied", "accepted", "rejected"];
 
@@ -22,6 +23,9 @@ export default function TeacherReportGenerator() {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const [universityName, setUniversityName] = useState("");
+  const [reportData, setReportData] = useState(null);
+  const [generatedUniversity, setGeneratedUniversity] = useState("");
+  const [generatedBatch, setGeneratedBatch] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,26 +44,22 @@ export default function TeacherReportGenerator() {
 
   const handleGenerate = async () => {
     setLoading(true);
+    setReportData(null); 
+
     try {
-      const filters = {};
-      if (batch) filters.batch_year = batch;
-      if (status) filters.status = status;
+      const filters = {
+        batch_year: batch || undefined, 
+        status: status || undefined,
+      };
 
-      const res = await axios.post("/api/university/report", filters, {
-        responseType: "blob",
-      });
+      const res = await axios.post("/api/university/report", filters);
 
-      const url = URL.createObjectURL(new Blob([res.data]));
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "internship_report.pdf";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
+      setReportData(Array.isArray(res.data.data) ? res.data.data : []);
+      setGeneratedUniversity(res.data.university || universityName);
+      setGeneratedBatch(res.data.batch || batch);
     } catch (error) {
-      console.error(error);
-      alert("Failed to generate report");
+      console.error("Generation error:", error.response?.data || error.message);
+      setReportData([]);
     } finally {
       setLoading(false);
     }
@@ -99,11 +99,12 @@ export default function TeacherReportGenerator() {
           filters like batch year and application status.
         </Typography>
 
-        <Divider mb={4} />
+        <Divider sx={{ my: 4 }} />
 
         <Typography
           variant="subtitle1"
-          className="mb-4 font-medium text-gray-800 tracking-wide"
+          mb={4}
+          className="font-medium text-gray-800 tracking-wide"
           sx={{ letterSpacing: "0.02em" }}
         >
           Select Filters
@@ -158,23 +159,46 @@ export default function TeacherReportGenerator() {
             variant="contained"
             onClick={handleGenerate}
             disabled={loading}
+            fullWidth
             size="large"
             className="bg-blue-600 hover:bg-blue-700 text-white"
             sx={{
               borderRadius: 2,
-              fontWeight: "700",
+              fontWeight: 700,
               textTransform: "none",
               fontSize: "1.1rem",
               py: 1.8,
-              boxShadow: "0 5px 14px rgb(59 130 246 / 0.45)",
+              boxShadow: "0 5px 16px rgba(59, 130, 246, 0.4)",
+              mt: 2, 
             }}
           >
             {loading ? (
               <CircularProgress size={24} color="inherit" />
             ) : (
-              "Download Report"
+              "Generate Report"
             )}
           </Button>
+
+          {!loading && reportData && (
+            <Stack alignItems="center" spacing={2} sx={{ mt: 2 }}>
+              {reportData.length > 0 ? (
+                <TeacherReportDownload
+                  reportData={reportData}
+                  university={generatedUniversity}
+                  batch={generatedBatch ? `Batch ${generatedBatch}` : "All Batches"}
+                  logo={"http://localhost:3000/uni/ucsh.jpg"}
+                />
+              ) : (
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ textAlign: "center" }}
+                >
+                  No internship records found for the selected filters.
+                </Typography>
+              )}
+            </Stack>
+          )}
         </Stack>
 
         <Typography

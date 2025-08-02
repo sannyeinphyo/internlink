@@ -16,10 +16,10 @@ import {
 } from "@mui/material";
 
 import { useSession } from "next-auth/react";
-import Logout from "@/components/Logout";
 import axios from "axios";
 import NotificationBell from "@/components/NotificationBell";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import LogoutButton from "@/components/Logout";
 
 export const appBarHeight = 64;
 
@@ -30,10 +30,11 @@ export default function Navbar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const userId = session?.user?.id;
+  const handleToggle = (event) => {
+    setAnchorEl(anchorEl ? null : event.currentTarget);
+  };
 
-  const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
-  const handleMenuClose = () => setAnchorEl(null);
-
+  const handleClose = () => setAnchorEl(null);
   useEffect(() => {
     if (session?.user) {
       console.log("User session exists:", session.user);
@@ -57,17 +58,17 @@ export default function Navbar() {
       console.log("No user session found");
     }
   }, [session]);
-useEffect(() => {
-  const getProfile = async () => {
-    try {
-      const req = await axios.get(`/api/company/profile`);
-      setProfile(req.data.data);
-    } catch (err) {
-      console.error("Failed to load company profile", err);
-    }
-  };
-  getProfile();
-}, []);
+  useEffect(() => {
+    const getProfile = async () => {
+      try {
+        const req = await axios.get(`/api/company/profile`);
+        setProfile(req.data.data);
+      } catch (err) {
+        console.error("Failed to load company profile", err);
+      }
+    };
+    getProfile();
+  }, []);
   if (status === "loading") {
     console.log("Session is loading...");
     return (
@@ -119,22 +120,24 @@ useEffect(() => {
       >
         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
           Intern
-          <span style={{ fontStyle: "italic", color: "buttonmain.main" }}>Link</span>
+          <span style={{ fontStyle: "italic", color: "buttonmain.main" }}>
+            Link
+          </span>
         </Typography>
 
         <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
           {session?.user?.id && <NotificationBell userId={session.user.id} />}
           <Typography
-            sx={{ fontSize: "16px", fontWeight: "bold", color: "bgmain.main" , }}
+            sx={{ fontSize: "16px", fontWeight: "bold", color: "bgmain.main" }}
           >
             {name}
           </Typography>
           <Tooltip title="Company Profile">
             <IconButton
-              onClick={handleMenuOpen}
+              onClick={handleToggle}
               color="inherit"
               size="medium"
-              sx={{ display: "flex", gap: 1 , boxShadow:2 }}
+              sx={{ display: "flex", gap: 1, boxShadow: 2 }}
             >
               <Avatar src={profile.image} alt={name} />
             </IconButton>
@@ -143,16 +146,64 @@ useEffect(() => {
           <Menu
             anchorEl={anchorEl}
             open={open}
-            onClose={handleMenuClose}
+            onClose={handleClose}
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
             transformOrigin={{ vertical: "top", horizontal: "right" }}
+            PaperProps={{
+              elevation: 0,
+              sx: {
+                mt: 1,
+                minWidth: 180,
+                borderRadius: 2,
+                boxShadow: "0px 4px 20px rgba(0,0,0,0.05)",
+                p: 1,
+              },
+            }}
           >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
-            <Divider/>
-            <LanguageSwitcher/>
-            <MenuItem>
-              <Logout onClick={handleMenuClose} />
+            <MenuItem
+              onClick={() => {
+                handleClose();
+                goTo(`/${locale}/company/profile`);
+              }}
+              sx={{
+                "&:hover": {
+                  bgcolor: "primary.light",
+                  color: "white",
+                },
+                borderRadius: 1,
+                mt: 1,
+              }}
+            >
+              <Typography variant="body2">Profile</Typography>
+            </MenuItem>
+
+            <MenuItem
+              onClick={() => {
+                handleClose();
+                goTo(`/${locale}/reset_password`);
+              }}
+              sx={{
+                "&:hover": {
+                  bgcolor: "primary.light",
+                  color: "white",
+                },
+                borderRadius: 1,
+                mt: 1,
+              }}
+            >
+              <Typography variant="body2">Change Password</Typography>
+            </MenuItem>
+
+            <Divider sx={{ my: 1 }} />
+
+            <MenuItem disableRipple>
+              <LanguageSwitcher />
+            </MenuItem>
+
+            <Divider sx={{ my: 1 }} />
+
+            <MenuItem disableRipple sx={{ mt: 1 }}>
+              <LogoutButton onClick={handleClose} />
             </MenuItem>
           </Menu>
         </Box>

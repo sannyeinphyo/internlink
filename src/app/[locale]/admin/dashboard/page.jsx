@@ -30,6 +30,7 @@ import Papa from "papaparse";
 import { saveAs } from "file-saver";
 import { Bar } from "react-chartjs-2";
 import { BarElement } from "chart.js";
+import { useTranslations } from "next-intl";
 
 ChartJS.register(
   CategoryScale,
@@ -43,6 +44,7 @@ ChartJS.register(
 );
 
 export default function AdminDashboard() {
+  const t = useTranslations("admin")
   const currentYear = new Date().getFullYear();
   const years = [currentYear - 1, currentYear, currentYear + 1];
 
@@ -76,32 +78,32 @@ export default function AdminDashboard() {
   const stats = useMemo(
     () => [
       {
-        label: "Total Students",
+        label: t("total_student"),
         value: dashboardData?.totalStudents || 0,
         color: "#1976d2",
       },
       {
-        label: "Total Companies",
+        label: t("total_company"),
         value: dashboardData?.totalCompanies || 0,
         color: "#2e7d32",
       },
       {
-        label: "Total Applications",
+        label: t("total_applications"),
         value: dashboardData?.totalApplications || 0,
         color: "#d32f2f",
       },
       {
-        label: "Total Job Posts",
+        label: t("total_jobs"),
         value: dashboardData?.totalPosts || 0,
         color: "#ff9800",
       },
       {
-        label: "Verified User",
+        label: t('Verified'),
         value: dashboardData?.accountVerification?.verified || 0,
         color: "#1eff00ff",
       },
       {
-        label: "Unverified User",
+        label: t("unverified"),
         value: dashboardData?.accountVerification?.unverified || 0,
         color: "#ff0000ff",
       },
@@ -214,33 +216,33 @@ export default function AdminDashboard() {
     );
   }
   const studentColumns = [
-    { field: "no", headerName: "No", width: 70 },
-    { field: "name", headerName: "Name", width: 200 },
-    { field: "email", headerName: "Email", width: 250 },
+    { field: "no", headerName: t("no"), width: 70 },
+    { field: "name", headerName: t("name"), width: 200 },
+    { field: "email", headerName: t("email"), width: 250 },
     {
       field: "createdAt",
-      headerName: "Joined At",
+      headerName: t("joined_at"),
       width: 180,
     },
     {
       field: "major",
-      headerName: "Major",
+      headerName: t("major"),
       width: 150,
     },
   ];
 
   const companyColumns = [
-    { field: "no", headerName: "No", width: 70 },
-    { field: "name", headerName: "Name", width: 200 },
-    { field: "email", headerName: "Email", width: 250 },
+    { field: "no", headerName: t("no"), width: 70 },
+    { field: "name", headerName:  t("name"), width: 200 },
+    { field: "email", headerName: t("email"), width: 250 },
     {
       field: "createdAt",
-      headerName: "Joined At",
+      headerName: t("joined_at"),
       width: 180,
     },
     {
       field: "location",
-      headerName: "Location",
+      headerName: t("location"),
       width: 150,
     },
   ];

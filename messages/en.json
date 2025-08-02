@@ -35,6 +35,56 @@
       "text6": "Built with modern technologies (Next.js, Node.js, MySQL, Prisma)"
     }
   },
+  "contact_us": {
+    "header": "Contact Us",
+    "greeting": "We'd love to hear from you! Whether you're a student, company, or university, feel free to reach out to InternLink for any inquiries, suggestions, or support.",
+    "name": "Your Name",
+    "email": "Your Email",
+    "message": "Message",
+    "send": "Send Message"
+  },
+  "admin": {
+    "dashboard": "Admin Dashboard",
+    "total_student": "Total Student",
+    "total_company": "Total Company",
+    "total_applications": "Total Applications",
+    "total_jobs": "Total Jobs Post",
+    "Verified": "Verified User",
+    "unverified": "Unverified User",
+    "no": "No.",
+    "name": "Name",
+    "email": "Email",
+    "joined_at": "Joined At",
+    "major": "Major",
+    "location": "Location"
+  },
+  "admin_create": {
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "role": "Role",
+    "website": "Website",
+    "facebook_url": "Facebook URL",
+    "location": "Location",
+    "contact_info": "Contact Info",
+    "description": "Description",
+    "company":"Company",
+    "create":"Create Account",
+    "cancel":"Cancel",
+    "address":"Address"
+
+  },
+  "admin_student": {
+    "no": "No.",
+    "name": "Name",
+    "email": "Email",
+    "status": "Status",
+    "university": "University",
+    "batch": "Batch",
+    "major": "Major",
+    "actions": "Actions",
+    "search": "Search"
+  },
   "StudentDashboard": {
     "BrowseJobs": "Browse Internships",
     "Signup": "Sign Up",
@@ -89,7 +139,7 @@
     "title": "Confirm To Apply",
     "text": "Are you sure?",
     "confirm": "Apply",
-    "cancel": "Cancle"
+    "cancel": "Cancel"
   },
   "login": {
     "loading": "Loading...",
@@ -182,6 +232,15 @@
       "total_rejected": "Total Rejected"
     }
   },
+  "myintern-ship": {
+    "no": "No",
+    "name": "Student Name",
+    "email": "Email",
+    "applied_on": "Applied On",
+    "status": "Status",
+    "post": "Post",
+    "action": "Action"
+  },
   "student_applications": {
     "tabel_heading": "Student Applications",
     "no": "No",
@@ -209,32 +268,32 @@
     "cancel": "Cancel"
   },
   "internshipPost": {
-  "header": "Create Internship Post",
-  "subHeader": "Fill in the required details about the internship opportunity.",
-  "sections": {
-    "basicInfo": " Basic Info",
-    "expectations": " Expectations",
-    "salaryWorkMode": " Salary & Work Mode",
-    "scheduleLocation": " Schedule & Location",
-    "additionalInfo": "Additional Info"
-  },
-  "fields": {
-    "title": "Title ",
-    "jobType": "Job Type",
-    "description": "Description",
-    "responsibilities": "Responsibilities",
-    "requirements": "Requirements",
-    "paid": "Paid",
-    "salary":"Salary",
-    "remote": "Remote",
-    "location": "Location",
-    "positions": "Number Of Positions",
-    "startDate": "Start Date",
-    "endDate": "End Date",
-    "applicationDeadline": "Application Deadline",
-    "benefits": "Benefits",
-    "contactEmail": "Contact Email"
-  },
-  "submitButton": "Submit Internship Post"
-}
+    "header": "Create Internship Post",
+    "subHeader": "Fill in the required details about the internship opportunity.",
+    "sections": {
+      "basicInfo": " Basic Info",
+      "expectations": " Expectations",
+      "salaryWorkMode": " Salary & Work Mode",
+      "scheduleLocation": " Schedule & Location",
+      "additionalInfo": "Additional Info"
+    },
+    "fields": {
+      "title": "Title ",
+      "jobType": "Job Type",
+      "description": "Description",
+      "responsibilities": "Responsibilities",
+      "requirements": "Requirements",
+      "paid": "Paid",
+      "salary": "Salary",
+      "remote": "Remote",
+      "location": "Location",
+      "positions": "Number Of Positions",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "applicationDeadline": "Application Deadline",
+      "benefits": "Benefits",
+      "contactEmail": "Contact Email"
+    },
+    "submitButton": "Submit Internship Post"
+  }
 }

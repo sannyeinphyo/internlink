@@ -1,4 +1,3 @@
-// ReviewAccountsPage with MUI DataGrid and Dialog for deletion confirmation
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";

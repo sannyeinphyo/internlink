@@ -12,7 +12,7 @@ export default function UnauthorizedPage() {
   const locale = pathname.split("/")[1];
 
   const handleLoginRedirect = () => {
-    router.push(`/${locale}/`);
+    router.push(`/${locale}/login`);
   };
 
   return (

@@ -30,7 +30,6 @@ export default function InternshipApplicationDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch application details on mount or when id changes
   useEffect(() => {
     if (!id) return;
 
@@ -56,7 +55,6 @@ export default function InternshipApplicationDetailPage() {
     fetchApplicationDetails();
   }, [id]);
 
-  // Helper to get MUI Chip color based on status
   const getStatusColor = (currentStatus) => {
     switch (currentStatus) {
       case "pending":

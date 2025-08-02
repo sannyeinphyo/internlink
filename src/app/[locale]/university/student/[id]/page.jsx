@@ -244,53 +244,45 @@ export default function UniversityStudentDetailPage({ params }) {
                 </ListItem>
                 <ListItem disableGutters>
                   <ListItemText
-                    primary="Major"
-                    secondary={student.major || "N/A"}
-                  />
-                </ListItem>
-                <ListItem disableGutters>
-                  <ListItemText
-                    primary="Batch Year"
-                    secondary={student.batch_year || "N/A"}
-                  />
-                </ListItem>
-                <ListItem disableGutters>
-                  <ListItemText
-                    primary="Skills"
-                    secondary={
-                      student.skills && student.skills.length > 0 ? (
-                        <Box
-                          sx={{
-                            display: "flex",
-                            flexWrap: "wrap",
-                            gap: 1,
-                            mt: 0.5,
-                          }}
-                        >
-                          {(typeof student.skills === "string"
-                            ? student.skills.split(",").map((s) => s.trim())
-                            : student.skills
-                          )
-                            .filter(Boolean)
-                            .map((skill, idx) => (
-                              <Chip
-                                key={idx}
-                                label={skill}
-                                size="small"
-                                sx={{
-                                  backgroundColor: getColorByIndex(idx),
-                                  color: "white",
-                                  fontWeight: 600,
-                                }}
-                              />
-                            ))}
-                        </Box>
-                      ) : (
-                        "N/A"
-                      )
+                    primary={
+                      <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                        Skills
+                      </Typography>
                     }
                   />
                 </ListItem>
+                <ListItem disableGutters>
+                  {student.skills && student.skills.length > 0 ? (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap:1
+                      }}
+                    >
+                      {(typeof student.skills === "string"
+                        ? student.skills.split(",").map((s) => s.trim())
+                        : student.skills
+                      )
+                        .filter(Boolean)
+                        .map((skill, idx) => (
+                          <Chip
+                            key={idx}
+                            label={skill}
+                            size="small"
+                            sx={{
+                              backgroundColor: getColorByIndex(idx),
+                              color: "white",
+                              fontWeight: 600,
+                            }}
+                          />
+                        ))}
+                    </Box>
+                  ) : (
+                    <Typography sx={{ ml: 2 }}>N/A</Typography>
+                  )}
+                </ListItem>
+
                 <ListItem disableGutters>
                   <ListItemText
                     primary="LinkedIn"

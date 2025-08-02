@@ -13,12 +13,14 @@ import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import MUIDialogBox from "@/components/MUIDialogbox";
+import { useTranslations } from "next-intl";
 
 export default function MyApplications() {
   const { locale } = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
+  const t = useTranslations("myintern-ship");
 
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -85,13 +87,13 @@ export default function MyApplications() {
   };
 
   const columns = [
-    { field: "no", headerName: "No", width: 90 },
-    { field: "studentName", headerName: "Student Name", width: 180 },
-    { field: "email", headerName: "Email", width: 220 },
-    { field: "applicationDate", headerName: "Applied On", width: 150 },
+    { field: "no", headerName:t("no"), width: 90 },
+    { field: "studentName", headerName:t("name"), width: 180 },
+    { field: "email", headerName: t("email"), width: 220 },
+    { field: "applicationDate", headerName: t("applied_on"), width: 150 },
     {
       field: "status",
-      headerName: "Status",
+      headerName: t("status"),
       width: 120,
       renderCell: (params) => {
         let color;
@@ -113,10 +115,10 @@ export default function MyApplications() {
         );
       },
     },
-    { field: "post_title", headerName: "Post", width: 250 },
+    { field: "post_title", headerName: t("post"), width: 250 },
     {
       field: "action",
-      headerName: "Action",
+      headerName: t("action"),
       headerAlign: "center",
       align: "center",
       width: 200,

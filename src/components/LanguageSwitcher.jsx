@@ -58,7 +58,7 @@ export default function LanguageSwitcher() {
           },
           "&::after": {
             content: '"မြန်မာ"',
-            right: 3,
+            right: 2,
           },
         },
       })),

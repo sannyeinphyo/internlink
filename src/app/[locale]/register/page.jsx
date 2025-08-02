@@ -219,6 +219,7 @@ export default function RegisterPage() {
         >
           <Typography variant="h4" fontWeight="bold" gutterBottom>
             {greetingt("welcomeMessage")}
+            
           </Typography>
           <Typography variant="body1" sx={{ mt: 2 }}>
             {greetingt("introMessage")}

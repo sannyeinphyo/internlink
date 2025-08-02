@@ -11,8 +11,10 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { ButtonPrimary } from "@/components/Button";
+import { useTranslations } from "next-intl";
 
 export default function ContactUs() {
+  const t = useTranslations("contact_us");
   return (
     <Box
       sx={{
@@ -36,15 +38,14 @@ export default function ContactUs() {
           gutterBottom
           sx={{ color: "buttonmain.main", textAlign: "center", mb: 2 }}
         >
-          Contact Us
+          {t("header")}
         </Typography>
         <Typography
           variant="body1"
           mb={6}
           sx={{ color: "text.secondary", textAlign: "center", maxWidth: 700, mx: "auto" }}
         >
-          We'd love to hear from you! Whether you're a student, company, or university,
-          feel free to reach out to InternLink for any inquiries, suggestions, or support.
+          {t("greeting")}
         </Typography>
       </motion.div>
 
@@ -66,7 +67,7 @@ export default function ContactUs() {
           <Grid container spacing={4}>
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Your Name"
+                label={t("name")}
                 fullWidth
                 required
                 variant="outlined"
@@ -77,7 +78,7 @@ export default function ContactUs() {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Your Email"
+                label={t("email")}
                 fullWidth
                 required
                 type="email"
@@ -89,7 +90,7 @@ export default function ContactUs() {
             </Grid>
             <Grid item xs={12}>
               <TextField
-                label="Message"
+                label={t("message")}
                 multiline
                 rows={5}
                 fullWidth
@@ -108,7 +109,7 @@ export default function ContactUs() {
                 size="large"
        
               >
-                Send Message
+               { t("send")}
               </ButtonPrimary>
             </Grid>
           </Grid>

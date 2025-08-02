@@ -20,17 +20,18 @@ import {
   DialogActions,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo, use } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import SearchIcon from "@mui/icons-material/Search";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
+import { useTranslations } from "next-intl";
 
 export default function StudentList() {
   const { locale } = useParams();
-
+  const t = useTranslations("admin_student"); 
   const [students, setStudents] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
@@ -101,7 +102,8 @@ export default function StudentList() {
         major.includes(query) ||
         status.includes(query);
 
-      const matchStatus = !filterStatus || status === filterStatus.toLowerCase();
+      const matchStatus =
+        !filterStatus || status === filterStatus.toLowerCase();
       const matchMajor = !filterMajor || major === filterMajor.toLowerCase();
 
       return matchSearch && matchStatus && matchMajor;
@@ -120,17 +122,19 @@ export default function StudentList() {
   }));
 
   const columns = [
-    { field: "id", headerName: "No.", width: 70 },
-    { field: "name", headerName: "Name", flex: 1 },
-    { field: "email", headerName: "Email", flex: 1 },
+    { field: "id", headerName: t("no"), width: 70 },
+    { field: "name", headerName: t("name"), flex: 1 },
+    { field: "email", headerName: t("email"), flex: 1 },
     {
       field: "status",
-      headerName: "Status",
+      headerName: t("status"),
       width: 110,
       renderCell: ({ value }) => (
-        <Typography component={"span"}
+        <Typography
+          component={"span"}
           sx={{
-            fontSize:"14px",
+            textTransform: "capitalize",
+            fontSize: "14px",
             color:
               value === "approved"
                 ? "green"
@@ -144,12 +148,12 @@ export default function StudentList() {
         </Typography>
       ),
     },
-    { field: "university", headerName: "University", flex: 1 },
-    { field: "batch", headerName: "Batch", width: 100 },
-    { field: "major", headerName: "Major", width: 150 },
+    { field: "university", headerName: t("university"), flex: 1 },
+    { field: "batch", headerName: t("batch"), width: 100 },
+    { field: "major", headerName: t("major"), width: 150 },
     {
       field: "actions",
-      headerName: "Actions",
+      headerName: t("actions"),
       width: 120,
       renderCell: ({ row }) => (
         <>
@@ -166,12 +170,21 @@ export default function StudentList() {
     },
   ];
 
-  const uniqueMajors = [...new Set(students.map((s) => s.student?.major).filter(Boolean))];
-  const uniqueStatuses = [...new Set(students.map((s) => s.status).filter(Boolean))];
+  const uniqueMajors = [
+    ...new Set(students.map((s) => s.student?.major).filter(Boolean)),
+  ];
+  const uniqueStatuses = [
+    ...new Set(students.map((s) => s.status).filter(Boolean)),
+  ];
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="200px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="200px"
+      >
         <CircularProgress />
         <Typography ml={2}>Loading students...</Typography>
       </Box>
@@ -180,7 +193,12 @@ export default function StudentList() {
 
   if (error) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="200px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="200px"
+      >
         <Alert severity="error">{error}</Alert>
       </Box>
     );
@@ -188,13 +206,12 @@ export default function StudentList() {
 
   return (
     <Box>
-      {/* ==== Filters ==== */}
       <Box display="flex" justifyContent="space-between" flexWrap="wrap" mb={2}>
         <Typography variant="h5">Students</Typography>
         <Stack direction="row" spacing={2} flexWrap="wrap">
           <TextField
             variant="outlined"
-            placeholder="Search by any field"
+            placeholder= {t("search")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             InputProps={{
@@ -261,7 +278,8 @@ export default function StudentList() {
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete this student? This action cannot be undone.
+            Are you sure you want to delete this student? This action cannot be
+            undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>

@@ -24,6 +24,8 @@ export default function TeacherReportGenerator() {
   const [loading, setLoading] = useState(false);
   const [universityName, setUniversityName] = useState("");
   const [reportData, setReportData] = useState(null);
+  const [generatedUniversity, setGeneratedUniversity] = useState("");
+  const [generatedBatch, setGeneratedBatch] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,27 +42,28 @@ export default function TeacherReportGenerator() {
     fetchData();
   }, []);
 
-const handleGenerate = async () => {
-  setLoading(true);
-  setReportData(null); // Clear previous data
-  
-  try {
-    const filters = {
-      batch_year: batch || undefined, // Send undefined instead of empty string
-      status: status || undefined
-    };
+  const handleGenerate = async () => {
+    setLoading(true);
+    setReportData(null); 
 
-    const res = await axios.post("/api/teacher/report", filters);
-    console.log("API response:", res.data); // Add this to see what's returned
-    
-    setReportData(Array.isArray(res.data) ? res.data : []);
-  } catch (error) {
-    console.error("Generation error:", error.response?.data || error.message);
-    setReportData([]);
-  } finally {
-    setLoading(false);
-  }
-};
+    try {
+      const filters = {
+        batch_year: batch || undefined, 
+        status: status || undefined,
+      };
+
+      const res = await axios.post("/api/teacher/report", filters);
+
+      setReportData(Array.isArray(res.data.data) ? res.data.data : []);
+      setGeneratedUniversity(res.data.university || universityName);
+      setGeneratedBatch(res.data.batch || batch);
+    } catch (error) {
+      console.error("Generation error:", error.response?.data || error.message);
+      setReportData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Card
@@ -96,11 +99,12 @@ const handleGenerate = async () => {
           filters like batch year and application status.
         </Typography>
 
-        <Divider mb={4} />
+        <Divider sx={{ my: 4 }} />
 
         <Typography
           variant="subtitle1"
-          className="mb-4 font-medium text-gray-800 tracking-wide"
+          mb={4}
+          className="font-medium text-gray-800 tracking-wide"
           sx={{ letterSpacing: "0.02em" }}
         >
           Select Filters
@@ -155,15 +159,17 @@ const handleGenerate = async () => {
             variant="contained"
             onClick={handleGenerate}
             disabled={loading}
-            size="large"
+            fullWidth
+            size="large" // Use large size to fill the width
             className="bg-blue-600 hover:bg-blue-700 text-white"
             sx={{
               borderRadius: 2,
-              fontWeight: "700",
+              fontWeight: 700,
               textTransform: "none",
               fontSize: "1.1rem",
               py: 1.8,
-              boxShadow: "0 5px 14px rgb(59 130 246 / 0.45)",
+              boxShadow: "0 5px 16px rgba(59, 130, 246, 0.4)",
+              mt: 2, // Adjust spacing from the last TextField
             }}
           >
             {loading ? (
@@ -173,23 +179,27 @@ const handleGenerate = async () => {
             )}
           </Button>
 
-          {!loading && reportData && reportData.length > 0 && (
-            <TeacherReportDownload
-              reportData={reportData}
-              university={universityName}
-              batch={batch ? `Batch ${batch}` : "All Batches"}
-              logo={"http://localhost:3000/uni/ucsh.jpg"}
-            />
-          )}
-
-          {!loading && reportData && reportData.length === 0 && (
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ mt: 2, textAlign: "center" }}
-            >
-              No internship records found for the selected filters.
-            </Typography>
+          {/* Conditional rendering for download button and feedback message */}
+          {!loading && reportData && (
+            <Stack alignItems="center" spacing={2} sx={{ mt: 2 }}>
+              {reportData.length > 0 ? (
+                // A secondary button for download to distinguish it from the main action
+                <TeacherReportDownload
+                  reportData={reportData}
+                  university={generatedUniversity}
+                  batch={generatedBatch ? `Batch ${generatedBatch}` : "All Batches"}
+                  logo={"http://localhost:3000/uni/ucsh.jpg"}
+                />
+              ) : (
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ textAlign: "center" }}
+                >
+                  No internship records found for the selected filters.
+                </Typography>
+              )}
+            </Stack>
           )}
         </Stack>
 

@@ -1,5 +1,3 @@
-"use server";
-
 import { NextResponse } from "next/server";
 import { pdf } from "@react-pdf/renderer";
 import InternshipReportPdf from "@/components/InternshipReportPdf";
@@ -19,44 +17,77 @@ export async function POST(req) {
     const session = await getServerSession(authOptions);
     const user = session?.user;
 
-    if (!user || user.role !== "university") {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
+    if (!user) {
+      return NextResponse.json(
+        { message: "Authentication required" }, 
+        { status: 401 }
+      );
     }
 
-    const { batch_year, status, department } = await req.json();
-
-    const university = await prisma.university.findUnique({
-      where: { user_id: user.id },
-    });
-
-    if (!university) {
-      return NextResponse.json({ message: "University profile not found" }, { status: 404 });
+    if (user.role !== "university" && user.role !== "admin") {
+      return NextResponse.json(
+        { message: "Unauthorized role" }, 
+        { status: 403 }
+      );
     }
 
-    const universityId = university.id;
-    const universityName = university.name;
+    const { batch_year, status, university_id } = await req.json();
 
+    const accept = req.headers.get('accept') || '';
+    const wantsPDF = accept.includes('application/pdf');
+
+    let universityIdToFilter = undefined;
+    let universityName = "All Universities";
+
+    if (user.role === "university") {
+      const university = await prisma.university.findUnique({
+        where: { user_id: user.id },
+      });
+
+      if (!university) {
+        return NextResponse.json(
+          { message: "University profile not found" },
+          { status: 404 }
+        );
+      }
+
+      universityIdToFilter = university.id;
+      universityName = university.name;
+    } 
+    // Handle admin users
+    else if (university_id) {
+      const university = await prisma.university.findUnique({ 
+        where: { id: university_id } 
+      });
+      
+      if (!university) {
+        return NextResponse.json(
+          { message: "Specified university not found" },
+          { status: 404 }
+        );
+      }
+      
+      universityIdToFilter = university.id;
+      universityName = university.name;
+    }
+
+    // Fetch applications with proper type conversion
     const applications = await prisma.internshipApplication.findMany({
       where: {
         ...(status ? { status } : {}),
         student: {
-          ...(batch_year ? { batch_year } : {}),
-          ...(department ? { major: department } : {}),
-          university_id: universityId,
+          ...(batch_year ? { batch_year: parseInt(batch_year) } : {}),
+          ...(universityIdToFilter ? { university_id: universityIdToFilter } : {}),
         },
       },
       include: {
         student: {
-          include: {
-            user: true,
-          },
+          include: { user: true },
         },
         post: {
           include: {
             company: {
-              include: {
-                user: true,
-              },
+              include: { user: true },
             },
           },
         },
@@ -67,32 +98,45 @@ export async function POST(req) {
       studentName: app.student.user.name,
       companyName: app.post?.company?.user?.name || "-",
       status: app.status,
+      batchYear: app.student.batch_year,
     }));
 
-    const document = (
-      <InternshipReportPdf
-        reportData={reportData}
-        university={universityName}
-        batch_year={batch_year || "All Batches"}
-      />
-    );
 
-    const pdfBuffer = await pdf(document).toBuffer();
+    if (wantsPDF) {
+      const pdfDocument = (
+        <InternshipReportPdf
+          reportData={reportData}
+          university={universityName}
+          batch={batch_year ? `Batch ${batch_year}` : "All Batches"}
+        />
+      );
 
-    return new NextResponse(pdfBuffer, {
-      headers: {
-        "Content-Type": "application/pdf",
-        "Content-Disposition": "attachment; filename=internship_report.pdf",
-      },
+      const pdfBuffer = await pdf(pdfDocument).toBuffer();
+
+      return new NextResponse(pdfBuffer, {
+        headers: {
+          "Content-Type": "application/pdf",
+          "Content-Disposition": "attachment; filename=internship_report.pdf",
+        },
+      });
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: reportData,
+      university: universityName,
+      batch: batch_year || null,
+      count: applications.length,
     });
+
   } catch (error) {
-    console.error("PDF generation error:", error);
-    return new NextResponse(
-      JSON.stringify({ message: "Failed to generate report", error: error.message }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
+    console.error("Report generation error:", error);
+    return NextResponse.json(
+      { 
+        message: "Failed to generate report", 
+        error: error.message 
+      },
+      { status: 500 }
     );
   }
 }

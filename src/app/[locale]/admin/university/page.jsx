@@ -68,7 +68,9 @@ export default function UniversityList() {
 
   const confirmDelete = async () => {
     try {
-      await axios.delete(`/api/admin/university/${selectedUniversityId}/delete`);
+      await axios.delete(
+        `/api/admin/university/${selectedUniversityId}/delete`
+      );
       setOpenDialog(false);
       setSelectedUniversityId(null);
       getUniversityList();
@@ -113,6 +115,7 @@ export default function UniversityList() {
       renderCell: (params) => (
         <span
           style={{
+            textTransform: "capitalize",
             fontWeight: 600,
             color:
               params.value === "approved"
@@ -148,11 +151,18 @@ export default function UniversityList() {
     },
   ];
 
-  const uniqueStatuses = [...new Set(universities.map((u) => u.status).filter(Boolean))];
+  const uniqueStatuses = [
+    ...new Set(universities.map((u) => u.status).filter(Boolean)),
+  ];
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="200px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="200px"
+      >
         <CircularProgress />
         <Typography ml={2}>Loading universities...</Typography>
       </Box>
@@ -161,7 +171,12 @@ export default function UniversityList() {
 
   if (error) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="200px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="200px"
+      >
         <Alert severity="error">{error}</Alert>
       </Box>
     );
@@ -169,9 +184,17 @@ export default function UniversityList() {
 
   return (
     <Box>
-      <Typography variant="h5" gutterBottom>Universities</Typography>
+      <Typography variant="h5" gutterBottom>
+        Universities
+      </Typography>
 
-      <Box display="flex" flexWrap="wrap" gap={2} mb={2} justifyContent={"flex-end"}>
+      <Box
+        display="flex"
+        flexWrap="wrap"
+        gap={2}
+        mb={2}
+        justifyContent={"flex-end"}
+      >
         <TextField
           variant="outlined"
           placeholder="Search..."
@@ -213,14 +236,12 @@ export default function UniversityList() {
         />
       </Box>
 
-      <Dialog
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-      >
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete this university? This action cannot be undone.
+            Are you sure you want to delete this university? This action cannot
+            be undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>

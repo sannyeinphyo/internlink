@@ -20,10 +20,7 @@ import {
   Button,
   IconButton,
 } from "@mui/material";
-import {
-  DataGrid,
-  GridToolbar,
-} from "@mui/x-data-grid";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useParams } from "next/navigation";
@@ -109,6 +106,7 @@ export default function TeacherList() {
       renderCell: (params) => (
         <span
           style={{
+            textTransform: "capitalize",
             fontWeight: 600,
             color:
               params.value === "approved"
@@ -168,7 +166,12 @@ export default function TeacherList() {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="200px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="200px"
+      >
         <CircularProgress />
         <Typography ml={2}>Loading teachers...</Typography>
       </Box>
@@ -177,7 +180,12 @@ export default function TeacherList() {
 
   if (error) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="200px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="200px"
+      >
         <Alert severity="error">{error}</Alert>
       </Box>
     );
@@ -185,8 +193,16 @@ export default function TeacherList() {
 
   return (
     <Box>
-      <Typography variant="h5" mb={2}>Teachers</Typography>
-      <Stack direction="row" spacing={2} flexWrap="wrap" mb={2} justifyContent={"flex-end"}>
+      <Typography variant="h5" mb={2}>
+        Teachers
+      </Typography>
+      <Stack
+        direction="row"
+        spacing={2}
+        flexWrap="wrap"
+        mb={2}
+        justifyContent={"flex-end"}
+      >
         <TextField
           variant="outlined"
           placeholder="Search by any field"
@@ -238,7 +254,8 @@ export default function TeacherList() {
         <DialogTitle id="delete-dialog-title">Confirm Delete</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete this teacher? This action cannot be undone.
+            Are you sure you want to delete this teacher? This action cannot be
+            undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>

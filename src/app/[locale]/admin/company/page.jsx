@@ -122,9 +122,11 @@ export default function CompanyList() {
       align: "center",
       width: 120,
       renderCell: ({ value }) => (
-        <Typography component={"span"}
+        <Typography
+          component={"span"}
           sx={{
-            fontSize:"14px",
+            textTransform: "capitalize",
+            fontSize: "14px",
             fontWeight: 600,
             color:
               value === "approved"

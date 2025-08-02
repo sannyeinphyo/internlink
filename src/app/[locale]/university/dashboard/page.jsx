@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
+import dynamic from 'next/dynamic';
 import {
   Grid,
   Card,
@@ -13,14 +14,13 @@ import {
   MenuItem,
   Select,
   Box,
-  // Stack, // Not used, can be removed
   FormControl,
   InputLabel,
   CardHeader,
-  List,          // Added for Latest Users
-  ListItem,      // Added for Latest Users
-  ListItemText,  // Added for Latest Users
-  Divider,       // Added for Latest Users
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
 } from "@mui/material";
 import SchoolIcon from "@mui/icons-material/School";
 import GroupIcon from "@mui/icons-material/Group";
@@ -28,7 +28,6 @@ import MailIcon from "@mui/icons-material/Mail";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 
-// Import Chart.js components
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -37,12 +36,9 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js';
-import { Bar } from 'react-chartjs-2';
-// You might have installed this previously, if not, install: npm install chartjs-plugin-datalabels
-import ChartDataLabels from 'chartjs-plugin-datalabels'; // Assuming you still want this for the bar chart
+} from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 
-// Register Chart.js components and the datalabels plugin
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -50,8 +46,14 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  ChartDataLabels // Register the datalabels plugin
+  ChartDataLabels
 );
+
+const BarChart = dynamic(() =>
+  import("react-chartjs-2").then((mod) => mod.Bar),
+  { ssr: false }
+);
+
 
 const StatCard = ({ icon, label, value, cardColor }) => (
   <Card
@@ -136,8 +138,8 @@ export default function UniversityDashboard() {
           data: data.map(item => item.value),
           backgroundColor: [
             'rgba(25, 118, 210, 0.8)',
-            'rgba(56, 142, 60, 0.8)', 
-            'rgba(211, 47, 47, 0.8)',  
+            'rgba(56, 142, 60, 0.8)',
+            'rgba(211, 47, 47, 0.8)',
           ],
           borderColor: [
             'rgba(25, 118, 210, 1)',
@@ -260,26 +262,6 @@ export default function UniversityDashboard() {
     );
   }
 
-  if (!dashboardData) {
-    return (
-        <Container
-            maxWidth="lg"
-            sx={{
-                minHeight: "80vh",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 2,
-            }}
-        >
-            <Alert severity="info" sx={{ width: "100%" }}>
-                No dashboard data available.
-            </Alert>
-        </Container>
-    );
-  }
-
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -348,9 +330,9 @@ export default function UniversityDashboard() {
               subheader={<Typography variant="subtitle2" color="text.secondary">Total applications by status for the year {selectedYear}</Typography>}
             />
             <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 350 }}>
-              {applicationStatusChartData.datasets[0].data.some(value => value > 0) ? (
+              {dashboardData?.applicationStatusData?.some(value => value.value > 0) ? (
                 <Box sx={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Bar data={applicationStatusChartData} options={applicationStatusBarOptions} />
+                  <BarChart data={applicationStatusChartData} options={applicationStatusBarOptions} />
                 </Box>
               ) : (
                 <Typography color="text.secondary" textAlign="center" mt={4}>
@@ -368,29 +350,29 @@ export default function UniversityDashboard() {
               title={<Typography variant="h6" fontWeight="bold">Latest User Registrations</Typography>}
               subheader={<Typography variant="subtitle2" color="text.secondary">Recently added teachers and students for {selectedYear}</Typography>}
             />
-            <CardContent sx={{ flexGrow: 1, overflowY: 'auto' }}> {/* Added overflowY for scroll if many users */}
+            <CardContent sx={{ flexGrow: 1, overflowY: 'auto' }}>
               {dashboardData?.latestUsers && dashboardData.latestUsers.length > 0 ? (
-                <List dense> {/* dense makes list items smaller */}
+                <List dense>
                   {dashboardData.latestUsers.map((user, index) => (
                     <React.Fragment key={user.id}>
                    <ListItem disablePadding>
-                        <ListItemText
-                          primary={
-                            <Typography variant="body1" fontWeight="medium">
-                              {user.name}
-                            </Typography>
-                          }
-                          secondary={ 
-                            <Box component="div"> 
-                              <Typography variant="body2" color="text.secondary" component="div"> {/* Make this a div */}
-                                {user.role} &bull; {new Date(user.createdAt).toLocaleDateString()}
-                              </Typography>
-                              <Typography variant="caption" color="text.secondary" component="div"> {/* Make this a div */}
-                                {user.email}
-                              </Typography>
-                            </Box>
-                          }
-                        />
+                     <ListItemText
+  primary={
+    <Typography variant="body1" fontWeight="medium">
+      {user.name}
+    </Typography>
+  }
+  secondary={ 
+    <Box component="span"> 
+      <Typography variant="body2" color="text.secondary" component="span">
+        {user.role} &bull; {new Date(user.createdAt).toLocaleDateString()}
+      </Typography>
+      <Typography variant="caption" color="text.secondary" component="span">
+        {user.email}
+      </Typography>
+    </Box>
+  }
+/>
                       </ListItem>
                       {index < dashboardData.latestUsers.length - 1 && <Divider component="li" />}
                     </React.Fragment>

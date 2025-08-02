@@ -6,6 +6,12 @@ import {
   StyleSheet,
   Image,
 } from "@react-pdf/renderer";
+import { Font } from "@react-pdf/renderer";
+
+Font.register({
+  family: "Myanmar",
+  src: "/fonts/NotoSansMyanmar-Regular.ttf",
+});
 
 const styles = StyleSheet.create({
   page: {
@@ -38,43 +44,35 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 12,
   },
+  // --- Simplified table styles using pure flexbox ---
   table: {
-    display: "table",
     width: "100%",
-    borderRadius: 4,
     borderWidth: 1,
     borderColor: "#ccc",
-    overflow: "hidden",
   },
   row: {
     flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
   },
   headerCell: {
-    flex: 1,
+    padding: 8,
     backgroundColor: "#f5f5f5",
     color: "#333",
-    borderRightWidth: 1,
-    borderColor: "#ddd",
-    padding: 8,
     fontWeight: "bold",
     textAlign: "left",
   },
   cell: {
-    flex: 1,
     padding: 8,
     fontSize: 11,
-    borderTopWidth: 1,
-    borderRightWidth: 1,
-    borderColor: "#eee",
     textAlign: "left",
     fontFamily: "Myanmar",
   },
-  evenRow: {
-    backgroundColor: "#fafafa",
-  },
-  lastCell: {
-    borderRightWidth: 0,
-  },
+  colNo: { flex: 0.5 },
+  colStudent: { flex: 2 },
+  colBatch: { flex: 1 },
+  colCompany: { flex: 2 },
+  colStatus: { flex: 1 },
 });
 
 function formatDateTime(date) {
@@ -88,20 +86,19 @@ function formatDateTime(date) {
 }
 
 export default function InternshipReportPdf({
-  reportData,
-  university = "Example University",
+  reportData = [],
+  university = "University",
   batch = "All Batches",
-  logo,
+  logo = "http://localhost:3000/uni/ucsh.jpg",
 }) {
-  const now = new Date();
-
   const dataToRender = Array.isArray(reportData) ? reportData : [];
+  const now = new Date();
 
   return (
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={{ alignItems: "center", marginBottom: 10 }}>
-          {logo && <Image src={logo} style={styles.logo} />}
+          <Image src={logo} style={styles.logo} />
         </View>
 
         <View style={{ alignItems: "flex-end", marginBottom: 10 }}>
@@ -113,35 +110,42 @@ export default function InternshipReportPdf({
           University: {university} | Batch of Report: {batch}
         </Text>
 
-        <View style={styles.row}>
-          <Text style={styles.headerCell}>No</Text>
-          <Text style={styles.headerCell}>Student</Text>
-          <Text style={styles.headerCell}>Batch</Text>
-          <Text style={styles.headerCell}>Company</Text>
-          <Text style={styles.headerCell}>Status</Text>
+        <View style={styles.table}>
+          <View style={[styles.row, { borderBottomWidth: 1, borderBottomColor: "#ccc", backgroundColor: "#f5f5f5" }]}>
+            <Text style={[styles.headerCell, styles.colNo]}>No</Text>
+            <Text style={[styles.headerCell, styles.colStudent]}>Student</Text>
+            <Text style={[styles.headerCell, styles.colBatch]}>Batch</Text>
+            <Text style={[styles.headerCell, styles.colCompany]}>Company</Text>
+            <Text style={[styles.headerCell, styles.colStatus]}>Status</Text>
+          </View>
 
           {dataToRender.map((row, i) => (
             <View
-              style={[styles.row, i % 2 === 0 ? styles.evenRow : null]}
+              style={styles.row}
               key={i}
             >
-              <Text style={styles.cell}>{i + 1}</Text>
-              <Text style={styles.cell}>{row.studentName}</Text>
-              <Text style={styles.cell}>{row.batchYear}</Text> {/* New cell */}
-              <Text style={styles.cell}>{row.companyName || "—"}</Text>
+              <Text style={[styles.cell, styles.colNo]}>{i + 1}</Text>
+              <Text style={[styles.cell, styles.colStudent]}>{row.studentName || "-"}</Text>
+              <Text style={[styles.cell, styles.colBatch]}>
+                {row.batchYear || "-"}
+              </Text>
+              <Text style={[styles.cell, styles.colCompany]}>{row.companyName || "—"}</Text>
               <Text
-                style={{
-                  ...styles.cell,
-                  color:
-                    row.status === "applied"
-                      ? "#1976d2"
-                      : row.status === "accepted"
-                      ? "#2e7d32"
-                      : "#d32f2f",
-                  fontWeight: "bold",
-                }}
+                style={[
+                  styles.cell,
+                  styles.colStatus,
+                  {
+                    color:
+                      row.status === "applied"
+                        ? "#1976d2"
+                        : row.status === "accepted"
+                        ? "#2e7d32"
+                        : "#d32f2f",
+                    fontWeight: "bold",
+                  }
+                ]}
               >
-                {row.status}
+                {row.status || "-"}
               </Text>
             </View>
           ))}

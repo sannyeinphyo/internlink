@@ -18,6 +18,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { useTranslations } from "next-intl";
 
 import { combinedAccountSchema } from "@/schemas/adminAccountCreation";
 
@@ -27,6 +28,7 @@ const ROLES = [
 ];
 
 export default function CreateAccount() {
+  const t = useTranslations("admin_create");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -157,36 +159,39 @@ export default function CreateAccount() {
         <Box component="form" sx={{ p: 2 }} onSubmit={handleSubmit(onSubmit)}>
           <Box display="flex">
             <TextField
-              label="Name *"
+              label={t("name")}
               fullWidth
               sx={{ mb: 2, mr: 2 }}
               {...register("name")}
               error={!!errors.name}
               helperText={errors.name?.message}
+              required
             />
             <TextField
-              label="Email *"
+              label={t("email")}
               fullWidth
               sx={{ mb: 2 }}
               {...register("email")}
               error={!!errors.email}
               helperText={errors.email?.message}
+              required
             />
           </Box>
 
           <Box display="flex" sx={{ mb: 2 }}>
             <TextField
-              label="Password *"
+              label={t("password")}
               type="password"
               fullWidth
               {...register("password")}
               error={!!errors.password}
               helperText={errors.password?.message}
+              required
             />
           </Box>
 
           <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.role}>
-            <InputLabel id="role-label">Role</InputLabel>
+            <InputLabel id="role-label">{t("role")}</InputLabel>
             <Controller
               name="role"
               control={control}
@@ -212,7 +217,7 @@ export default function CreateAccount() {
             <>
               <Box display="flex">
                 <TextField
-                  label="Website"
+                  label={t("website")}
                   fullWidth={
                     selectedRole === "company" || selectedRole === "university"
                   }
@@ -224,7 +229,7 @@ export default function CreateAccount() {
 
                 {selectedRole === "company" && (
                   <TextField
-                    label="Facebook URL"
+                    label={t("facebook_url")}
                     fullWidth
                     sx={{ mb: 2 }}
                     {...register("facebook")}
@@ -237,38 +242,41 @@ export default function CreateAccount() {
               <Box display="flex">
                 {selectedRole === "company" && (
                   <TextField
-                    label="Location *"
+                    label={t("location")}
                     fullWidth
                     sx={{ mb: 2, mr: 2 }}
                     {...register("location")}
                     error={!!errors.location}
                     helperText={errors.location?.message}
+                    required
                   />
                 )}
                 {selectedRole === "university" && (
                   <TextField
-                    label="Address *"
+                    label={t("address")}
                     fullWidth
                     sx={{ mb: 2, mr: 2 }}
                     {...register("address")}
                     error={!!errors.address}
                     helperText={errors.address?.message}
+                    required
                   />
                 )}
 
                 <TextField
-                  label="Contact Info *"
+                  label={t("contact_info")}
                   fullWidth
                   sx={{ mb: 2 }}
                   {...register("contact_info")}
                   error={!!errors.contact_info}
                   helperText={errors.contact_info?.message}
+                  required
                 />
               </Box>
 
               {selectedRole === "company" && (
                 <TextField
-                  label="Description *"
+                  label={t("description")}
                   fullWidth
                   multiline
                   rows={3}
@@ -276,6 +284,7 @@ export default function CreateAccount() {
                   {...register("description")}
                   error={!!errors.description}
                   helperText={errors.description?.message}
+                  required
                 />
               )}
             </>
@@ -283,7 +292,7 @@ export default function CreateAccount() {
 
           <Stack direction="row" spacing={2}>
             <Button variant="contained" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Creating..." : "Create Account"}
+              {isSubmitting ? "Creating..." : t("create")}
             </Button>
             <Button
               variant="contained"
@@ -292,7 +301,7 @@ export default function CreateAccount() {
               onClick={handleCancel}
               disabled={isSubmitting}
             >
-              Cancel
+             {t("cancel")}
             </Button>
           </Stack>
         </Box>
