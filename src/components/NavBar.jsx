@@ -86,9 +86,12 @@ export default function NavBar() {
         }}
         onClick={() => router.push(`/${locale}/dashboard`)}
       >
-        Intern
+        <Box sx={{ display: "inline", color: "#ea9635ff"   }}>
+    UniJob
+        </Box>
+    
         <Box sx={{ display: "inline", color: "buttonmain.main" }}>
-          <i>Link</i>
+          Link
         </Box>
       </Box>
 

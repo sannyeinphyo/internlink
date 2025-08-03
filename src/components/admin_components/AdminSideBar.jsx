@@ -36,6 +36,7 @@ import BusinessIcon from "@mui/icons-material/Business";
 import HomeWorkIcon from "@mui/icons-material/HomeWork";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import WorkIcon from "@mui/icons-material/Work";
+import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 
 const drawerWidth = 240;
 
@@ -108,19 +109,19 @@ export default function AdminSideBar({ children }) {
   const navItems = [
     { text: "Dashboard", icon: <Home />, path: `/${locale}/admin/dashboard` },
     { text: "Create Accounts", icon: <AddBoxIcon />, path: `/${locale}/admin/create` },
-    { text: "View Students", icon: <People />, path: `/${locale}/admin/student` },
+    { text: "Manage Students", icon: <People />, path: `/${locale}/admin/student` },
     {
-      text: "View Companies",
+      text: "Manage Companies",
       icon: <BusinessIcon />,
       path: `/${locale}/admin/company`,
     },
     {
-      text: "View Universities",
+      text: "Manage Universities",
       icon: <HomeWorkIcon />,
       path: `/${locale}/admin/university`,
     },
     {
-      text: "Vewi Teachers",
+      text: "Manage Teachers",
       icon: <SupervisorAccountIcon />,
       path: `/${locale}/admin/teacher`,
     },
@@ -130,6 +131,7 @@ export default function AdminSideBar({ children }) {
       path: `/${locale}/admin/internshipapplication`,
     },
     { text: "Review Accounts", icon: <AddBoxIcon />, path: `/${locale}/admin/reviewaccount` },
+    { text: "Feedback", icon:<ChatBubbleIcon/>, path: `/${locale}/admin/feedback` },
   ];
 
   return (

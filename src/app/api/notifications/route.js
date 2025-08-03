@@ -27,7 +27,3 @@ export async function POST(request) {
     return NextResponse.json({ error: "Failed to create notification" }, { status: 500 });
   }
 }
-console.log('PUSHER_KEY:', process.env.PUSHER_KEY);
-console.log('PUSHER_SECRET:', process.env.PUSHER_SECRET);
-console.log('PUSHER_APP_ID:', process.env.PUSHER_APP_ID);
-console.log('PUSHER_CLUSTER:', process.env.PUSHER_CLUSTER);

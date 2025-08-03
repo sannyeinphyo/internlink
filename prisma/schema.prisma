@@ -47,6 +47,7 @@ model User {
   notifications Notification[]
   savedPosts    SavedPost[]
   PasswordReset PasswordReset[]
+  mailboxes     Mailbox[]   
 }
 
 model Company {
@@ -174,4 +175,14 @@ model PasswordReset {
   otp       String
   otpExpiry DateTime
   createdAt DateTime @default(now())
+}
+model Mailbox {
+  id        Int      @id @default(autoincrement())
+  user_id   Int?     
+  name      String
+  email     String  
+  message   String   @db.MediumText
+  createdAt DateTime @default(now())
+
+  user      User?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }

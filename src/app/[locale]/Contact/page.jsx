@@ -1,20 +1,53 @@
 "use client";
-import React from "react";
+
+import React, { useState } from "react";
 import {
   Box,
   Typography,
   TextField,
-  Button,
   Grid,
   Paper,
-  Divider,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { ButtonPrimary } from "@/components/Button";
 import { useTranslations } from "next-intl";
+import axios from "axios";
 
 export default function ContactUs() {
   const t = useTranslations("contact_us");
+
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [loading, setLoading] = useState(false);
+  const [snack, setSnack] = useState({ open: false, success: true, message: "" });
+
+  const handleChange = (e) => {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      await axios.post("/api/mailbox", {
+        ...form,
+        user_id: null,
+      });
+
+      setSnack({ open: true, success: true, message: "Message sent successfully!" });
+      setForm({ name: "", email: "", message: "" });
+    } catch (err) {
+      setSnack({
+        open: true,
+        success: false,
+        message:
+          err.response?.data?.error || "Something went wrong. Please try again.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -67,9 +100,12 @@ export default function ContactUs() {
           <Grid container spacing={4}>
             <Grid item xs={12} sm={6}>
               <TextField
+                name="name"
                 label={t("name")}
                 fullWidth
                 required
+                value={form.name}
+                onChange={handleChange}
                 variant="outlined"
                 sx={{
                   "& .MuiInputLabel-root": { fontWeight: 600 },
@@ -78,10 +114,13 @@ export default function ContactUs() {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
+                name="email"
                 label={t("email")}
                 fullWidth
                 required
                 type="email"
+                value={form.email}
+                onChange={handleChange}
                 variant="outlined"
                 sx={{
                   "& .MuiInputLabel-root": { fontWeight: 600 },
@@ -90,11 +129,14 @@ export default function ContactUs() {
             </Grid>
             <Grid item xs={12}>
               <TextField
+                name="message"
                 label={t("message")}
                 multiline
                 rows={5}
                 fullWidth
                 required
+                value={form.message}
+                onChange={handleChange}
                 variant="outlined"
                 sx={{
                   "& .MuiInputLabel-root": { fontWeight: 600 },
@@ -107,9 +149,10 @@ export default function ContactUs() {
                 color="primary"
                 fullWidth
                 size="large"
-       
+                onClick={handleSubmit}
+                disabled={loading}
               >
-               { t("send")}
+                {loading ? "Sending..." : t("send")}
               </ButtonPrimary>
             </Grid>
           </Grid>
@@ -143,6 +186,21 @@ export default function ContactUs() {
           </Typography>
         </Paper>
       </motion.div>
+
+      <Snackbar
+        open={snack.open}
+        autoHideDuration={4000}
+        onClose={() => setSnack({ ...snack, open: false })}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setSnack({ ...snack, open: false })}
+          severity={snack.success ? "success" : "error"}
+          sx={{ width: "100%" }}
+        >
+          {snack.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

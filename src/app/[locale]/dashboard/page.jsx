@@ -366,7 +366,7 @@ export default function Dashboard() {
 
           <Box sx={{ mt: 1, display: "flex", gap: 1 }}>
             <IconButton
-              href="https://facebook.com"
+              href="https://facebook.com/sannyeinphyo"
               target="_blank"
               rel="noopener noreferrer"
               sx={{ color: "white" }}
@@ -374,7 +374,7 @@ export default function Dashboard() {
               <Facebook fontSize="small" />
             </IconButton>
             <IconButton
-              href="https://linkedin.com"
+              href="https://linkedin.com/sannyeinphyo"
               target="_blank"
               rel="noopener noreferrer"
               sx={{ color: "white" }}
@@ -382,7 +382,7 @@ export default function Dashboard() {
               <LinkedIn fontSize="small" />
             </IconButton>
             <IconButton
-              href="mailto:support@internlink.com"
+              href="mailto:sannyeinphyo@gmail.com"
               sx={{ color: "white" }}
             >
               <Email fontSize="small" />
