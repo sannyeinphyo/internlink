@@ -27,6 +27,19 @@ enum ApplicationStatus {
   rejected
 }
 
+enum InterviewType {
+  ONLINE
+  IN_PERSON
+}
+
+enum InterviewStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+  COMPLETED
+}
+
 model User {
   id            Int             @id @default(autoincrement())
   name          String
@@ -47,7 +60,7 @@ model User {
   notifications Notification[]
   savedPosts    SavedPost[]
   PasswordReset PasswordReset[]
-  mailboxes     Mailbox[]   
+  mailboxes     Mailbox[]
 }
 
 model Company {
@@ -63,6 +76,8 @@ model Company {
 
   user  User             @relation(fields: [user_id], references: [id], onDelete: Cascade)
   posts InternshipPost[]
+
+  Interview Interview[]
 }
 
 model University {
@@ -100,6 +115,8 @@ model Student {
   user         User                    @relation(fields: [user_id], references: [id], onDelete: Cascade)
   university   University              @relation(fields: [university_id], references: [id], onDelete: Cascade)
   applications InternshipApplication[]
+
+  Interview Interview[]
 }
 
 model InternshipPost {
@@ -125,6 +142,7 @@ model InternshipPost {
   company      Company                 @relation(fields: [company_id], references: [id], onDelete: Cascade)
   applications InternshipApplication[]
   savedPosts   SavedPost[]
+  Interview    Interview[]
 }
 
 model InternshipApplication {
@@ -136,6 +154,8 @@ model InternshipApplication {
 
   post    InternshipPost @relation(fields: [post_id], references: [id], onDelete: Cascade)
   student Student        @relation(fields: [student_id], references: [id], onDelete: Cascade)
+
+  Interview Interview[]
 }
 
 model Notification {
@@ -176,13 +196,33 @@ model PasswordReset {
   otpExpiry DateTime
   createdAt DateTime @default(now())
 }
+
 model Mailbox {
   id        Int      @id @default(autoincrement())
-  user_id   Int?     
+  user_id   Int?
   name      String
-  email     String  
+  email     String
   message   String   @db.MediumText
   createdAt DateTime @default(now())
 
-  user      User?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Interview {
+  id             Int             @id @default(autoincrement())
+  post_id        Int
+  company_id     Int
+  student_id     Int
+  application_id Int             @unique
+  scheduledAt    DateTime
+  location       String?
+  type           InterviewType
+  status         InterviewStatus @default(PENDING)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  post        InternshipPost        @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  company     Company               @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  student     Student               @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  application InternshipApplication @relation(fields: [application_id], references: [id], onDelete: Cascade)
 }

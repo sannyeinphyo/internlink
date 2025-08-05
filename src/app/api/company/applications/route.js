@@ -128,3 +128,70 @@ export async function PATCH(req) {
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 }
+export async function POST(req) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || session.user.role !== "company") {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  const body = await req.json();
+  const { application_id, scheduledAt, location, type } = body;
+
+  if (!application_id || !scheduledAt || !type) {
+    return NextResponse.json(
+      { message: "Missing required fields: application_id, scheduledAt, type" },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const application = await prisma.internshipApplication.findUnique({
+      where: { id: application_id },
+      include: {
+        post: true,
+        student: true,
+      },
+    });
+
+    if (!application) {
+      return NextResponse.json({ message: "Application not found" }, { status: 404 });
+    }
+
+    const company = await prisma.company.findUnique({
+      where: { user_id: session.user.id },
+    });
+
+    if (!company || company.id !== application.post.company_id) {
+      return NextResponse.json({ message: "Unauthorized for this application" }, { status: 403 });
+    }
+
+    const interview = await prisma.interview.create({
+      data: {
+        post_id: application.post.id,
+        company_id: company.id,
+        student_id: application.student.id,
+        application_id: application.id,
+        scheduledAt: new Date(scheduledAt),
+        location,
+        type,
+        status: "PENDING",
+      },
+    });
+
+    await prisma.notification.create({
+      data: {
+        user_id: application.student.user_id,
+        title: `Interview Scheduled`,
+        body: `Your interview for "${application.post.title}" has been scheduled on ${new Date(
+          scheduledAt
+        ).toLocaleString()}. Location: ${location || "To be confirmed"}.`,
+      },
+    });
+
+    return NextResponse.json({ interview }, { status: 201 });
+  } catch (error) {
+    console.error("Error scheduling interview:", error);
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
+  }
+}

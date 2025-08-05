@@ -27,9 +27,11 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
 import axios from "axios";
+import { useTranslations } from "next-intl";
 
 export default function CompanyList() {
   const { locale } = useParams();
+  const t = useTranslations("admin_company");
 
   const [companies, setCompanies] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -112,12 +114,12 @@ export default function CompanyList() {
   }));
 
   const columns = [
-    { field: "id", headerName: "No.", width: 70 },
-    { field: "name", headerName: "Name", flex: 1 },
-    { field: "email", headerName: "Email", flex: 1 },
+    { field: "id", headerName: t("no"), width: 70 },
+    { field: "name", headerName: t("name"), flex: 1 },
+    { field: "email", headerName: t("email"), flex: 1 },
     {
       field: "status",
-      headerName: "Status",
+      headerName: t("status"),
       headerAlign: "center",
       align: "center",
       width: 120,
@@ -140,11 +142,11 @@ export default function CompanyList() {
         </Typography>
       ),
     },
-    { field: "location", headerName: "Location", flex: 1 },
-    { field: "contact", headerName: "Contact Info", flex: 1 },
+    { field: "location", headerName: t("location"), flex: 1 },
+    { field: "contact", headerName: t("contact"), flex: 1 },
     {
       field: "actions",
-      headerName: "Actions",
+      headerName: t("actions"),
       width: 130,
       renderCell: ({ row }) => (
         <>
@@ -194,9 +196,8 @@ export default function CompanyList() {
 
   return (
     <Box>
-      {/* ==== Filter Controls ==== */}
       <Box display="flex" justifyContent="space-between" flexWrap="wrap" mb={2}>
-        <Typography variant="h5">Companies</Typography>
+        <Typography variant="h5">{t("companies")}</Typography>
         <Stack direction="row" spacing={2} flexWrap="wrap">
           <TextField
             variant="outlined"
@@ -230,7 +231,6 @@ export default function CompanyList() {
         </Stack>
       </Box>
 
-      {/* ==== Data Grid ==== */}
       <Box height={500}>
         <DataGrid
           rows={rows}

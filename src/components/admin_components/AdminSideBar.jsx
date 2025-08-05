@@ -6,6 +6,7 @@ import Link from "next/link";
 import { styled, useTheme } from "@mui/material/styles";
 import AdminProfileMenu from "./AdminProfileMenu";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 import {
   Box,
@@ -36,9 +37,9 @@ import BusinessIcon from "@mui/icons-material/Business";
 import HomeWorkIcon from "@mui/icons-material/HomeWork";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import WorkIcon from "@mui/icons-material/Work";
-import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
+import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 
-const drawerWidth = 240;
+const drawerWidth = 260;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -104,40 +105,26 @@ const Drawer = styled(MuiDrawer, {
 export default function AdminSideBar({ children }) {
   const { locale } = useParams();
   const theme = useTheme();
+  const t = useTranslations("admin_sidebar");
   const [open, setOpen] = React.useState(true);
   const pathname = usePathname();
+
   const navItems = [
-    { text: "Dashboard", icon: <Home />, path: `/${locale}/admin/dashboard` },
-    { text: "Create Accounts", icon: <AddBoxIcon />, path: `/${locale}/admin/create` },
-    { text: "Manage Students", icon: <People />, path: `/${locale}/admin/student` },
-    {
-      text: "Manage Companies",
-      icon: <BusinessIcon />,
-      path: `/${locale}/admin/company`,
-    },
-    {
-      text: "Manage Universities",
-      icon: <HomeWorkIcon />,
-      path: `/${locale}/admin/university`,
-    },
-    {
-      text: "Manage Teachers",
-      icon: <SupervisorAccountIcon />,
-      path: `/${locale}/admin/teacher`,
-    },
-    {
-      text: "Internship Applications",
-      icon: <WorkIcon />,
-      path: `/${locale}/admin/internshipapplication`,
-    },
-    { text: "Review Accounts", icon: <AddBoxIcon />, path: `/${locale}/admin/reviewaccount` },
-    { text: "Feedback", icon:<ChatBubbleIcon/>, path: `/${locale}/admin/feedback` },
+    { text: t("dashboard"), icon: <Home />, path: `/${locale}/admin/dashboard` },
+    { text: t("create_accounts"), icon: <AddBoxIcon />, path: `/${locale}/admin/create` },
+    { text: t("manage_students"), icon: <People />, path: `/${locale}/admin/student` },
+    { text: t("manage_companies"), icon: <BusinessIcon />, path: `/${locale}/admin/company` },
+    { text: t("manage_universities"), icon: <HomeWorkIcon />, path: `/${locale}/admin/university` },
+    { text: t("manage_teachers"), icon: <SupervisorAccountIcon />, path: `/${locale}/admin/teacher` },
+    { text: t("internship_applications"), icon: <WorkIcon />, path: `/${locale}/admin/internshipapplication` },
+    { text: t("review_accounts"), icon: <AddBoxIcon />, path: `/${locale}/admin/reviewaccount` },
+    { text: t("feedback"), icon: <ChatBubbleIcon />, path: `/${locale}/admin/feedback` },
   ];
 
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
+      <AppBar position="fixed" open={open} >
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <IconButton
@@ -148,8 +135,8 @@ export default function AdminSideBar({ children }) {
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" noWrap color="black" fontWeight={"bold"}>
-              Intern
+            <Typography variant="h6" noWrap color="#ea9635ff" fontWeight={"bold"}>
+              UniJob
               <span
                 style={{
                   fontStyle: "italic",
@@ -170,7 +157,7 @@ export default function AdminSideBar({ children }) {
         <DrawerHeader>
           <IconButton onClick={() => setOpen(false)}>
             {theme.direction === "rtl" ? (
-              <ChevronRightIcon variant="green" />
+              <ChevronRightIcon />
             ) : (
               <ChevronLeftIcon />
             )}
@@ -182,9 +169,10 @@ export default function AdminSideBar({ children }) {
             const isActive = pathname === path;
             return (
               <Link key={text} href={path} style={{ textDecoration: "none" }}>
-                <ListItem disablePadding>
+                <ListItem disablePadding >
                   <ListItemButton
                     sx={{
+                      
                       minHeight: 48,
                       justifyContent: open ? "initial" : "center",
                       px: 2.5,
@@ -209,9 +197,19 @@ export default function AdminSideBar({ children }) {
                     </ListItemIcon>
                     <ListItemText
                       primary={text}
+                      slotProps={{
+    primary: {
+      sx: {
+        fontSize: "0.8rem",
+        fontWeight: isActive ? "bold" : "normal",
+      },
+    },
+  }}
                       sx={{
+                        fontSize: "0.8rem",
+                        
                         opacity: open ? 1 : 0,
-                        fontWeight: isActive ? "bold" : "normal",
+                       
                       }}
                     />
                   </ListItemButton>
@@ -227,6 +225,7 @@ export default function AdminSideBar({ children }) {
         sx={{
           flexGrow: 1,
           p: 3,
+          
           transition: (theme) =>
             theme.transitions.create("margin", {
               easing: theme.transitions.easing.sharp,

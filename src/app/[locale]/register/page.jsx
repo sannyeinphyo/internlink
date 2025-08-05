@@ -217,7 +217,7 @@ export default function RegisterPage() {
             boxShadow: 2,
           }}
         >
-          <Typography variant="h4" fontWeight="bold" gutterBottom>
+          <Typography variant="h4" fontWeight="bold" gutterBottom color="#ea9635ff">
             {greetingt("welcomeMessage")}
             
           </Typography>
@@ -370,7 +370,7 @@ export default function RegisterPage() {
                         Computer Science
                       </MenuItem>
                       <MenuItem value="Computer Technologies">
-                        Computer Technologies
+                        Computer Technology
                       </MenuItem>
                     </Select>
                     <FormHelperText>{errors.major}</FormHelperText>

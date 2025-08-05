@@ -122,7 +122,6 @@ export default function SettingsHomePage() {
           ))}
         </List>
 
-        {/* Inline Delete Company Section */}
         <Box mt={6} borderTop="1px solid #ddd" pt={4}>
           <Typography variant="h6" fontWeight="bold" color="error" gutterBottom>
             {t("delete_company_account")}

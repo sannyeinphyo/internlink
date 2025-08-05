@@ -50,125 +50,120 @@ export default function AdminProfileMenu() {
     router.push(path);
   };
 
- return (
-  <Box
-    onClick={handleToggle}
-    sx={{
-      display: "flex",
-      alignItems: "center",
-      gap: 1,
-      cursor: "pointer",
-      userSelect: "none",
-      px: 1.5,
-      py: 1,
-      borderRadius: "999px",
-      backgroundColor: "white",
-      boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.05)",
-      transition: "background-color 0.3s, transform 0.2s",
-      "&:hover": {
-        backgroundColor: "#f0f0ff",
-        transform: "scale(1.02)",
-      },
-    }}
-  >
-    {loading ? (
-      <CircularProgress size={24} />
-    ) : admin ? (
-      <>
-        <Avatar
-          alt={admin.name}
-          src={admin.image || "/default-avatar.png"}
-          sx={{
-            width: 32,
-            height: 32,
-            border: "2px solid #b983ff",
-          }}
-        />
-        <Typography
-          variant="body2"
-          sx={{
-            fontWeight: 500,
-            color: "#333",
-            maxWidth: 120,
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {admin.name}
-        </Typography>
-      </>
-    ) : (
-      <Typography variant="body2" color="error">
-        Error
-      </Typography>
-    )}
-
-    <Menu
-  anchorEl={anchorEl}
-  open={open}
-  onClose={handleClose}
-  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-  transformOrigin={{ vertical: "top", horizontal: "right" }}
-  PaperProps={{
-    elevation: 0,
-    sx: {
-      mt: 1,
-      minWidth: 200,
-      borderRadius: 2,
-      boxShadow: "0px 4px 20px rgba(0,0,0,0.05)",
-      p: 1,
-    },
-  }}
->
-
-  {[
-    {
-      label: "Profile",
-      path: `/${locale}/admin/profile`,
-    },
-    {
-      label: "Change Password",
-      path: `/${locale}/reset_password`,
-    },
-  ].map((item) => (
-    <MenuItem
-      key={item.path}
-      onClick={() => {
-        handleClose();
-        goTo(item.path);
-      }}
+  return (
+    <Box
+      onClick={handleToggle}
       sx={{
-        fontWeight: pathname === item.path ? 600 : 400,
-        color: pathname === item.path ? "primary.main" : "text.primary",
-        borderRadius: 1,
-        mt: 1,
+        display: "flex",
+        alignItems: "center",
+        gap: 1,
+        cursor: "pointer",
+        userSelect: "none",
+        px: 1.5,
+        py: 1,
+        borderRadius: "999px",
+        backgroundColor: "white",
+        boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.05)",
+        transition: "background-color 0.3s, transform 0.2s",
         "&:hover": {
-          bgcolor: "primary.light",
-          color: "white",
+          backgroundColor: "#f0f0ff",
+          transform: "scale(1.02)",
         },
       }}
     >
-      <Typography variant="body2">{item.label}</Typography>
-    </MenuItem>
-  ))}
+      {loading ? (
+        <CircularProgress size={24} />
+      ) : admin ? (
+        <>
+          <Avatar
+            alt={admin.name}
+            src={admin.image || "/default-avatar.png"}
+            sx={{
+              width: 32,
+              height: 32,
+              border: "2px solid #b983ff",
+            }}
+          />
+          <Typography
+            variant="body2"
+            sx={{
+              fontWeight: 500,
+              color: "#333",
+              maxWidth: 120,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {admin.name}
+          </Typography>
+        </>
+      ) : (
+        <Typography variant="body2" color="error">
+          Error
+        </Typography>
+      )}
 
-  <Divider sx={{ my: 1 }} />
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        transformOrigin={{ vertical: "top", horizontal: "right" }}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            mt: 1,
+            minWidth: 200,
+            borderRadius: 2,
+            boxShadow: "0px 4px 20px rgba(0,0,0,0.05)",
+            p: 1,
+          },
+        }}
+      >
+        {[
+          {
+            label: "Profile",
+            path: `/${locale}/admin/profile`,
+          },
+          {
+            label: "Change Password",
+            path: `/${locale}/reset_password`,
+          },
+        ].map((item) => (
+          <MenuItem
+            key={item.path}
+            onClick={() => {
+              handleClose();
+              goTo(item.path);
+            }}
+            sx={{
+              fontWeight: pathname === item.path ? 600 : 400,
+              color: pathname === item.path ? "primary.main" : "text.primary",
+              borderRadius: 1,
+              mt: 1,
+              "&:hover": {
+                bgcolor: "primary.light",
+                color: "white",
+              },
+            }}
+          >
+            <Typography variant="body2">{item.label}</Typography>
+          </MenuItem>
+        ))}
 
-  {/* Language Switcher */}
-  <MenuItem disableRipple>
-    <LanguageSwitcher />
-  </MenuItem>
+        <Divider sx={{ my: 1 }} />
 
-  <Divider sx={{ my: 1 }} />
+        <MenuItem disableRipple>
+          <LanguageSwitcher />
+        </MenuItem>
 
-  {/* Logout Button */}
-  <MenuItem disableRipple sx={{ mt: 1 }}>
-    <LogoutButton onClick={handleClose} />
-  </MenuItem>
-</Menu>
+        <Divider sx={{ my: 1 }} />
 
-  </Box>
-);
-
+        <MenuItem disableRipple sx={{ mt: 1 }}>
+          <LogoutButton onClick={handleClose} />
+        </MenuItem>
+      </Menu>
+    </Box>
+  );
 }

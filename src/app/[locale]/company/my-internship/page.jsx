@@ -28,6 +28,7 @@ import WorkIcon from "@mui/icons-material/Work";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 function EditPostDialog({ open, onClose, post, onUpdated }) {
   const [formData, setFormData] = useState({
@@ -117,6 +118,7 @@ function EditPostDialog({ open, onClose, post, onUpdated }) {
 }
 
 export default function MyInternship() {
+  const t = useTranslations("myintern-ship");
   const theme = useTheme();
   const [mypost, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -171,7 +173,7 @@ export default function MyInternship() {
   return (
     <Box p={3}>
       <Typography variant="h5" gutterBottom fontWeight={"bold"}>
-        My Internship Posts
+        {t("myinternship")}
       </Typography>
 
       {loading ? (
@@ -181,7 +183,7 @@ export default function MyInternship() {
       ) : error ? (
         <Typography color="error">{error}</Typography>
       ) : mypost.length === 0 ? (
-        <Typography>No internship posts found.</Typography>
+        <Typography>{t("no_post")}</Typography>
       ) : (
         <Grid container spacing={3}>
           {mypost.map((post, index) => (
@@ -221,7 +223,7 @@ export default function MyInternship() {
 
                 <Stack  display = {"inline"}  fontWeight="700" direction="row" alignItems="center" spacing={1}>
                   <Chip
-                    label={`Applied: ${post._count?.applications || 0}`}
+                    label={`${t("applied")}: ${post._count?.applications || 0}`}
                     color="primary"
                     size="small"
                     variant="contained"
@@ -247,19 +249,19 @@ export default function MyInternship() {
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <WorkIcon fontSize="small" color="action" />
                     <Typography variant="body2" noWrap>
-                      Job Type: {post.job_type || "-"}
+                      {t("job_type")}: {post.job_type || "-"}
                     </Typography>
                   </Stack>
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <LocationOnIcon fontSize="small" color="action" />
                     <Typography variant="body2" noWrap>
-                      Location: {post.location || "-"}
+                      {t("location")}: {post.location || "-"}
                     </Typography>
                   </Stack>
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <MonetizationOnIcon fontSize="small" color="action" />
                     <Typography variant="body2" noWrap>
-                      Salary:{" "}
+                      {t("salary")}:{" "}
                       {post.paid
                         ? `$${post.salary?.toLocaleString()}`
                         : "Unpaid"}
@@ -268,7 +270,7 @@ export default function MyInternship() {
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <CalendarTodayIcon fontSize="small" color="action" />
                     <Typography variant="body2" noWrap>
-                      Deadline:{" "}
+                      {t("application_deadline")}:{" "}
                       {post.application_deadline
                         ? new Date(
                             post.application_deadline
@@ -280,19 +282,19 @@ export default function MyInternship() {
 
                 <Stack direction="row" spacing={1} flexWrap="wrap" mb={1}>
                   <Chip
-                    label={post.paid ? "Paid" : "Unpaid"}
+                    label={post.paid ? t("paid") : t("unpaid")}
                     color={post.paid ? "success" : "default"}
                     size="small"
                   />
                   <Chip
-                    label={post.remote ? "Remote" : "On-site"}
+                    label={post.remote ? t("remote") : t("onsite")}
                     color={post.remote ? "info" : "default"}
                     size="small"
                   />
                   {post.positions && (
                     <Chip
-                      label={`${post.positions} Position${
-                        post.positions > 1 ? "s" : ""
+                      label={`${post.positions} ${t("positions")}${
+                        post.positions > 1 ? t("s") : ""
                       }`}
                       color="primary"
                       size="small"
@@ -311,14 +313,14 @@ export default function MyInternship() {
                     )
                   }
                 >
-                  View
+                  {t("view")}
                 </Button>
                 <Button
                   variant="outlined"
                   size="small"
                   onClick={() => setEditPost(post)}
                 >
-                  Edit
+                 {t("edit")}
                 </Button>
                 <Button
                   variant="contained"
@@ -326,7 +328,7 @@ export default function MyInternship() {
                   color="error"
                   onClick={() => handleDeleteClick(post)}
                 >
-                  Delete
+                {t("delete")}
                 </Button>
               </CardActions>
             </Card>
@@ -351,18 +353,18 @@ export default function MyInternship() {
         <DialogTitle id="delete-dialog-title">Confirm Delete</DialogTitle>
         <DialogContent>
           <DialogContentText id="delete-dialog-description">
-            Are you sure you want to delete the internship post "
-            {postToDelete?.title}"? This action cannot be undone.
+          {t("confirm_delete_text", { title: postToDelete?.title })}
+
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDeleteCancel}>Cancel</Button>
+          <Button onClick={handleDeleteCancel}>{t("cancel")}</Button>
           <Button
             onClick={handleDeleteConfirm}
             color="error"
             variant="contained"
           >
-            Delete
+            {t("delete")}
           </Button>
         </DialogActions>
       </Dialog>

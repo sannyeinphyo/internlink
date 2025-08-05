@@ -13,5 +13,5 @@ export default function App() {
     }
   }, [locale, router]);
 
-  return null; // or loading UI if needed
+  return null;
 }

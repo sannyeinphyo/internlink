@@ -12,7 +12,7 @@ export async function sendOtpToEmail(email, otp) {
 
 
   await transporter.sendMail({
-    from: `"InternLink" <${process.env.EMAIL_USER}>`,
+    from: `"UniJobLink" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: "Verify Your Email",
     html: `

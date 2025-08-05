@@ -179,10 +179,10 @@ export default function ContactUs() {
             variant="body2"
             sx={{ color: "text.secondary", lineHeight: 1.6, whiteSpace: "pre-line" }}
           >
-            InternLink Headquarters{"\n"}
+            UniJobLink Headquarters{"\n"}
             No. 123, Tech Park Road, Yangon, Myanmar{"\n"}
             Phone: +95 9 123 456 789{"\n"}
-            Email: support@internlink.com
+            Email: support@unijoblink.com
           </Typography>
         </Paper>
       </motion.div>

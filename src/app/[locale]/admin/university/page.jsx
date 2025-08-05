@@ -27,9 +27,11 @@ import SearchIcon from "@mui/icons-material/Search";
 import Link from "next/link";
 import axios from "axios";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export default function UniversityList() {
   const { locale } = useParams();
+  const  t  = useTranslations("admin_university"); 
 
   const [universities, setUniversities] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -105,12 +107,12 @@ export default function UniversityList() {
   }));
 
   const columns = [
-    { field: "no", headerName: "No", width: 80 },
-    { field: "name", headerName: "Name", flex: 1 },
-    { field: "email", headerName: "Email", flex: 1.2 },
+    { field: "no", headerName: t("no"), width: 80 },
+    { field: "name", headerName: t("name"), flex: 1 },
+    { field: "email", headerName: t("email"), flex: 1.2 },
     {
       field: "status",
-      headerName: "Status",
+      headerName: t("status"),
       flex: 1,
       renderCell: (params) => (
         <span
@@ -129,11 +131,11 @@ export default function UniversityList() {
         </span>
       ),
     },
-    { field: "address", headerName: "Address", flex: 1.5 },
-    { field: "contact", headerName: "Contact Info", flex: 1 },
+    { field: "address", headerName: t("address"), flex: 1.5 },
+    { field: "contact", headerName: t("contact"), flex: 1 },
     {
       field: "actions",
-      headerName: "Actions",
+      headerName: t("actions"),
       width: 120,
       sortable: false,
       renderCell: (params) => (
@@ -185,7 +187,7 @@ export default function UniversityList() {
   return (
     <Box>
       <Typography variant="h5" gutterBottom>
-        Universities
+       {t("title")}
       </Typography>
 
       <Box
@@ -197,7 +199,7 @@ export default function UniversityList() {
       >
         <TextField
           variant="outlined"
-          placeholder="Search..."
+          placeholder={t("search")}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           InputProps={{
@@ -237,19 +239,18 @@ export default function UniversityList() {
       </Box>
 
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogTitle>{t("confirmTitle")}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete this university? This action cannot
-            be undone.
+           {t("confirmText")}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)} color="inherit">
-            Cancel
+           { t("cancel")}
           </Button>
           <Button onClick={confirmDelete} color="error" variant="contained">
-            Delete
+            {t("delete")}
           </Button>
         </DialogActions>
       </Dialog>

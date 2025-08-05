@@ -45,7 +45,7 @@ export async function POST(req) {
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
-      subject: "InternLink Email Verification OTP",
+      subject: "UniJobLink Email Verification OTP",
       text: `Your verification OTP code is ${otp}. It will expire in 10 minutes.`,
     });
 

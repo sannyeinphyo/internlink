@@ -40,7 +40,7 @@ export async function POST(req) {
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
-      subject: "OTP Code for Internlink password reset",
+      subject: "OTP Code for UniJobLink password reset",
       text: `Your OTP code is ${otp}. It will expires in 10 minutes.`,
     });
 

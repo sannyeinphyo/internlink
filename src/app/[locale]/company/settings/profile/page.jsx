@@ -79,7 +79,7 @@ export default function CompanyProfile() {
 
   return (
     <Box display={"flex"} justifyContent={"center"} p={6}>
-      <Box boxShadow={3} width={400} p={3} borderRadius={2}>
+      <Box boxShadow={3} width={900} p={3} borderRadius={2}>
         <Typography fontSize={24} fontWeight={700} mb={3}>
           Company Profile
         </Typography>

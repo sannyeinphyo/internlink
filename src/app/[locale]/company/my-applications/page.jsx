@@ -7,6 +7,12 @@ import {
   Button,
   CircularProgress,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  DialogActions,
+  Chip
 } from "@mui/material";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { DataGrid } from "@mui/x-data-grid";
@@ -21,6 +27,7 @@ export default function MyApplications() {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const t = useTranslations("myintern-ship");
+  const tinput = useTranslations("status");
 
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -28,6 +35,20 @@ export default function MyApplications() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [dialogRow, setDialogRow] = useState(null);
   const [dialogAction, setDialogAction] = useState("");
+
+  const [interviewDialogOpen, setInterviewDialogOpen] = useState(false);
+
+  const [interviewFormData, setInterviewFormData] = useState({
+    scheduledAt: new Date(),
+    location: "",
+    type: "ONLINE",
+  });
+
+  const statusColors = {
+    applied: { bg: "#1976d2", text: "fff" },
+    accepted: { bg: "#4caf50", text: "fff" },
+    rejected: { bg: "#e91e63", text: "fff" },
+  };
 
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -87,41 +108,43 @@ export default function MyApplications() {
   };
 
   const columns = [
-    { field: "no", headerName:t("no"), width: 90 },
-    { field: "studentName", headerName:t("name"), width: 180 },
+    { field: "no", headerName: t("no"), width: 90 },
+    { field: "studentName", headerName: t("name"), width: 180 },
     { field: "email", headerName: t("email"), width: 220 },
     { field: "applicationDate", headerName: t("applied_on"), width: 150 },
     {
       field: "status",
       headerName: t("status"),
-      width: 120,
+      width: 150,
+
       renderCell: (params) => {
-        let color;
-        switch (params.value) {
-          case "accepted":
-            color = "green";
-            break;
-          case "rejected":
-            color = "red";
-            break;
-          case "applied":
-            color = "blue";
-        }
+        const status = params.row.status || "default";
+        const color = statusColors[status] || statusColors.default;
+        const label = tinput(status, { default: status });
 
         return (
-          <Box style={{ color }}>
-            {params.value.charAt(0).toUpperCase() + params.value.slice(1)}
-          </Box>
+          <Chip
+            label={label}
+            size="small"
+            sx={{
+              minWidth: "80px",
+              backgroundColor: color.bg,
+              color: "white",
+              fontWeight: 500,
+              borderRadius: 1,
+              margin: "4px 2px 0 2px",
+            }}
+          />
         );
       },
     },
-    { field: "post_title", headerName: t("post"), width: 250 },
+    { field: "post_title", headerName: t("post"), width: 200 },
     {
       field: "action",
       headerName: t("action"),
       headerAlign: "center",
       align: "center",
-      width: 200,
+      width: 400,
       sortable: false,
       filterable: false,
       renderCell: (params) => (
@@ -146,6 +169,18 @@ export default function MyApplications() {
             <VisibilityIcon />
           </IconButton>
           <Button
+            variant="outlined"
+            size="small"
+            disabled={params.row.status !== "applied"}
+            onClick={() => {
+              setDialogRow(params.row);
+              setInterviewDialogOpen(true);
+            }}
+          >
+            {t("schedule")}
+          </Button>
+
+          <Button
             variant="contained"
             size="small"
             sx={{ minWidth: "auto", px: 1 }}
@@ -156,7 +191,7 @@ export default function MyApplications() {
               setDeleteDialogOpen(true);
             }}
           >
-            Accept
+            {t("accept")}
           </Button>
           <Button
             variant="outlined"
@@ -170,7 +205,7 @@ export default function MyApplications() {
               setDeleteDialogOpen(true);
             }}
           >
-            Reject
+            {t("reject")}
           </Button>
         </Box>
       ),
@@ -185,10 +220,12 @@ export default function MyApplications() {
       ? new Date(app.applied_at).toLocaleDateString()
       : "N/A",
     status: app.status || "N/A",
-    post: app.post, // ✅ Store full post object
+    post: app.post,
     student_id: app.student_id,
     post_id: app.post_id,
     post_title: app.post.title,
+    application_id: app.id,
+    company_id: app.post.company_id,
   }));
 
   return (
@@ -197,7 +234,7 @@ export default function MyApplications() {
         variant="h6"
         sx={{ mt: 6, mb: 2, fontWeight: "bold", textAlign: "left" }}
       >
-        Student Applications
+        {t("student_applications")}
       </Typography>
       <Paper elevation={3} sx={{ borderRadius: 3, p: 2 }}>
         {loading ? (
@@ -236,6 +273,93 @@ export default function MyApplications() {
         snackbar={snackbar}
         onSnackbarClose={handleSnackbarClose}
       />
+      <Dialog
+        open={interviewDialogOpen}
+        onClose={() => setInterviewDialogOpen(false)}
+      >
+        <DialogTitle>{t("interview_schedule")}</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Date & Time"
+            type="datetime-local"
+            fullWidth
+            margin="normal"
+            value={interviewFormData.scheduledAt.toISOString().slice(0, 16)}
+            onChange={(e) =>
+              setInterviewFormData((prev) => ({
+                ...prev,
+                scheduledAt: new Date(e.target.value),
+              }))
+            }
+          />
+          <TextField
+            label="Location or Zoom Link"
+            fullWidth
+            margin="normal"
+            value={interviewFormData.location}
+            onChange={(e) =>
+              setInterviewFormData((prev) => ({
+                ...prev,
+                location: e.target.value,
+              }))
+            }
+          />
+          <TextField
+            select
+            label="Type"
+            SelectProps={{ native: true }}
+            fullWidth
+            margin="normal"
+            value={interviewFormData.type}
+            onChange={(e) =>
+              setInterviewFormData((prev) => ({
+                ...prev,
+                type: e.target.value,
+              }))
+            }
+          >
+            <option value="ONLINE">Online</option>
+            <option value="IN_PERSON">In Person</option>
+          </TextField>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setInterviewDialogOpen(false)}>
+            {t("cancel")}
+          </Button>
+          <Button
+            variant="contained"
+            onClick={async () => {
+              try {
+                await axios.post("/api/interviews", {
+                  studentId: dialogRow.student_id,
+                  postId: dialogRow.post_id,
+                  applicationId: dialogRow.application_id,
+                  scheduledAt: interviewFormData.scheduledAt,
+                  location: interviewFormData.location,
+                  type: interviewFormData.type,
+                });
+                setSnackbar({
+                  open: true,
+                  message: "Interview scheduled successfully",
+                  severity: "success",
+                });
+                fetchApplications();
+              } catch (err) {
+                console.error(err);
+                setSnackbar({
+                  open: true,
+                  message: "Failed to schedule interview",
+                  severity: "error",
+                });
+              } finally {
+                setInterviewDialogOpen(false);
+              }
+            }}
+          >
+            {t("schedule")}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

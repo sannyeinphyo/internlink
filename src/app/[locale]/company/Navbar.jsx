@@ -20,10 +20,14 @@ import axios from "axios";
 import NotificationBell from "@/components/NotificationBell";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import LogoutButton from "@/components/Logout";
+import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 
 export const appBarHeight = 64;
 
 export default function Navbar() {
+  const {locale} = useParams();
+  const router = useRouter();
   const { data: session, status } = useSession();
   const [profile, setProfile] = useState("");
   const [name, setName] = useState("");
@@ -85,8 +89,8 @@ export default function Navbar() {
     return (
       <AppBar position="fixed" sx={{ height: appBarHeight, px: 2 }}>
         <Toolbar sx={{ minHeight: appBarHeight }}>
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            Intern
+          <Typography variant="h6" sx={{ fontWeight: "bold", color:"#ea9635ff" }}>
+            UniJob
             <span style={{ fontStyle: "italic", color: "purple" }}>Link</span>
           </Typography>
         </Toolbar>
@@ -118,9 +122,9 @@ export default function Navbar() {
           justifyContent: "space-between",
         }}
       >
-        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-          Intern
-          <span style={{ fontStyle: "italic", color: "buttonmain.main" }}>
+        <Typography variant="h6" sx={{ fontWeight: "bold" , color:"#ea9635ff" }}>
+          UniJob
+          <span style={{ color: "buttonmain.main" }}>
             Link
           </span>
         </Typography>
@@ -156,14 +160,14 @@ export default function Navbar() {
                 minWidth: 180,
                 borderRadius: 2,
                 boxShadow: "0px 4px 20px rgba(0,0,0,0.05)",
-                p: 1,
+                
               },
             }}
           >
             <MenuItem
               onClick={() => {
                 handleClose();
-                goTo(`/${locale}/company/profile`);
+                router.push(`/${locale}/company/settings/profile`);
               }}
               sx={{
                 "&:hover": {
@@ -180,7 +184,7 @@ export default function Navbar() {
             <MenuItem
               onClick={() => {
                 handleClose();
-                goTo(`/${locale}/reset_password`);
+                router.push(`/${locale}/reset_password`);
               }}
               sx={{
                 "&:hover": {

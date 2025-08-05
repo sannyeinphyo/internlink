@@ -72,7 +72,7 @@ useEffect(() => {
             px: { xs: 2, md: 4 },
           }}
         >
-          <Typography variant="h4" fontWeight="bold" gutterBottom>
+          <Typography variant="h4" fontWeight="bold" color="#ea9635ff" gutterBottom>
             <Typewriter
               words={[t("welcome")]}
               loop={1}
@@ -104,7 +104,7 @@ useEffect(() => {
             gap: 3,
           }}
         >
-          <Typography variant="h4" textAlign="center" fontWeight="700">
+          <Typography variant="h4" textAlign="center" fontWeight="700" >
             {t("login")}
           </Typography>
 

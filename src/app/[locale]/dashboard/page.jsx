@@ -324,7 +324,7 @@ export default function Dashboard() {
       >
         <Box>
           <Box sx={{ fontSize: "24px", fontWeight: "bold", mb: 1 }}>
-            InternLink
+            UniJobLink
           </Box>
           <Box sx={{ fontSize: "16px", mb: 2 }}>
             {footert("connectMeaningfulInternships")}
@@ -391,7 +391,7 @@ export default function Dashboard() {
         </Box>
 
         <Box sx={{ fontSize: "13px", color: "gray.300", mt: 1 }}>
-          © {new Date().getFullYear()} InternLink. All rights reserved.
+          © {new Date().getFullYear()} UniJobLink. All rights reserved.
         </Box>
       </Box>
     </Box>

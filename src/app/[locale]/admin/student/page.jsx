@@ -41,6 +41,8 @@ export default function StudentList() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedStudentId, setSelectedStudentId] = useState(null);
 
+
+
   const getStudentList = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -207,7 +209,9 @@ export default function StudentList() {
   return (
     <Box>
       <Box display="flex" justifyContent="space-between" flexWrap="wrap" mb={2}>
-        <Typography variant="h5">Students</Typography>
+<Typography variant="h5">{t("students")}</Typography>
+
+
         <Stack direction="row" spacing={2} flexWrap="wrap">
           <TextField
             variant="outlined"
@@ -224,13 +228,13 @@ export default function StudentList() {
             }}
           />
           <FormControl sx={{ minWidth: 150 }}>
-            <InputLabel>Status</InputLabel>
+           <InputLabel>{t("status")}</InputLabel>
             <Select
               value={filterStatus}
               label="Status"
               onChange={(e) => setFilterStatus(e.target.value)}
             >
-              <MenuItem value="">All</MenuItem>
+            <MenuItem value="">{t("all")}</MenuItem>
               {uniqueStatuses.map((status) => (
                 <MenuItem key={status} value={status}>
                   {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -256,7 +260,6 @@ export default function StudentList() {
         </Stack>
       </Box>
 
-      {/* ==== DataGrid ==== */}
       <Box height={500}>
         <DataGrid
           rows={rows}
@@ -273,7 +276,6 @@ export default function StudentList() {
         />
       </Box>
 
-      {/* ==== MUI Dialog for delete confirmation ==== */}
       <Dialog open={deleteDialogOpen} onClose={closeDeleteDialog}>
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>

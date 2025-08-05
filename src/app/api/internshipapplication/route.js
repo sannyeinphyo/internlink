@@ -27,8 +27,11 @@ export async function GET() {
       },
       include: {
         post: true,
+        Interview: true,
       },
     });
+
+    console.log("Applications fetched:", applications);
 
     return NextResponse.json({
       message: "Getting internship applications",

@@ -17,24 +17,52 @@ import PostAddIcon from "@mui/icons-material/PostAdd";
 import WorkIcon from "@mui/icons-material/Work";
 import DescriptionIcon from "@mui/icons-material/Description";
 import SettingsIcon from "@mui/icons-material/Settings";
-import NotificationsIcon from "@mui/icons-material/Notifications";
+import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import { useParams, usePathname } from "next/navigation";
 import { appBarHeight } from "./Navbar";
+import { useTranslations } from "next-intl";
 
-const drawerWidth = 240;
+const drawerWidth = 270;
 const collapsedWidth = 60;
 
 export default function Sidebar() {
+  const t = useTranslations("company_sidebar");
   const [open, setOpen] = React.useState(false);
   const { locale } = useParams();
   const pathname = usePathname();
 
   const menuItems = [
-    { label: "Dashboard", href: `/${locale}/company/dashboard`, icon: <DashboardIcon /> },
-    { label: "Post Internship", href: `/${locale}/company/post-internship`, icon: <PostAddIcon /> },
-    { label: "Internship Posts", href: `/${locale}/company/my-internship`, icon: <WorkIcon /> },
-    { label: "My Applications", href: `/${locale}/company/my-applications`, icon: <DescriptionIcon /> },
-    { label: "Company Settings", href: `/${locale}/company/settings`, icon: <SettingsIcon /> },
+    {
+      label: t("dashboard"),
+      href: `/${locale}/company/dashboard`,
+      icon: <DashboardIcon />,
+    },
+    {
+      label: t("post_internship"),
+      href: `/${locale}/company/post-internship`,
+      icon: <PostAddIcon />,
+    },
+    {
+      label: t("viewinternship"),
+      href: `/${locale}/company/my-internship`,
+      icon: <WorkIcon />,
+    },
+    {
+      label: t("interview"),
+      href: `/${locale}/company/interview`,
+      icon: <QuestionAnswerIcon />,
+    },
+    {
+      label: t("application"),
+      href: `/${locale}/company/my-applications`,
+      icon: <DescriptionIcon />,
+    },
+
+    {
+      label: t("Setting"),
+      href: `/${locale}/company/settings`,
+      icon: <SettingsIcon />,
+    },
   ];
 
   const normalizePath = (path) => path.replace(/\/$/, "");
@@ -75,7 +103,6 @@ export default function Sidebar() {
               easing: theme.transitions.easing.sharp,
               duration: theme.transitions.duration.standard,
             }),
-
         },
       }}
     >
@@ -83,9 +110,15 @@ export default function Sidebar() {
       <Box sx={{ overflow: "auto" }}>
         <List>
           {menuItems.map((item) => {
-            const isActive = normalizePath(item.href) === normalizePath(pathname);
+            const isActive =
+              normalizePath(item.href) === normalizePath(pathname);
             return (
-              <Tooltip key={item.href} title={!open ? item.label : ""} placement="right" arrow>
+              <Tooltip
+                key={item.href}
+                title={!open ? item.label : ""}
+                placement="right"
+                arrow
+              >
                 <ListItemButton
                   component={Link}
                   href={item.href}
@@ -94,13 +127,17 @@ export default function Sidebar() {
                     justifyContent: open ? "initial" : "center",
                     px: 3,
                     mb: 0.8,
-                 
+
                     color: isActive ? "#651edf" : "#333",
-                    backgroundColor: isActive ? "rgba(101, 30, 223, 0.12)" : "transparent",
+                    backgroundColor: isActive
+                      ? "rgba(101, 30, 223, 0.12)"
+                      : "transparent",
                     cursor: "pointer",
                     transition: "all 0.3s ease",
                     "&:hover": {
-                      backgroundColor: isActive ? "rgba(101, 30, 223, 0.18)" : "rgba(101, 30, 223, 0.08)",
+                      backgroundColor: isActive
+                        ? "rgba(101, 30, 223, 0.18)"
+                        : "rgba(101, 30, 223, 0.08)",
                       color: "#651edf",
                       "& svg": {
                         color: "#651edf",
@@ -122,7 +159,10 @@ export default function Sidebar() {
                   {open && (
                     <ListItemText
                       primary={item.label}
-                      primaryTypographyProps={{ fontWeight: 600, fontSize: "1rem" }}
+                      primaryTypographyProps={{
+                        fontWeight: 600,
+                        fontSize: ".8rem",
+                      }}
                     />
                   )}
                 </ListItemButton>

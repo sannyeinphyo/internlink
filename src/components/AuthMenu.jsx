@@ -154,6 +154,23 @@ export default function AuthMenu() {
           <Typography variant="body2">Bookmarks</Typography>
         </MenuItem>
 
+          <MenuItem
+          onClick={() => {
+            handleClose();
+            router.push(`/${locale}/student/interviews`);
+          }}
+          sx={{
+            "&:hover": {
+              bgcolor: "primary.light",
+              color: "white",
+            },
+            borderRadius: 1,
+            mt: 1,
+          }}
+        >
+          <Typography variant="body2">Interviews</Typography>
+        </MenuItem>
+
         <MenuItem disableRipple sx={{ mt: 1 }}>
           <LogoutButton onClick={handleClose} />
         </MenuItem>
