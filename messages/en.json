@@ -262,8 +262,8 @@
       "applicationStatus": "Application Status",
       "appliedAt": "Applied Date",
       "actions": "Actions",
-      "interview_status":"Interview Status",
-      "interview_action":"Interview Actions"
+      "interview_status": "Interview Status",
+      "interview_action": "Interview Actions"
     }
   },
 
@@ -341,6 +341,37 @@
     "accept": "Accept",
     "reject": "Reject",
     "interview_schedule": "Scheldule Interview"
+  },
+  "applicationDetail": {
+    "page_title": "Internship Application Details",
+    "back": "Back",
+    "loading": "Loading application details...",
+    "status_section_title": "Application Status & Date",
+    "status": "Status",
+    "applied_at": "Applied At",
+    "student_section_title": "Applicant Details",
+    "role": "Role",
+    "verified": "Verified",
+    "yes": "Yes",
+    "no": "No",
+    "university": "University",
+    "major": "Major",
+    "batch": "Batch Year",
+    "skills": "Skills",
+    "linkedin": "LinkedIn",
+    "github": "GitHub",
+    "post_section_title": "Internship Post Details",
+    "post_title": "Post Title",
+    "description": "Description",
+    "requirements": "Requirements",
+    "responsibilities": "Responsibilities",
+    "benefits": "Benefits",
+    "application_deadline": "Application Deadline",
+    "created_at": "Created At",
+    "not_found": "Internship application not found.",
+    "error": "Failed to load internship application details. Please try again or check the ID.",
+    "student_info_missing": "Student details not available for this application.",
+    "post_info_missing": "Internship post details not available for this application."
   },
   "student_applications": {
     "tabel_heading": "Student Applications",

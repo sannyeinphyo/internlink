@@ -123,7 +123,7 @@
     "cancel": "မလုပ်တော့ပါ",
     "delete": "ဖျက်မည်"
   },
-  "admin_university":{
+  "admin_university": {
     "title": "တက္ကသိုလ်များ",
     "search": "ရှာဖွေပါ...",
     "status": "အခြေနေ",
@@ -264,8 +264,8 @@
       "applicationStatus": "လျှောက်လွှာအခြေအနေ",
       "appliedAt": "လျှောက်ထားသည့်နေ့",
       "actions": "လုပ်ဆောင်ချက်များ",
-      "interview_status":"အင်တာဗျူးအခြေအနေ",
-      "interview_action":"အင်တာဗျူးလုပ်ဆောင်ချက်"
+      "interview_status": "အင်တာဗျူးအခြေအနေ",
+      "interview_action": "အင်တာဗျူးလုပ်ဆောင်ချက်"
     }
   },
   "company_setting": {
@@ -297,7 +297,7 @@
     "title": "ခေါင်းစဉ်",
     "job_type": "အလုပ်အမျိုးအစား",
     "salary": "လစာ",
-    "student_applications":"ကျောင်းသားလျှောက်လွှာများ",
+    "student_applications": "ကျောင်းသားလျှောက်လွှာများ",
     "application_deadline": "လျှောက်ထားရမည့်နောက်ဆုံးနေ့",
     "applied": "လျှောက်ထားသူ",
     "description": "ဖော်ပြချက်",
@@ -318,10 +318,10 @@
     "delete_failed": "အလုပ်သင်အကြောင်းအရာ ဖျက်ရန်မအောင်မြင်ပါ",
     "loading": "ဖတ်ဆောင်နေသည်...",
     "s": "များ",
-    "accept":" လက်ခံမည်",
-    "reject":" ပယ်ဖျက်မည်",
+    "accept": " လက်ခံမည်",
+    "reject": " ပယ်ဖျက်မည်",
     "interview_schedule": "အင်တာဗျူးအချိန်ဇယား"
-    },
+  },
   "company_sidebar": {
     "dashboard": "ဒက်ရှ်ဘုတ်",
     "viewinternship": "အလုပ်သင်လုပ်ငန်းများကြည့်ရှုမည်",
@@ -330,6 +330,37 @@
     "post": "အလုပ်သင်လုပ်ငန်းတင်ရန်",
     "application": "ကျောင်းသားလျှောက်လွှာများ",
     "interview": "အင်တာဗျူး"
+  },
+  "applicationDetail": {
+    "page_title": "အလုပ်လျှောက်ထားမှုအသေးစိတ်",
+    "back": "နောက်သို့",
+    "loading": "အလုပ်လျှောက်ထားမှုအချက်အလက်များ ဖတ်ရှုနေသည်...",
+    "status_section_title": "လျှောက်ထားမှုအခြေအနေနှင့် ရက်စွဲ",
+    "status": "အခြေအနေ",
+    "applied_at": "လျှောက်ထားသည့်နေ့",
+    "student_section_title": "လျှောက်ထားသူအချက်အလက်များ",
+    "role": "ရာထူး",
+    "verified": "အတည်ပြုပြီး",
+    "yes": "ဟုတ်ကဲ့",
+    "no": "မဟုတ်ပါ",
+    "university": "တက္ကသိုလ်",
+    "major": "ဘာသာရပ်",
+    "batch": "Batch နှစ်",
+    "skills": "ကျွမ်းကျင်မှုများ",
+    "linkedin": "LinkedIn",
+    "github": "GitHub",
+    "post_section_title": "အလုပ်အကြောင်းအရာ",
+    "post_title": "အလုပ်အမည်",
+    "description": "ဖော်ပြချက်",
+    "requirements": "လိုအပ်ချက်များ",
+    "responsibilities": "တာဝန်များ",
+    "benefits": "အကျိုးခံစားခွင့်များ",
+    "application_deadline": "လျှောက်ထားခြင်းသတ်မှတ်နေ့",
+    "created_at": "ဖန်တီးသည့်နေ့",
+    "not_found": "အလုပ်လျှောက်ထားမှုကို မတွေ့ပါ။",
+    "error": "အလုပ်လျှောက်ထားမှုအသေးစိတ်များ ဖတ်ရန် မအောင်မြင်ပါ။ ထပ်မံကြိုးစားပါ။",
+    "student_info_missing": "ဤလျှောက်လွှာအတွက် ကျောင်းသားအချက်အလက် မရှိပါ။",
+    "post_info_missing": "ဤလျှောက်လွှာအတွက် အလုပ်အချက်အလက် မရှိပါ။"
   },
 
   "university_setting": {

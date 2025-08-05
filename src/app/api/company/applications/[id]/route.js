@@ -15,7 +15,7 @@ const formatDate = (date) => {
 
 export async function GET(request, { params }) {
   const session = await getServerSession(authOptions);
-  if (!session || session.user.role !== "admin") {
+  if (!session || session.user.role !== "company") {
     return NextResponse.json(
       { message: "Your Not Authorized" },
       { status: 403 }

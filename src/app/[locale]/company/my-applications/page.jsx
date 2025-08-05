@@ -162,7 +162,7 @@ export default function MyApplications() {
             size="small"
             onClick={() =>
               router.push(
-                `/${locale}/company/jobs_details/${params.row.post.id}?backUrl=/${locale}/company/my-applications`
+                `/${locale}/company/my-applications/${params.row.application_id}?backUrl=/${locale}/company/my-applications`
               )
             }
           >

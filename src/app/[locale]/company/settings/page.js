@@ -81,7 +81,7 @@ export default function SettingsHomePage() {
     description: t("profile_settings_description"),
   },
   {
-    id: "password",
+    id: "reset_password",
     label: t("change_password"),
     description: t("change_password_description"),
   },
