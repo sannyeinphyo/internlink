@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { IconButton, Menu, MenuItem, Typography } from "@mui/material";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { ButtonPrimary, ButtonOutline } from "@/components/Button";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -64,38 +63,36 @@ export default function AuthMenu() {
 
   return (
     <>
-      <NotificationBell userId={session?.user?.id}/>
+      <NotificationBell userId={session?.user?.id} />
 
- <IconButton
-  onClick={handleProfileClick}
-  sx={{
-    color: "textmain.main",
-    p: 0,
-    boxShadow: 2,
-    border: "2px solid #4242425e",
-    transition: "transform .3s",
-    "&:hover": {
-      transform: "scale(1.15)",
-    },
-  }}
-  size="large"
-  aria-controls={open ? "profile-menu" : undefined}
-  aria-haspopup="true"
-  aria-expanded={open ? "true" : undefined}
->
-  <img
-    src={profileImage?.image || "/placeholder-image.jpg"}
-    alt="Profile"
-    style={{
-      width: 55,
-      height: 55,
-      borderRadius: "50%",
-      objectFit: "cover",
-    }}
-  />
-</IconButton>
-
-
+      <IconButton
+        onClick={handleProfileClick}
+        sx={{
+          color: "textmain.main",
+          p: 0,
+          boxShadow: 2,
+          border: "2px solid #4242425e",
+          transition: "transform .3s",
+          "&:hover": {
+            transform: "scale(1.15)",
+          },
+        }}
+        size="large"
+        aria-controls={open ? "profile-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? "true" : undefined}
+      >
+        <img
+          src={profileImage?.image || "/placeholder-image.jpg"}
+          alt="Profile"
+          style={{
+            width: 55,
+            height: 55,
+            borderRadius: "50%",
+            objectFit: "cover",
+          }}
+        />
+      </IconButton>
 
       <Menu
         id="profile-menu"
@@ -134,13 +131,13 @@ export default function AuthMenu() {
             mt: 1,
           }}
         >
-          <Typography variant="body2">Profile</Typography>
+          <Typography variant="body2">{t("Profile")}</Typography>
         </MenuItem>
 
         <MenuItem
           onClick={() => {
             handleClose();
-            router.push(`/${locale}/student/bookmarks`); 
+            router.push(`/${locale}/student/bookmarks`);
           }}
           sx={{
             "&:hover": {
@@ -151,10 +148,10 @@ export default function AuthMenu() {
             mt: 1,
           }}
         >
-          <Typography variant="body2">Bookmarks</Typography>
+          <Typography variant="body2">{t("Bookmarks")}</Typography>
         </MenuItem>
 
-          <MenuItem
+        <MenuItem
           onClick={() => {
             handleClose();
             router.push(`/${locale}/student/interviews`);
@@ -168,7 +165,23 @@ export default function AuthMenu() {
             mt: 1,
           }}
         >
-          <Typography variant="body2">Interviews</Typography>
+          <Typography variant="body2">{t("Interviews")}</Typography>
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            router.push(`/${locale}/reset_password`);
+          }}
+          sx={{
+            "&:hover": {
+              bgcolor: "primary.light",
+              color: "white",
+            },
+            borderRadius: 1,
+            mt: 1,
+          }}
+        >
+          <Typography variant="body2">{t("ChangePassword")}</Typography>
         </MenuItem>
 
         <MenuItem disableRipple sx={{ mt: 1 }}>

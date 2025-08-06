@@ -8,11 +8,13 @@ import toast from "react-hot-toast";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
+ import { useTranslations } from "next-intl";
 
 export default function SavedPostPage() {
   const [savedPosts, setSavedPosts] = useState([]);
   const { data: session } = useSession();
   const { locale } = useParams();
+  const t = useTranslations("bookmarks");
 
   useEffect(() => {
     const fetchSavedPosts = async () => {
@@ -33,14 +35,21 @@ export default function SavedPostPage() {
   return (
     <Box p={3}>
       <Typography variant="h5" mb={3} mt={3} fontWeight={"bold"}>
-        Saved Posts
+        {t("save_post")}
       </Typography>
       <Typography mb={3} mt={3} fontSize={"16px"} fontWeight={"500"}>
-        The bookmarks you had made ...
+        {t("title")}{" "}
       </Typography>
 
       {savedPosts.length === 0 ? (
-        <Typography width={"100%"} height={"100%"} alignItems={"certer"} justifyContent={"center"}>No saved posts found.</Typography>
+        <Typography
+          width={"100%"}
+          height={"100%"}
+          alignItems={"certer"}
+          justifyContent={"center"}
+        >
+          No saved posts found.
+        </Typography>
       ) : (
         savedPosts.map((saved) => {
           const post = saved.internshipPost;
@@ -72,7 +81,7 @@ export default function SavedPostPage() {
                 >
                   <Typography variant="h6" fontWeight="bold" mb={1}>
                     {post.title}{" "}
-                    <Chip label="Saved" size="small" color="secondary" />
+                    <Chip label={t("saved")} size="small" color="secondary" />
                   </Typography>
 
                   <Typography variant="body2" mb={1}>
@@ -86,25 +95,25 @@ export default function SavedPostPage() {
                       variant="contained"
                     />
                     <Chip
-                      label={post.remote ? "Remote" : "On-site"}
+                      label={post.remote ? t("Remote") : t("Onsite")}
                       color={post.remote ? "warning" : "info"}
                       variant="contained"
                     />
                     <Chip
-                      label={post.paid ? "Paid" : "Unpaid"}
+                      label={post.paid ? t("paid") : t("unpaid")}
                       color={post.paid ? "success" : "error"}
                       variant="contained"
                     />
                   </Stack>
 
                   <Typography variant="body2" color="text.secondary">
-                    Location: {post.location}
+                    {t("Location")}: {post.location}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Salary: {post.salary?.toLocaleString()} MMK
+                    {t("Salary")}: {post.salary?.toLocaleString()} MMK
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    Deadline:{" "}
+                    {t("Deadline")}:{" "}
                     {new Date(post.application_deadline).toLocaleDateString()}
                   </Typography>
                 </Box>

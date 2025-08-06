@@ -28,9 +28,12 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export default function TeacherList() {
   const { locale } = useParams();
+  const t = useTranslations("teacher");
+
   const [teachers, setTeachers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -50,12 +53,12 @@ export default function TeacherList() {
         setTeachers([]);
       }
     } catch (err) {
-      setError("Failed to load teachers. Please try again.");
+      setError(t("load_error"));
       setTeachers([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     getTeacherList();
@@ -96,12 +99,12 @@ export default function TeacherList() {
   });
 
   const columns = [
-    { field: "no", headerName: "No", width: 80 },
-    { field: "name", headerName: "Name", flex: 1 },
-    { field: "email", headerName: "Email", flex: 1.5 },
+    { field: "no", headerName: t("no"), width: 80 },
+    { field: "name", headerName: t("name"), flex: 1 },
+    { field: "email", headerName: t("email"), flex: 1.5 },
     {
       field: "status",
-      headerName: "Status",
+      headerName: t("status"),
       flex: 1,
       renderCell: (params) => (
         <span
@@ -122,17 +125,17 @@ export default function TeacherList() {
     },
     {
       field: "university",
-      headerName: "University",
+      headerName: t("university"),
       flex: 1.2,
     },
     {
       field: "department",
-      headerName: "Department",
+      headerName: t("department"),
       flex: 1,
     },
     {
       field: "actions",
-      headerName: "Actions",
+      headerName: t("actions"),
       width: 120,
       sortable: false,
       renderCell: (params) => (
@@ -166,26 +169,16 @@ export default function TeacherList() {
 
   if (loading) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="200px"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" height="200px">
         <CircularProgress />
-        <Typography ml={2}>Loading teachers...</Typography>
+        <Typography ml={2}>{t("loading")}</Typography>
       </Box>
     );
   }
 
   if (error) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="200px"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" height="200px">
         <Alert severity="error">{error}</Alert>
       </Box>
     );
@@ -194,18 +187,12 @@ export default function TeacherList() {
   return (
     <Box>
       <Typography variant="h5" mb={2}>
-        Teachers
+        {t("teachers")}
       </Typography>
-      <Stack
-        direction="row"
-        spacing={2}
-        flexWrap="wrap"
-        mb={2}
-        justifyContent={"flex-end"}
-      >
+      <Stack direction="row" spacing={2} flexWrap="wrap" mb={2} justifyContent="flex-end">
         <TextField
           variant="outlined"
-          placeholder="Search by any field"
+          placeholder={t("search_placeholder")}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           InputProps={{
@@ -218,15 +205,15 @@ export default function TeacherList() {
           }}
         />
         <FormControl sx={{ minWidth: 150 }}>
-          <InputLabel id="status-filter-label">Status</InputLabel>
+          <InputLabel id="status-filter-label">{t("status")}</InputLabel>
           <Select
             labelId="status-filter-label"
             id="status-filter"
             value={filterStatus}
-            label="Status"
+            label={t("status")}
             onChange={(e) => setFilterStatus(e.target.value)}
           >
-            <MenuItem value="">All</MenuItem>
+            <MenuItem value="">{t("all")}</MenuItem>
             {uniqueStatuses.map((status) => (
               <MenuItem key={status} value={status}>
                 {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -246,24 +233,17 @@ export default function TeacherList() {
         />
       </Box>
 
-      <Dialog
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-        aria-labelledby="delete-dialog-title"
-      >
-        <DialogTitle id="delete-dialog-title">Confirm Delete</DialogTitle>
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} aria-labelledby="delete-dialog-title">
+        <DialogTitle id="delete-dialog-title">{t("confirm_delete")}</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete this teacher? This action cannot be
-            undone.
-          </DialogContentText>
+          <DialogContentText>{t("delete_warning")}</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)} color="inherit">
-            Cancel
+            {t("cancel")}
           </Button>
           <Button onClick={confirmDelete} color="error" variant="contained">
-            Delete
+            {t("delete")}
           </Button>
         </DialogActions>
       </Dialog>

@@ -97,7 +97,7 @@ export default function Jobs() {
     rejected: [],
     available: [],
   };
-  
+
   filteredJobs.forEach((job) => {
     const status = job.applications?.[0]?.status;
 
@@ -129,7 +129,14 @@ export default function Jobs() {
         <Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
           {label}
         </Typography>
-        <Box sx={{ maxWidth: "1280px", mx: "auto" }}>
+        <Box
+          sx={{
+            maxWidth: "1400px",
+            mx: "auto",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
           <Box
             sx={{
               display: "flex",
@@ -137,7 +144,7 @@ export default function Jobs() {
               alignItems: "flex-start",
               flexWrap: "wrap",
               gap: "24px",
-              justifyContent: "flex-start",
+              justifyContent: "center",
             }}
           >
             {jobs.map((job) => {

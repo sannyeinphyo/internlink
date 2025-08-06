@@ -110,7 +110,7 @@ export default function Applications() {
             label={label}
             size="small"
             sx={{
-              minWidth: "80px",
+              minWidth: "120px",
               backgroundColor: color.bg,
               color: "white",
               fontWeight: 500,
@@ -130,16 +130,16 @@ export default function Applications() {
       renderCell: (params) => {
         const interview = params.row.Interview?.[0]; 
         if (!interview) return "-";
-
         const status = interview.status || "PENDING";
+        const label = t(status, { default: status });
         const color = interviewStatusColors[status] || interviewStatusColors.PENDING;
 
         return (
           <Chip
-            label={status}
+            label={label}
             size="small"
             sx={{
-              minWidth: "90px",
+              minWidth: "120px",
               backgroundColor: color.bg,
               color: "white",
               fontWeight: 500,
@@ -179,7 +179,7 @@ export default function Applications() {
             !disabled && updateInterviewStatus(interview.id, "ACCEPTED")
           }
         >
-          Accept
+         {t("ACCEPT")}
         </Button>
         <Button
           size="small"
@@ -190,7 +190,7 @@ export default function Applications() {
             !disabled && updateInterviewStatus(interview.id, "REJECTED")
           }
         >
-          Reject
+          {t("REJECT")}
         </Button>
       </Stack>
     );

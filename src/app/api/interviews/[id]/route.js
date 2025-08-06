@@ -21,11 +21,11 @@ export async function GET(req, { params }) {
             user: true,
           },
         },
-           post: {
-      include: {
-        company: true,  
-      },
-    },
+        post: {
+          include: {
+            company: true,
+          },
+        },
         application: true,
       },
     });
@@ -91,10 +91,6 @@ export async function PATCH(req, { params }) {
       (session.user.role === "student" &&
         interview.student.user_id !== session.user.id)
     ) {
-      console.log("Session:", session.user);
-      console.log("Interview Company ID:", interview.company.user_id);
-      console.log("Interview Student User ID:", interview.student.user_id);
-
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
 
@@ -134,7 +130,7 @@ export async function PATCH(req, { params }) {
     if (status) {
       await prisma.notification.create({
         data: {
-          user_id: interview.post.company.user_id,
+          user_id: interview.company.user_id,
           title: `Interview ${status.toLowerCase()}`,
           body: `Student ${
             interview.student.user.name
@@ -145,7 +141,13 @@ export async function PATCH(req, { params }) {
       });
     }
 
-    return NextResponse.json({ interview: updatedInterview });
+    return NextResponse.json(
+      {
+        message: "Interview updated successfully",
+        interview: updatedInterview,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error updating interview:", error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });

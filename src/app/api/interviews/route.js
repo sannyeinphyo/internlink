@@ -11,17 +11,14 @@ export async function POST(req) {
   }
 
   try {
-    const {
-      postId,
-      studentId,
-      applicationId,
-      scheduledAt,
-      location,
-      type, 
-    } = await req.json();
+    const { postId, studentId, applicationId, scheduledAt, location, type } =
+      await req.json();
 
     if (!postId || !studentId || !applicationId || !scheduledAt || !type) {
-      return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Missing required fields" },
+        { status: 400 }
+      );
     }
 
     const company = await prisma.company.findUnique({
@@ -29,7 +26,22 @@ export async function POST(req) {
     });
 
     if (!company) {
-      return NextResponse.json({ message: "Company not found" }, { status: 404 });
+      return NextResponse.json(
+        { message: "Company not found" },
+        { status: 404 }
+      );
+    }
+    const existingInterview = await prisma.interview.findUnique({
+      where: {
+        application_id: applicationId,
+      },
+    });
+
+    if (existingInterview) {
+      return NextResponse.json(
+        { message: "Interview already exists for this application" },
+        { status: 400 }
+      );
     }
 
     const interview = await prisma.interview.create({
@@ -44,11 +56,13 @@ export async function POST(req) {
         status: "PENDING",
       },
     });
-
     return NextResponse.json(interview, { status: 201 });
   } catch (error) {
     console.error("Error creating interview:", error);
-    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
 
@@ -65,7 +79,10 @@ export async function GET() {
     });
 
     if (!company) {
-      return NextResponse.json({ message: "Company not found" }, { status: 404 });
+      return NextResponse.json(
+        { message: "Company not found" },
+        { status: 404 }
+      );
     }
 
     const interviews = await prisma.interview.findMany({
@@ -105,6 +122,9 @@ export async function GET() {
     return NextResponse.json(interviews, { status: 200 });
   } catch (error) {
     console.error("Error fetching interviews:", error);
-    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

@@ -109,12 +109,14 @@ export default function JobCard({
       >
         <Card
           sx={{
-            width: "100%",
+            width: "400px",
+             height: "350px",
             borderRadius: 2,
             textAlign: "left",
             boxShadow: 3,
           }}
         >
+          <Box height={"80px"}>
           <CardHeader
             avatar={logo}
             action={
@@ -125,7 +127,11 @@ export default function JobCard({
             title={subheader}
             subheader={`${title} • ${timestamp}`}
           />
-          <CardContent mb={"2"}>
+          </Box>
+          <Box height={"180px"}>
+
+      
+          <CardContent mb={2} >
             <Typography
               variant="body2"
               sx={{ color: "text.secondary" }}
@@ -133,7 +139,7 @@ export default function JobCard({
             >
               {description}
             </Typography>
-            <Stack spacing={1} mt={"8px"}>
+            <Stack spacing={1} mt={2}>
               <Box display="flex" alignItems="center" gap={1} mt={1}>
                 <LocationOnIcon fontSize="small" color="action" />
                 <Typography variant="body2">{location}</Typography>
@@ -183,6 +189,7 @@ export default function JobCard({
               );
             })}
           </CardContent>
+              </Box>
           <CardActions sx={{ justifyContent: "space-evenly", gap: 1, mb: 2 }}>
             <ButtonPrimary size="small" onClick={onApply} disabled={disabled}>
               Apply Now

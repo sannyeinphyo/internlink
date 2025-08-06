@@ -1,7 +1,6 @@
-// InternshipApplicationList with MUI DataGrid and MUI Dialog replacing Table and toast.
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -28,15 +27,16 @@ import SearchIcon from "@mui/icons-material/Search";
 import Link from "next/link";
 import axios from "axios";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export default function InternshipApplicationList() {
   const { locale } = useParams();
+  const t = useTranslations("internship");
 
-  const [internshipApplications, setInternshipApplications] = useState([]);
+  const [allApplications, setAllApplications] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -45,39 +45,47 @@ export default function InternshipApplicationList() {
   const internshipApplicationsPerPage = 10;
   const applicationStatuses = ["applied", "accepted", "rejected"];
 
-  const getInternshipApplicationList = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await axios.get("/api/admin/internshipapplication", {
-        params: {
-          page: currentPage,
-          pageSize: internshipApplicationsPerPage,
-          search: searchQuery,
-          status: filterStatus,
-        },
-      });
-
-      if (Array.isArray(response.data.data)) {
-        setInternshipApplications(response.data.data);
-      } else {
-        setInternshipApplications([]);
-      }
-
-      setTotalPages(response.data.totalPages || 1);
-    } catch (err) {
-      console.error("API Error:", err);
-      setError("Failed to load internship applications.");
-      setInternshipApplications([]);
-      setTotalPages(1);
-    } finally {
-      setLoading(false);
-    }
-  }, [currentPage, internshipApplicationsPerPage, searchQuery, filterStatus]);
-
+  // ✅ Fetch all applications once
   useEffect(() => {
-    getInternshipApplicationList();
-  }, [getInternshipApplicationList]);
+    const fetchApplications = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await axios.get("/api/admin/internshipapplication");
+
+        if (Array.isArray(response.data.data)) {
+          setAllApplications(response.data.data);
+        } else {
+          setAllApplications([]);
+        }
+      } catch (err) {
+        console.error("API Error:", err);
+        setError(t("load_error"));
+        setAllApplications([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchApplications();
+  }, [t]);
+
+  const filteredApplications = allApplications.filter((app) => {
+    const matchesSearch =
+      app.post_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      app.student_name.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesStatus = filterStatus ? app.status === filterStatus : true;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  const totalPages = Math.ceil(filteredApplications.length / internshipApplicationsPerPage);
+
+  const paginatedApplications = filteredApplications.slice(
+    (currentPage - 1) * internshipApplicationsPerPage,
+    currentPage * internshipApplicationsPerPage
+  );
 
   const handleDeleteClick = (id) => {
     setSelectedAppId(id);
@@ -87,16 +95,15 @@ export default function InternshipApplicationList() {
   const confirmDelete = async () => {
     try {
       await axios.delete(`/api/admin/internshipapplication/${selectedAppId}/delete`);
-      getInternshipApplicationList();
-    } catch (error) {
-      console.error("Delete Error:", error);
-    } finally {
+      setAllApplications((prev) => prev.filter((app) => app.id !== selectedAppId));
       setOpenDialog(false);
       setSelectedAppId(null);
+    } catch (error) {
+      console.error("Delete Error:", error);
     }
   };
 
-  const rows = internshipApplications.map((app, index) => ({
+  const rows = paginatedApplications.map((app, index) => ({
     id: app.id,
     no: (currentPage - 1) * internshipApplicationsPerPage + index + 1,
     post_name: app.post_name,
@@ -106,12 +113,12 @@ export default function InternshipApplicationList() {
   }));
 
   const columns = [
-    { field: "no", headerName: "No.", width: 80 },
-    { field: "post_name", headerName: "Post Name", flex: 1 },
-    { field: "student_name", headerName: "Student Name", flex: 1 },
+    { field: "no", headerName: t("no"), width: 80 },
+    { field: "post_name", headerName: t("post_name"), flex: 1 },
+    { field: "student_name", headerName: t("student_name"), flex: 1 },
     {
       field: "status",
-      headerName: "Status",
+      headerName: t("status"),
       flex: 1,
       renderCell: (params) => (
         <span
@@ -130,10 +137,10 @@ export default function InternshipApplicationList() {
         </span>
       ),
     },
-    { field: "applied_at", headerName: "Applied At", flex: 1 },
+    { field: "applied_at", headerName: t("applied_at"), flex: 1 },
     {
       field: "actions",
-      headerName: "Actions",
+      headerName: t("actions"),
       width: 120,
       sortable: false,
       renderCell: (params) => (
@@ -155,7 +162,7 @@ export default function InternshipApplicationList() {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="200px">
         <CircularProgress />
-        <Typography ml={2}>Loading applications...</Typography>
+        <Typography ml={2}>{t("loading")}</Typography>
       </Box>
     );
   }
@@ -170,12 +177,12 @@ export default function InternshipApplicationList() {
 
   return (
     <Box>
-      <Typography variant="h5" gutterBottom>Internship Applications</Typography>
+      <Typography variant="h5" gutterBottom>{t("applications")}</Typography>
 
       <Box display="flex" flexWrap="wrap" gap={2} mb={2} justifyContent={"flex-end"}>
         <TextField
           variant="outlined"
-          placeholder="Search by post or student name"
+          placeholder={t("search_placeholder")}
           value={searchQuery}
           onChange={(e) => {
             setSearchQuery(e.target.value);
@@ -192,16 +199,16 @@ export default function InternshipApplicationList() {
         />
 
         <FormControl sx={{ minWidth: 150 }}>
-          <InputLabel>Status</InputLabel>
+          <InputLabel>{t("status")}</InputLabel>
           <Select
             value={filterStatus}
-            label="Status"
+            label={t("status")}
             onChange={(e) => {
               setFilterStatus(e.target.value);
               setCurrentPage(1);
             }}
           >
-            <MenuItem value="">All</MenuItem>
+            <MenuItem value="">{t("all")}</MenuItem>
             {applicationStatuses.map((status) => (
               <MenuItem key={status} value={status}>
                 {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -217,28 +224,24 @@ export default function InternshipApplicationList() {
           columns={columns}
           pageSize={internshipApplicationsPerPage}
           pagination
-          rowCount={totalPages * internshipApplicationsPerPage}
-          paginationMode="server"
-          onPageChange={(params) => setCurrentPage(params + 1)}
+          page={currentPage - 1}
+          onPageChange={(newPage) => setCurrentPage(newPage + 1)}
         />
       </Box>
 
-      <Dialog
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-      >
-        <DialogTitle>Confirm Deletion</DialogTitle>
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>{t("confirm_delete")}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete this application?
+            {t("delete_warning")}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)} color="inherit">
-            Cancel
+            {t("cancel")}
           </Button>
           <Button onClick={confirmDelete} color="error" variant="contained">
-            Delete
+            {t("delete")}
           </Button>
         </DialogActions>
       </Dialog>

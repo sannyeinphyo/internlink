@@ -19,26 +19,39 @@ export default function AdminMailboxPage() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [loaded, setLoaded] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    let didCancel = false;
+
     axios
       .get("/api/mailbox")
       .then((res) => {
-        setMessages(res.data);
-        setError("");
-        if (!loaded) {
+        if (!didCancel) {
+          setMessages(res.data);
+          setError("");
           toast.success("Messages loaded successfully");
-          setLoaded(true);
         }
       })
       .catch((err) => {
         const msg = err.response?.data?.error || "Failed to fetch messages.";
-        setError(msg);
-        toast.error(msg);
+        if (!didCancel) {
+          setError(msg);
+          toast.error(msg);
+        }
       })
-      .finally(() => setLoading(false));
-  }, [loaded]);
+      .finally(() => {
+        if (!didCancel) setLoading(false);
+      });
+
+    return () => {
+      didCancel = true;
+    };
+  }, []);
 
   if (loading) {
     return (
@@ -88,7 +101,9 @@ export default function AdminMailboxPage() {
                           variant="body2"
                           color="text.secondary"
                         >
-                          {new Date(msg.createdAt).toLocaleString()}
+                          {isClient
+                            ? new Date(msg.createdAt).toLocaleString()
+                            : ""}
                         </Typography>
                       </Typography>
                     }

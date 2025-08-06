@@ -3,6 +3,7 @@ import { prisma } from "../../../lib/prisma";
 import bcrypt from "bcryptjs";
 import { registerSchema } from "@/schemas/validationSchemas";
 import { sendOtpToEmail } from "@/lib/sendOtpToEmail";
+import { sendPendingApprovalEmail } from "@/lib/sendPendingApprovalEmail";
 import otpGenerator from "otp-generator";
 
 export async function POST(request) {
@@ -45,12 +46,12 @@ export async function POST(request) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-     const otp = otpGenerator.generate(6, {
-        lowerCaseAlphabets: false,
-        upperCaseAlphabets: false,
-        specialChars: false,
-        digits: true,
-      });
+    const otp = otpGenerator.generate(6, {
+      lowerCaseAlphabets: false,
+      upperCaseAlphabets: false,
+      specialChars: false,
+      digits: true,
+    });
     const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
     const user = await prisma.user.create({
       data: {
@@ -95,6 +96,10 @@ export async function POST(request) {
     }
 
     await sendOtpToEmail(email, otp);
+    
+    if (["student", "company"].includes(role)) {
+      await sendPendingApprovalEmail(email, name);
+    }
 
     return NextResponse.json(
       { message: "User registered successfully. OTP sent to email." },

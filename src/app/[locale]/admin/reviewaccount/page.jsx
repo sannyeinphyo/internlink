@@ -22,9 +22,11 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export default function ReviewAccountsPage() {
   const { locale } = useParams();
+  const t = useTranslations("review");
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRole, setSelectedRole] = useState("company");
   const [accounts, setAccounts] = useState([]);
@@ -102,12 +104,12 @@ export default function ReviewAccountsPage() {
   }));
 
   const columns = [
-    { field: "no", headerName: "No", width: 70 },
-    { field: "name", headerName: "Name", flex: 1 },
-    { field: "email", headerName: "Email", flex: 1 },
+    { field: "no", headerName: t("no"), width: 70 },
+    { field: "name", headerName: t("name"), flex: 1 },
+    { field: "email", headerName: t("email"), flex: 1 },
     {
       field: "status",
-      headerName: "Status",
+      headerName: t("status"),
       flex: 1,
       renderCell: (params) => (
         <span style={{ color: getStatusColor(params.value), fontWeight: 600 }}>
@@ -117,17 +119,17 @@ export default function ReviewAccountsPage() {
     },
     ...(selectedRole === "company"
       ? [
-          { field: "location", headerName: "Location", flex: 1 },
-          { field: "contact_info", headerName: "Contact Info", flex: 1 },
+          { field: "location", headerName: t("location"), flex: 1 },
+          { field: "contact_info", headerName: t("contact_info"), flex: 1 },
         ]
       : [
-          { field: "university", headerName: "University", flex: 1 },
-          { field: "batch_year", headerName: "Batch Year", flex: 1 },
-          { field: "major", headerName: "Major", flex: 1 },
+          { field: "university", headerName: t("university"), flex: 1 },
+          { field: "batch_year", headerName: t("batch_year"), flex: 1 },
+          { field: "major", headerName: t("major"), flex: 1 },
         ]),
     {
       field: "actions",
-      headerName: "Actions",
+      headerName: t("actions"),
       width: 120,
       renderCell: (params) => (
         <>
@@ -145,7 +147,7 @@ export default function ReviewAccountsPage() {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
         <CircularProgress />
-        <Typography ml={2}>Loading accounts...</Typography>
+        <Typography ml={2}>{t("loading")}</Typography>
       </Box>
     );
   }
@@ -161,17 +163,17 @@ export default function ReviewAccountsPage() {
   return (
     <Box>
       <Box display="flex" justifyContent="space-between" mb={2}>
-        <Typography variant="h5">Admin Account Review</Typography>
+        <Typography variant="h5">{t("title")}</Typography>
         <Button
           onClick={handleMenuClick}
           variant="contained"
           endIcon={<ArrowDropDownIcon />}
         >
-          {selectedRole === "company" ? "Companies" : "Students"}
+          {selectedRole === "company" ? t("companies") : t("students")}
         </Button>
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-          <MenuItem onClick={() => handleMenuItemClick("company")}>Companies</MenuItem>
-          <MenuItem onClick={() => handleMenuItemClick("student")}>Students</MenuItem>
+          <MenuItem onClick={() => handleMenuItemClick("company")}>{t("companies")}</MenuItem>
+          <MenuItem onClick={() => handleMenuItemClick("student")}>{t("students")}</MenuItem>
         </Menu>
       </Box>
 
@@ -180,18 +182,16 @@ export default function ReviewAccountsPage() {
       </Box>
 
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogTitle>{t("confirm_delete")}</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete this account?
-          </DialogContentText>
+          <DialogContentText>{t("delete_warning")}</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)} color="inherit">
-            Cancel
+            {t("cancel")}
           </Button>
           <Button onClick={confirmDelete} color="error" variant="contained">
-            Delete
+            {t("delete")}
           </Button>
         </DialogActions>
       </Dialog>
