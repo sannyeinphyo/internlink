@@ -15,6 +15,7 @@ import LogoutButton from "@/components/Logout";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import LanguageSwitcher from "../LanguageSwitcher";
+import { useTranslations } from "next-intl";
 
 export default function AdminProfileMenu() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -24,6 +25,7 @@ export default function AdminProfileMenu() {
   const pathname = usePathname();
   const { locale } = useParams();
   const open = Boolean(anchorEl);
+  const t = useTranslations("NavBar");
 
   useEffect(() => {
     const fetchAdmin = async () => {
@@ -123,12 +125,12 @@ export default function AdminProfileMenu() {
       >
         {[
           {
-            label: "Profile",
+            label: t("Profile"),
             path: `/${locale}/admin/profile`,
           },
           {
-            label: "Change Password",
-            path: `/${locale}/reset_password`,
+            label: t("ChangePassword"),
+            path: `/${locale}/admin/reset_password`,
           },
         ].map((item) => (
           <MenuItem

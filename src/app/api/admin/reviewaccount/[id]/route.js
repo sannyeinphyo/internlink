@@ -1,11 +1,10 @@
-// app/api/admin/reviewaccount/[id]/route.js
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma"; // Centralized Prisma client import
+import { prisma } from "@/lib/prisma"; 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-// --- GET method (existing) ---
+import { sendApprovedApprovedEmail } from "@/lib/sendApprovedEmail";
+import { sendRejectingApprovalEmail } from "@/lib/sendRejectEmail";
 export async function GET(request, { params }) {
-  // Correct way to extract id: Access params.id, then parse it.
   const userId = parseInt(params.id);
 
   if (isNaN(userId)) {
@@ -44,24 +43,17 @@ export async function GET(request, { params }) {
       { error: "An internal server error occurred." },
       { status: 500 }
     );
-  } finally {
-    // Only disconnect if Prisma client is not managed globally (e.g., in development mode)
-    // For a robust setup, ensure you have a global Prisma client instance to avoid multiple disconnections.
-    // await prisma.$disconnect(); // Consider removing this if prisma is global and managed externally
-  }
+  } 
 }
 
-// --- PATCH method (for updating user status) ---
 export async function PATCH(request, { params }) {
   const session = await getServerSession(authOptions);
   if (!session || session.user.role !== "admin") {
     return NextResponse.json({ message: "Your Not Authorized" });
   }
-  // Correct way to extract id: Access params.id (it's a string here)
   const userId = params.id;
-  const { status } = await request.json(); // Expecting { status: 'approved' | 'declined' }
+  const { status } = await request.json(); 
 
-  // Validate userId by parsing it to int
   const parsedUserId = parseInt(userId);
   if (isNaN(parsedUserId)) {
     return NextResponse.json(
@@ -70,7 +62,6 @@ export async function PATCH(request, { params }) {
     );
   }
 
-  // Validate the status value
   const validStatuses = ["approved", "declined"];
   if (!validStatuses.includes(status)) {
     return NextResponse.json(
@@ -80,18 +71,32 @@ export async function PATCH(request, { params }) {
   }
 
   try {
-    // Update the user's status in the database
     const updatedUser = await prisma.user.update({
       where: {
-        id: parsedUserId, // Use the parsed integer ID here
+        id: parsedUserId, 
       },
       data: {
-        status: status, // Update the status field
-        verified: status === "approved" ? true : false, // Optionally update 'verified' based on status
+        status: status, 
+        verified: status === "approved" ? true : false,
       },
     });
 
-    // Return the updated user object (or a success message)
+    if(status === "approved") {
+      if (updatedUser.role === "company") {
+        await sendApprovedApprovedEmail(updatedUser.email, updatedUser.name);
+      } else if (updatedUser.role === "student") {
+        await sendApprovedApprovedEmail(updatedUser.email, updatedUser.name);
+      }
+    }
+
+    if(status === "declined") {
+      if (updatedUser.role === "company") {
+        await sendRejectingApprovalEmail(updatedUser.email, updatedUser.name);
+      } else if (updatedUser.role === "student") {
+        await sendRejectingApprovalEmail(updatedUser.email, updatedUser.name);
+      }
+    }
+
     return NextResponse.json(updatedUser, { status: 200 });
   } catch (error) {
     console.error(
@@ -99,9 +104,7 @@ export async function PATCH(request, { params }) {
       error
     );
 
-    // More specific error handling could be added here (e.g., if user not found for update)
     if (error.code === "P2025") {
-      // Prisma error code for record not found
       return NextResponse.json(
         { error: "User not found for update." },
         { status: 404 }
@@ -112,8 +115,5 @@ export async function PATCH(request, { params }) {
       { error: "An internal server error occurred during status update." },
       { status: 500 }
     );
-  } finally {
-    // Only disconnect if Prisma client is not managed globally (e.g., in development mode)
-    // await prisma.$disconnect(); // Consider removing this if prisma is global and managed externally
-  }
+  } 
 }

@@ -13,10 +13,18 @@
     "Signup": "Sign Up",
     "aletforlanguage": "Click to change language",
     "Logout": "Logout",
-    "Profile":"Profile",
+    "Profile": "Profile",
     "Bookmarks": "Bookmarks",
-    "Interviews":"Interview",
-    "ChangePassword":"Change Password"
+    "Interviews": "Interview",
+    "ChangePassword": "Change Password"
+  },
+  "resetPassword": {
+    "email": "Your Email",
+    "send": "Send OTP",
+    "resetPassword": "Reset Password",
+    "cancel": "Cancel",
+    "newpassword": "New Password",
+    "enterotp": "Enter OTP"
   },
   "about_us": {
     "heading": "About UniJobLink",
@@ -37,7 +45,8 @@
       "text4": "Notifications, saved job posts, and tracking tools",
       "text5": "Secure login and intuitive navigation",
       "text6": "Built with modern technologies (Next.js, Node.js, MySQL, Prisma)"
-    }
+    },
+    "our_team": "Our Team"
   },
   "contact_us": {
     "header": "Contact Us",
@@ -60,7 +69,11 @@
     "email": "Email",
     "joined_at": "Joined At",
     "major": "Major",
-    "location": "Location"
+    "location": "Location",
+    "recentstudents": "Recent Students",
+    "recentcompanies": "Recent Companies",
+    "fulldata": "Full Data Overview",
+    "Overview": "Overview"
   },
   "admin_sidebar": {
     "dashboard": "Dashboard",
@@ -198,6 +211,7 @@
     "label1": "Available Internships",
     "label2": "Already Applied",
     "label3": "Rejected",
+    "label4": "Accepted Applications",
     "error": "Failed to apply for internship.",
     "title": "Confirm To Apply",
     "text": "Are you sure?",
@@ -275,7 +289,13 @@
       "actions": "Actions",
       "interview_status": "Interview Status",
       "interview_action": "Interview Actions"
-    }
+    },
+    "confirmAcceptTitle": "Confirm Acceptance",
+    "confirmAcceptMessage": "Are you sure you want to accept this interview?",
+    "confirmRejectTitle": "Confirm Rejection",
+    "confirmRejectMessage": "Are you sure you want to reject this interview?",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
   },
 
   "company_setting": {
@@ -322,7 +342,7 @@
     "status": "Status",
     "post": "Post",
     "action": "Action",
-    "myinternship": "ခေါ်ဆိုထားသောအလုပ်သင်လုပ်ငန်းများ",
+    "myinternship": "My Internship Applications",
     "schedule": " Schedule Interview",
     "no_posts": "No internship posts found.",
     "title": "Title",
@@ -351,7 +371,11 @@
     "s": "s",
     "accept": "Accept",
     "reject": "Reject",
-    "interview_schedule": "Scheldule Interview"
+    "interview_schedule": "Scheldule Interview",
+    "filter_status": "Filter by Status",
+    "filter_post": "Filter by Post",
+    "all_posts": "All Posts",
+    "all_statuses": "All Statuses"
   },
   "applicationDetail": {
     "page_title": "Internship Application Details",
@@ -522,17 +546,116 @@
     "cancel": "Cancel",
     "delete": "Delete"
   },
-  "bookmarks":{
-    "save_post" : "Saved post",
-    "title" :" The bookmarks you had made ...",
+  "bookmarks": {
+    "save_post": "Saved post",
+    "title": " The bookmarks you had made ...",
     "Remote": "Remote",
     "Onsite": "Onsite",
-    "Location":"Location",
-    "Salary":"Salary",
-    "Deadline":"Deadline",
-    "$":"MMK",
+    "Location": "Location",
+    "Salary": "Salary",
+    "Deadline": "Deadline",
+    "$": "MMK",
     "paid": "Paid",
     "unpaid": "Unpaid",
     "saved": "Saved"
+  },
+  "university-dashboard": {
+    "title": "University Dashboard",
+    "year": "Year",
+    "teachers": "Total Teachers",
+    "students": "Total Students",
+    "applications": "Applications Submitted",
+    "applicationBreakdown": "Application Status Breakdown",
+    "applicationBreakdownSub": "Total applications by status for the year",
+    "noApplicationData": "No application data available for.",
+    "latestRegistrations": "Latest User Registrations",
+    "latestRegistrationsSub": "Recently added teachers and students for",
+    "noRegistrations": "No new user registrations for.",
+    "loading": "Loading dashboard...",
+    "error": "Failed to load dashboard data. Please try again.",
+    "unauthenticated": "You must be logged in to view this dashboard.",
+    "refresh": "Please try refreshing the page."
+  },
+  "university-create": {
+    "title": "Create Teacher/Student Account",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "role": "Role",
+    "universityName": "University Name",
+    "department": "Department",
+    "batchYear": "Batch Year",
+    "major": "Major",
+    "skills": "Skills",
+    "skillsPlaceholder": "Type and press enter...",
+    "facebook": "Facebook URL",
+    "linkedIn": "LinkedIn URL",
+    "create": "Create Account",
+    "creating": "Creating...",
+    "cancel": "Cancel",
+    "loadingSession": "Loading session...",
+    "unauthorized": "You are not authorized to access this page. Please log in as a university user.",
+    "formReset": "Form has been reset.",
+    "universityLoading": "Loading University...",
+    "universityError": "Error loading name",
+    "universityNotAuthorized": "Not authorized",
+    "errorFetchName": "Failed to fetch university name or ID.",
+    "errorLoadInfo": "Failed to load university info.",
+    "success": "Account created successfully! 🎉",
+    "errorSubmit": "Something went wrong during creation.",
+    "errorInvalidRole": "Invalid role selected. Please choose a role.",
+    "networkError": "No response from server. Network issue?",
+    "unexpectedError": "An unexpected error occurred.",
+    "teacher": "Teacher",
+    "student": "Student",
+    "departments": {
+      "Computer Science": "Computer Science",
+      "Information Technology": "Information Technology",
+      "Business": "Business",
+      "Engineering": "Engineering"
+    },
+    "majors": {
+      "Computer Science": "Computer Science",
+      "Computer Technology": "Computer Technology"
+    }
+  },
+
+  "uni-nav": {
+    "dashboard": "University Dashboard",
+    "createUsers": "Create Users",
+    "viewStudents": "View Students List",
+    "viewTeachers": "View Teacher List",
+    "generateReport": "Generate Report",
+    "studentApplications": "Student Applications",
+    "settings": "Settings"
+  },
+  "view_company": {
+    "already_applied": "Already Applied",
+    "applynow": "Apply Now",
+    "company_name": "Company Name",
+    "requirements": "Requirements",
+    "responsibilities": "Responsibilities",
+    "benefits": "Benefits",
+    "start": "Start Date",
+    "end": "End Date",
+    "paid": "Paid",
+    "unpaid": "Unpaid",
+    "remote": "Remote",
+    "onsite": "On-site",
+    "positions": "Position(s)",
+    "details": "Details",
+    "salary": "Salary",
+    "application_deadline": "Application Deadline",
+    "contact_email": "Contact Email",
+    "location": "Location",
+    "backtojobs": "Back to Jobs",
+    "whythisjob": "Why this job?",
+    "subtitle": "This internship offers a great opportunity to gain real-worldexperience, work with a talented team, and build your professional skills.",
+    "subtitle2": " Remember to tailor your application to highlight relevant skills and experience.",
+    "tips": "Quick Tips",
+    "tip_list1": "Read the job description carefully.",
+    "tip_list2": "Customize your resume and cover letter.",
+    "tip_list3": "Prepare for the interview by researching the company.",
+    "tip_list4": "Follow up after submitting your application."
   }
 }

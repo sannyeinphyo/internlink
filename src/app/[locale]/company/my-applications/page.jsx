@@ -12,7 +12,7 @@ import {
   DialogContent,
   TextField,
   DialogActions,
-  Chip
+  Chip,
 } from "@mui/material";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { DataGrid } from "@mui/x-data-grid";
@@ -35,6 +35,8 @@ export default function MyApplications() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [dialogRow, setDialogRow] = useState(null);
   const [dialogAction, setDialogAction] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [postFilter, setPostFilter] = useState("");
 
   const [interviewDialogOpen, setInterviewDialogOpen] = useState(false);
 
@@ -211,22 +213,35 @@ export default function MyApplications() {
       ),
     },
   ];
-  const rows = applications.map((app, index) => ({
-    no: index + 1,
-    id: `${app.student_id}-${app.post_id}`,
-    studentName: app.student.user.name || app.name || "N/A",
-    email: app.student.user.email || "N/A",
-    applicationDate: app.applied_at
-      ? new Date(app.applied_at).toLocaleDateString()
-      : "N/A",
-    status: app.status || "N/A",
-    post: app.post,
-    student_id: app.student_id,
-    post_id: app.post_id,
-    post_title: app.post.title,
-    application_id: app.id,
-    company_id: app.post.company_id,
-  }));
+  const statusOptions = Array.from(
+    new Set(applications.map((app) => app.status))
+  );
+
+  const postOptions = Array.from(
+    new Set(applications.map((app) => app.post.title))
+  );
+  const filteredRows = applications
+    .filter((app) => {
+      const statusMatch = statusFilter ? app.status === statusFilter : true;
+      const postMatch = postFilter ? app.post.title === postFilter : true;
+      return statusMatch && postMatch;
+    })
+    .map((app, index) => ({
+      no: index + 1,
+      id: `${app.student_id}-${app.post_id}`,
+      studentName: app.student.user.name || app.name || "N/A",
+      email: app.student.user.email || "N/A",
+      applicationDate: app.applied_at
+        ? new Date(app.applied_at).toLocaleDateString()
+        : "N/A",
+      status: app.status || "N/A",
+      post: app.post,
+      student_id: app.student_id,
+      post_id: app.post_id,
+      post_title: app.post.title,
+      application_id: app.id,
+      company_id: app.post.company_id,
+    }));
 
   return (
     <Box>
@@ -247,16 +262,51 @@ export default function MyApplications() {
             <CircularProgress />
           </Box>
         ) : (
-          <DataGrid
-            rows={rows}
-            columns={columns}
-            pageSize={5}
-            rowsPerPageOptions={[5, 10, 20]}
-            pagination
-            disableSelectionOnClick
-            autoHeight
-          />
+          <Box display="flex" gap={2} mb={2} justifyContent={"flex-end"}>
+            <TextField
+              select
+              // label={t("filter_status")}
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              SelectProps={{ native: true }}
+              size="small"
+              sx={{ width: 200 }}
+            >
+              <option value="">{t("all_statuses")}</option>
+              {statusOptions.map((status) => (
+                <option key={status} value={status}>
+                  {tinput(status)}
+                </option>
+              ))}
+            </TextField>
+
+            <TextField
+              select
+              // label={t("filter_post")}
+              value={postFilter}
+              onChange={(e) => setPostFilter(e.target.value)}
+              SelectProps={{ native: true }}
+              size="small"
+              sx={{ width: 250 }}
+            >
+              <option value="">{t("all_posts")}</option>
+              {postOptions.map((title) => (
+                <option key={title} value={title}>
+                  {title}
+                </option>
+              ))}
+            </TextField>
+          </Box>
         )}
+        <DataGrid
+          rows={filteredRows}
+          columns={columns}
+          pageSize={5}
+          rowsPerPageOptions={[5, 10, 20]}
+          pagination
+          disableSelectionOnClick
+          autoHeight
+        />
       </Paper>
 
       <MUIDialogBox

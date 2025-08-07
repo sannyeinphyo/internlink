@@ -111,7 +111,7 @@ export default function PasswordReset() {
                   color="secondary"
                   size="large"
                   onClick={() => {
-                    router.push(`/${locale}/company/settings`);
+                    router.push(`/${locale}/admin/dashboard`);
                   }}
                   sx={{ flex: 1 }}
                 >
@@ -160,7 +160,7 @@ export default function PasswordReset() {
                   color="secondary"
                   size="large"
                   onClick={() => {
-                    router.push(`/${locale}/company/settings`);
+                      router.push(`/${locale}/admin/dashboard`);
                   }}
                   sx={{ flex: 1 }}
                 >

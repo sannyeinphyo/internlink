@@ -314,12 +314,12 @@ export default function AdminDashboard() {
       </Box>
 
       <Typography variant="h5" fontWeight="bold" gutterBottom>
-        Admin Dashboard
+       {t("dashboard")}
       </Typography>
 
       {/* Stats */}
       <Typography variant="subtitle1" sx={{ mt: 3, mb: 1, fontWeight: 500 }}>
-        Overview Statistics
+        {t("Overview")}
       </Typography>
       <Grid container spacing={2} justifyContent="center">
         {stats.map((item, i) => (
@@ -345,7 +345,7 @@ export default function AdminDashboard() {
 
       <Box sx={{ mt: 6 }}>
         <Typography variant="h6" fontWeight="bold" gutterBottom>
-          Full Data Overview
+          {t("fulldata")}
         </Typography>
         <Paper elevation={3} sx={{ p: 3, overflowX: "auto" }}>
           <Box sx={{ height: { xs: 300, sm: 400, md: 500 } }}>
@@ -356,7 +356,7 @@ export default function AdminDashboard() {
 
       <Box sx={{ mt: 5 }}>
         <Typography variant="h6" gutterBottom>
-          Recent Students
+          {t("recentstudents")}
         </Typography>
         <Box sx={{ width: "100%", overflowX: "auto" }}>
           <Box sx={{ minWidth: 600, height: 350 }}>
@@ -371,7 +371,7 @@ export default function AdminDashboard() {
         </Box>
 
         <Typography variant="h6" gutterBottom sx={{ mt: 5 }}>
-          Recent Companies
+          {t("recentcompanies")}
         </Typography>
         <div style={{ height: 350, width: "100%" }}>
           <DataGrid

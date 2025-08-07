@@ -94,6 +94,7 @@ export default function Jobs() {
 
   const groupedJobs = {
     applied: [],
+    accepted: [],
     rejected: [],
     available: [],
   };
@@ -103,6 +104,8 @@ export default function Jobs() {
 
     if (status === "applied") {
       groupedJobs.applied.push(job);
+    } else if (status === "accepted") {
+      groupedJobs.accepted.push(job);
     } else if (status === "rejected") {
       groupedJobs.rejected.push(job);
     } else {
@@ -113,9 +116,10 @@ export default function Jobs() {
   const renderJobGroup = (jobs, label) => {
     if (jobs.length === 0) return null;
     let bgColor;
-    if (label === jobst("label1")) bgColor = "#eefff4ff";
-    else if (label === jobst("label2")) bgColor = "#ebf8ffff";
+    if (label === jobst("label1")) bgColor = "#ffffffff";
+    else if (label === jobst("label2")) bgColor = "#f3ebffff";
     else if (label === jobst("label3")) bgColor = "#ffeeeeff";
+     else if (label === jobst("label4")) bgColor = "#eefff4ff";
     return (
       <Box
         sx={{
@@ -176,7 +180,14 @@ export default function Jobs() {
                     new Date(job.createdAt),
                     { addSuffix: true }
                   )}`}
-                  subheader={job.company.name || ""}
+                  subheader={
+                    <Link
+                      href={`/${locale}/student/view_company/${job.company.id}`}
+                      passHref
+                    >
+                      {job.company.name || "Unknown Company"}
+                    </Link>
+                  }
                   description={job.description}
                   location={job.location}
                   paid={job.paid}
@@ -303,6 +314,7 @@ export default function Jobs() {
           <>
             {renderJobGroup(groupedJobs.available, jobst("label1"))}
             {renderJobGroup(groupedJobs.applied, jobst("label2"))}
+            {renderJobGroup(groupedJobs.accepted, jobst("label4"))}
             {renderJobGroup(groupedJobs.rejected, jobst("label3"))}
           </>
         )}

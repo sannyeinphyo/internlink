@@ -8,29 +8,52 @@ export async function GET(req, { params }) {
       return NextResponse.json({ message: "Company ID is required" }, { status: 400 });
     }
 
-    const company = await prisma.company.findUnique({
-      where: { id: companyId },
+const company = await prisma.company.findUnique({
+  where: { id: companyId },
+  select: {
+    id: true,
+    name: true,
+    image: true,
+    website: true,
+    facebook: true,
+    description: true,
+    location: true,
+    contact_info: true,
+    user: {
       select: {
         id: true,
         name: true,
+        email: true,
         image: true,
-        website: true,
-        facebook: true,
-        description: true,
-        location: true,
-        contact_info: true,
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            image: true,
-            role: true,
-            verified: true,
-          },
-        },
+        role: true,
+        verified: true,
       },
-    });
+    },
+    _count: {
+      select: {
+        posts: true,
+      },
+    },
+    posts: {
+      select: {
+        id: true,
+        title: true,
+        createdAt: true,
+        location: true,
+        paid: true,
+        salary: true,
+        job_type: true,
+        remote: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    },
+  },
+});
+
+
+
 
     if (!company) {
       return NextResponse.json({ message: "Company not found" }, { status: 404 });

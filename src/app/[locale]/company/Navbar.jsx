@@ -22,11 +22,13 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import LogoutButton from "@/components/Logout";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export const appBarHeight = 64;
 
 export default function Navbar() {
-  const {locale} = useParams();
+  const t = useTranslations("NavBar");
+  const { locale } = useParams();
   const router = useRouter();
   const { data: session, status } = useSession();
   const [profile, setProfile] = useState("");
@@ -89,10 +91,14 @@ export default function Navbar() {
     return (
       <AppBar position="fixed" sx={{ height: appBarHeight, px: 2 }}>
         <Toolbar sx={{ minHeight: appBarHeight }}>
-          <Typography variant="h6" sx={{ fontWeight: "bold", color:"#ea9635ff" }}>
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: "bold", color: "#ea9635ff" }}
+          >
             UniJob
-            <span style={{ fontStyle: "italic", color: "purple" }}>Link</span>
           </Typography>
+
+          <span style={{ fontStyle: "italic", color: "purple" }}>Link</span>
         </Toolbar>
       </AppBar>
     );
@@ -108,7 +114,7 @@ export default function Navbar() {
         display: "flex",
         justifyContent: "flex-end",
         alignItems: "center",
-        backgroundColor: "#ffffff",
+        backgroundColor: "#e8ffe9ff",
         color: "black",
         boxShadow: 2,
         backdropFilter: "blur(10px)",
@@ -122,12 +128,18 @@ export default function Navbar() {
           justifyContent: "space-between",
         }}
       >
-        <Typography variant="h6" sx={{ fontWeight: "bold" , color:"#ea9635ff" }}>
-          UniJob
-          <span style={{ color: "buttonmain.main" }}>
+        <Box>
+          <Typography
+            component={"span"}
+            variant="h6"
+            sx={{ fontWeight: "bold", color: "#ea9635ff" }}
+          >
+            UniJob
+          </Typography>
+          <Typography variant="h6" fontWeight={"bold"} color="#8e38ffff" component={"span"}>
             Link
-          </span>
-        </Typography>
+          </Typography>
+        </Box>
 
         <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
           {session?.user?.id && <NotificationBell userId={session.user.id} />}
@@ -137,14 +149,35 @@ export default function Navbar() {
             {name}
           </Typography>
           <Tooltip title="Company Profile">
-            <IconButton
+            {/* <IconButton
               onClick={handleToggle}
               color="inherit"
               size="medium"
               sx={{ display: "flex", gap: 1, boxShadow: 2 }}
             >
               <Avatar src={profile.image} alt={name} />
-            </IconButton>
+            </IconButton> */}
+            <Box
+              width={48}
+              height={48}
+              onClick={handleToggle}
+              sx={{ cursor: "pointer" }}
+            >
+              <img
+                style={{
+                  borderRadius: "50%",
+                  boxShadow: "0px 0 4px 2px rgba(0,0,0,0.1)",
+                }}
+                alt={profile.name}
+                src={profile.image || "/default-avatar.png"}
+                sx={{
+                  borderRadius: "50%",
+                  width: 32,
+                  height: 32,
+                  pointerEvents: "none",
+                }}
+              />
+            </Box>
           </Tooltip>
 
           <Menu
@@ -160,7 +193,6 @@ export default function Navbar() {
                 minWidth: 180,
                 borderRadius: 2,
                 boxShadow: "0px 4px 20px rgba(0,0,0,0.05)",
-                
               },
             }}
           >
@@ -178,13 +210,13 @@ export default function Navbar() {
                 mt: 1,
               }}
             >
-              <Typography variant="body2">Profile</Typography>
+              <Typography variant="body2">{t("Profile")}</Typography>
             </MenuItem>
 
             <MenuItem
               onClick={() => {
                 handleClose();
-                router.push(`/${locale}/reset_password`);
+                router.push(`/${locale}/company/settings/reset_password`);
               }}
               sx={{
                 "&:hover": {
@@ -195,7 +227,7 @@ export default function Navbar() {
                 mt: 1,
               }}
             >
-              <Typography variant="body2">Change Password</Typography>
+              <Typography variant="body2">{t("ChangePassword")}</Typography>
             </MenuItem>
 
             <Divider sx={{ my: 1 }} />

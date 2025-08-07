@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import axios from "axios";
 import {
@@ -14,8 +13,10 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export default function PasswordReset() {
+  const t = useTranslations("resetPassword");
   const { locale } = useParams();
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -83,13 +84,13 @@ export default function PasswordReset() {
           }}
         >
           <Typography variant="h4" fontWeight="bold">
-            {step === 1 ? "Reset Password" : "Enter OTP"}
+            {step === 1 ? t("resetPassword") : "Enter OTP"}
           </Typography>
 
           {step === 1 && (
             <>
               <TextField
-                label="Your Email"
+                label={t("email")}
                 type="email"
                 fullWidth
                 value={email}
@@ -109,11 +110,11 @@ export default function PasswordReset() {
                   color="secondary"
                   size="large"
                   onClick={() => {
-                    router.push(`/${locale}/login`);
+                    router.push(`/${locale}/dashboard`);
                   }}
                   sx={{ flex: 1 }}
                 >
-                  Cancel
+                  {t("cancel")}
                 </Button>
                 <Button
                   variant="contained"
@@ -121,7 +122,7 @@ export default function PasswordReset() {
                   onClick={requestOtp}
                   sx={{ flex: 1 }}
                 >
-                  Send OTP
+                  {t("send")}
                 </Button>
               </Box>
             </>
@@ -130,7 +131,7 @@ export default function PasswordReset() {
           {step === 2 && (
             <>
               <TextField
-                label="Enter OTP"
+                label={t("enterotp")}
                 type="text"
                 fullWidth
                 value={otp}
@@ -138,7 +139,7 @@ export default function PasswordReset() {
                 required
               />
               <TextField
-                label="New Password"
+                label={t("newpassword")}
                 type="password"
                 fullWidth
                 value={newPassword}
@@ -158,11 +159,11 @@ export default function PasswordReset() {
                   color="secondary"
                   size="large"
                   onClick={() => {
-                    router.push(`/${locale}/login`);
+                      router.push(`/${locale}/dashboard`);
                   }}
                   sx={{ flex: 1 }}
                 >
-                  Cancel
+                  {t("cancel")}
                 </Button>
 
                 <Button
@@ -171,7 +172,7 @@ export default function PasswordReset() {
                   onClick={resetPassword}
                   sx={{ flex: 1 }}
                 >
-                  Reset Password
+                  {t("resetPassword")}
                 </Button>
               </Box>
             </>

@@ -36,8 +36,9 @@ import WorkIcon from "@mui/icons-material/Work";
 import DescriptionIcon from "@mui/icons-material/Description";
 import SettingsIcon from "@mui/icons-material/Settings";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import { useTranslations } from "next-intl";
 
-const drawerWidth = 240;
+const drawerWidth = 260;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -102,45 +103,46 @@ const Drawer = styled(MuiDrawer, {
 
 export default function TeacherSideBar({ children }) {
   const { locale } = useParams();
+  const t = useTranslations("uni-nav");
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
   const pathname = usePathname();
   const navItems = [
     {
-      text: "University Dashboard",
+      text: t("dashboard"),
       path: `/${locale}/university/dashboard`,
       icon: <DashboardIcon />,
     },
 
     {
-      text: "Create Users",
+      text: t("createUsers"),
       path: `/${locale}/university/create`,
       icon: <GroupAddIcon />,
     },
 
     {
-      text: "View Students List",
+      text: t("viewStudents"),
       path: `/${locale}/university/student`,
       icon: <PostAddIcon />,
     },
 
     {
-      text: "View Teacher List",
+      text: t("viewTeachers"),
       path: `/${locale}/university/teacher`,
       icon: <WorkIcon />,
     },
     {
-      text: "Generate Report",
+      text: t("generateReport"),
       path: `/${locale}/university/report`,
       icon: <DescriptionIcon />,
     },
     {
-      text: "Student Applications",
+      text: t("studentApplications"),
       path: `/${locale}/university/student_applications`,
       icon: <DescriptionIcon />,
     },
     {
-      text: "Settings",
+      text: t("settings"),
       path: `/${locale}/university/settings`,
       icon: <SettingsIcon />,
     },
@@ -220,6 +222,7 @@ export default function TeacherSideBar({ children }) {
                     </ListItemIcon>
                     <ListItemText
                       primary={text}
+                      slotProps={{ primary: { sx: {fontSize:"0.8rem"} } }}
                       sx={{
                         opacity: open ? 1 : 0,
                         fontWeight: isActive ? "bold" : "normal",

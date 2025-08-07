@@ -39,15 +39,13 @@ export async function GET(request) {
             : false,
       },
       orderBy: {
-        createdAt: "asc", // Order by creation date to review the oldest accounts first
+        createdAt: "asc", 
       },
     });
 
-    // 4. Return the list of pending accounts
     return NextResponse.json(pendingAccounts);
   } catch (error) {
     console.error(`Error fetching pending ${role} accounts:`, error);
-    // In a production environment, avoid sending raw error details to the client
     return NextResponse.json(
       {
         error: `An internal server error occurred while fetching pending ${role}s.`,
@@ -55,7 +53,6 @@ export async function GET(request) {
       { status: 500 }
     );
   } finally {
-    // Disconnect Prisma Client after the request (important for serverless)
     await prisma.$disconnect();
   }
 }

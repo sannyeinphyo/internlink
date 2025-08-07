@@ -9,6 +9,10 @@ import {
   Chip,
   Button,
   Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -42,6 +46,28 @@ export default function Applications() {
   const router = useRouter();
   const { locale } = useParams();
   const t = useTranslations("status");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogAction, setDialogAction] = useState("");
+  const [selectedInterviewId, setSelectedInterviewId] = useState(null);
+
+  const handleDialogOpen = (interviewId, action) => {
+    setSelectedInterviewId(interviewId);
+    setDialogAction(action);
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+    setSelectedInterviewId(null);
+    setDialogAction("");
+  };
+
+  const handleDialogConfirm = async () => {
+    if (selectedInterviewId && dialogAction) {
+      await updateInterviewStatus(selectedInterviewId, dialogAction);
+    }
+    handleDialogClose();
+  };
 
   useEffect(() => {
     fetchApplications();
@@ -128,11 +154,12 @@ export default function Applications() {
       align: "center",
       width: 180,
       renderCell: (params) => {
-        const interview = params.row.Interview?.[0]; 
+        const interview = params.row.Interview?.[0];
         if (!interview) return "-";
         const status = interview.status || "PENDING";
         const label = t(status, { default: status });
-        const color = interviewStatusColors[status] || interviewStatusColors.PENDING;
+        const color =
+          interviewStatusColors[status] || interviewStatusColors.PENDING;
 
         return (
           <Chip
@@ -151,51 +178,51 @@ export default function Applications() {
       },
     },
     {
-  field: "interviewActions",
-  headerName: t("headers.interview_action"),
-  headerAlign: "center",
-  align: "center",
-  width: 200,
-  sortable: false,
-  filterable: false,
-  renderCell: (params) => {
-    const interview = params.row.Interview?.[0];
-    const disabled = !interview || interview.status !== "PENDING";
+      field: "interviewActions",
+      headerName: t("headers.interview_action"),
+      headerAlign: "center",
+      align: "center",
+      width: 200,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => {
+        const interview = params.row.Interview?.[0];
+        const disabled = !interview || interview.status !== "PENDING";
 
-    return (
-      <Stack
-        direction="row"
-        spacing={1}
-        justifyContent="center"
-        alignItems="center"
-        height="100%"
-      >
-        <Button
-          size="small"
-          variant="contained"
-          color="primary"
-          disabled={disabled}
-          onClick={() =>
-            !disabled && updateInterviewStatus(interview.id, "ACCEPTED")
-          }
-        >
-         {t("ACCEPT")}
-        </Button>
-        <Button
-          size="small"
-          variant="outlined"
-          color="error"
-          disabled={disabled}
-          onClick={() =>
-            !disabled && updateInterviewStatus(interview.id, "REJECTED")
-          }
-        >
-          {t("REJECT")}
-        </Button>
-      </Stack>
-    );
-  },
-},
+        return (
+          <Stack
+            direction="row"
+            spacing={1}
+            justifyContent="center"
+            alignItems="center"
+            height={"100%"}
+          >
+            <Button
+              size="small"
+              variant="contained"
+              color="primary"
+              disabled={disabled}
+              onClick={() =>
+                !disabled && handleDialogOpen(interview.id, "ACCEPTED")
+              }
+            >
+              {t("ACCEPT")}
+            </Button>
+            <Button
+              size="small"
+              variant="outlined"
+              color="error"
+              disabled={disabled}
+              onClick={() =>
+                !disabled && handleDialogOpen(interview.id, "REJECTED")
+              }
+            >
+              {t("REJECT")}
+            </Button>
+          </Stack>
+        );
+      },
+    },
 
     {
       field: "appliedAt",
@@ -261,6 +288,30 @@ export default function Applications() {
           {snack.message}
         </Alert>
       </Snackbar>
+      <Dialog open={dialogOpen} onClose={handleDialogClose}>
+        <DialogTitle>
+          {dialogAction === "ACCEPTED"
+            ? t("confirmAcceptTitle")
+            : t("confirmRejectTitle")}
+        </DialogTitle>
+        <DialogContent>
+          <Typography>
+            {dialogAction === "ACCEPTED"
+              ? t("confirmAcceptMessage")
+              : t("confirmRejectMessage")}
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" onClick={handleDialogClose}>{t("cancel")}</Button>
+          <Button
+          variant="contained"
+            onClick={handleDialogConfirm}
+            color={dialogAction === "ACCEPTED" ? "primary" : "error"}
+          >
+            {t("confirm")}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

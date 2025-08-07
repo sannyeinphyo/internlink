@@ -1,106 +1,112 @@
 "use client";
+
 import React from "react";
-import {Box, Paper, Typography} from "@mui/material";
-import {motion} from "framer-motion";
-import {useTranslations} from "next-intl";
+import {
+  Box,
+  Typography,
+  Paper,
+  Grid,
+  Card,
+  CardContent,
+  Avatar,
+} from "@mui/material";
+import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
+import Image from "next/image";
 
 const team = [
-    {
-        name: "Litch X",
-        role: "Founder & Developer",
-        image: "/profile/litch.png",
-        bio: "Leads the architecture and full-stack development of InternLink.",
-        email: "litch@internlink.com",
-        linkedin: "https://linkedin.com/in/litchx",
-    },
-    {
-        name: "Aung Aung",
-        role: "Backend Engineer",
-        image: "/profile/aung.png",
-        bio: "Handles API development and database integration.",
-        email: "aung@internlink.com",
-        linkedin: "https://linkedin.com/in/aungaung",
-    },
+  {
+    name: "San Nyein Phyo",
+    role: "Student & Company Side Developer",
+    image: "/profile/litch.png",
+    bio: "Leads the architecture and full-stack development of InternLink.",
+    email: "litch@internlink.com",
+    linkedin: "https://linkedin.com/in/sannyeinphyo",
+  },
+  {
+    name: "Kaung Myat Khine",
+    role: "Admin Side Developer",
+    image: "/profile/kaung.png",
+    bio: "Handles API development and database integration.",
+    email: "aung@internlink.com",
+    linkedin: "https://linkedin.com/in/aungaung",
+  },
 ];
-localStorage.setItem('locale', 'en');
-const locale = localStorage.getItem('locale');
-console.log(locale);
 
 export default function AboutUs() {
-    const t = useTranslations("about_us")
-    return (
-        <Box>
-            <Box sx={{py: 8, px: 2, maxWidth: 1280, mx: "auto"}}>
-                <motion.div
-                    initial={{opacity: 0, y: 40}}
-                    whileInView={{opacity: 1, y: 0}}
-                    transition={{duration: 0.5}}
-                    viewport={{once: true}}
-                >
-                    <Typography variant="h4" fontWeight="bold" gutterBottom>
-                        {t("heading")}
-                    </Typography>
+  const t = useTranslations("about_us");
 
-                    <Typography variant="body1" mb={3}>
-                        {t("heading_description")}
-                    </Typography>
+  return (
+    <Box>
+      <Box sx={{ py: 8, px: 2, maxWidth: 1280, mx: "auto" }}>
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+        >
+          <Typography variant="h4" fontWeight="bold" gutterBottom>
+            {t("heading")}
+          </Typography>
 
-                    <Typography variant="body1" mb={3}>
-                        {t("heaing_description2")}
-                    </Typography>
-                </motion.div>
+          <Typography variant="body1" mb={3}>
+            {t("heading_description")}
+          </Typography>
 
-                <motion.div
-                    initial={{opacity: 0, y: 50}}
-                    whileInView={{opacity: 1, y: 0}}
-                    transition={{duration: 0.6, delay: 0.2}}
-                    viewport={{once: true}}
-                >
-                    <Paper elevation={3} sx={{p: 3, mt: 4}}>
-                        <Typography variant="h6" gutterBottom>
-                            🚀 {t("mission")}
-                        </Typography>
-                        <Typography variant="body2" mb={2}>
-                            {t("mission_description")}
-                        </Typography>
+          <Typography variant="body1" mb={3}>
+            {t("heaing_description2")}
+          </Typography>
+        </motion.div>
 
-                        <Typography variant="h6" gutterBottom>
-                            🌍 {t("vision")}
-                        </Typography>
-                        <Typography variant="body2" mb={2}>
-                            {t("vision_description")}
-                        </Typography>
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          viewport={{ once: true }}
+        >
+          <Paper elevation={3} sx={{ p: 3, mt: 4 }}>
+            <Typography variant="h6" gutterBottom>
+              🚀 {t("mission")}
+            </Typography>
+            <Typography variant="body2" mb={2}>
+              {t("mission_description")}
+            </Typography>
 
-                        <Typography variant="h6" gutterBottom>
-                            ✅ {t("why_internLink")}
-                        </Typography>
-                        <ul style={{paddingLeft: 20}}>
-                            <li>{t("why_internlink_description.text1")}</li>
-                            <li>{t("why_internlink_description.text2")}</li>
-                            <li>{t("why_internlink_description.text3")}</li>
-                            <li>{t("why_internlink_description.text4")}</li>
-                            <li>{t("why_internlink_description.text5")}</li>
-                            <li>
-                                {t("why_internlink_description.text6")}
-                            </li>
-                        </ul>
-                    </Paper>
-                </motion.div>
+            <Typography variant="h6" gutterBottom>
+              🌍 {t("vision")}
+            </Typography>
+            <Typography variant="body2" mb={2}>
+              {t("vision_description")}
+            </Typography>
 
-                {/* Team Section */}
-                <motion.div
-                    initial={{opacity: 0, y: 50}}
-                    whileInView={{opacity: 1, y: 0}}
-                    transition={{duration: 0.6, delay: 0.3}}
-                    viewport={{once: true}}
-                >
-                    {/* <Typography variant="h5" fontWeight="bold" mt={6} mb={3}>
-            Meet the Team
-          </Typography> */}
+            <Typography variant="h6" gutterBottom>
+              ✅ {t("why_internLink")}
+            </Typography>
+            <ul style={{ paddingLeft: 20 , marginTop: 10 }}>
+              <li style={{margin:" 8px 0"}}>{t("why_internlink_description.text1")}</li>
+              <li style={{margin:" 8px 0"}}>{t("why_internlink_description.text2")}</li>
+              <li style={{margin:" 8px 0"}}>{t("why_internlink_description.text3")}</li>
+              <li style={{margin:" 8px 0"}}>{t("why_internlink_description.text4")}</li>
+              <li style={{margin:" 8px 0"}}>{t("why_internlink_description.text5")}</li>
+              <li style={{margin:" 8px 0"}}>{t("why_internlink_description.text6")}</li>
+            </ul>
+          </Paper>
+        </motion.div>
 
-                    {/* <Grid container spacing={4}>
+        {/* Team Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          viewport={{ once: true }}
+        >
+          <Typography variant="h5" fontWeight="bold" mt={6} mb={3}>
+            👥 {t("our_team")}
+          </Typography>
+
+          <Grid container spacing={4} justifyContent="center" display={"flex"}>
             {team.map((member, index) => (
-              <Grid item xs={12} sm={4} key={index}>
+              <Grid item xs={12} sm={6} md={4} key={index}>
                 <motion.div
                   whileHover={{ scale: 1.03 }}
                   transition={{ type: "spring", stiffness: 300 }}
@@ -122,10 +128,16 @@ export default function AboutUs() {
                     <Avatar
                       src={member.image}
                       alt={member.name}
-                      sx={{ width: 80, height: 80, mx: "auto", mb: 2 }}
+                      sx={{
+                        width: 90,
+                        height: 90,
+                        mx: "auto",
+                        mb: 2,
+                        border: "2px solid #1976d2",
+                      }}
                     />
                     <CardContent>
-                      <Typography variant="subtitle1" fontWeight="medium">
+                      <Typography variant="subtitle1" fontWeight="bold">
                         {member.name}
                       </Typography>
                       <Typography variant="body2" color="textSecondary" mb={1}>
@@ -150,9 +162,9 @@ export default function AboutUs() {
                 </motion.div>
               </Grid>
             ))}
-          </Grid> */}
-                </motion.div>
-            </Box>
-        </Box>
-    );
+          </Grid>
+        </motion.div>
+      </Box>
+    </Box>
+  );
 }

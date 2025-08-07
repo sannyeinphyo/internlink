@@ -27,6 +27,7 @@ import GroupIcon from "@mui/icons-material/Group";
 import MailIcon from "@mui/icons-material/Mail";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 
 import {
   Chart as ChartJS,
@@ -94,7 +95,7 @@ export default function UniversityDashboard() {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+const t = useTranslations("university-dashboard");
   const fetchDashboardData = async (year) => {
     setLoading(true);
     setError(null);
@@ -275,7 +276,7 @@ export default function UniversityDashboard() {
         gap={2}
       >
         <Typography variant="h4" fontWeight="bold" component="h1">
-          University Dashboard
+         {t("title")}
         </Typography>
         <FormControl variant="outlined" size="small" sx={{ minWidth: 120 }}>
           <InputLabel id="year-select-label">Year</InputLabel>
@@ -298,7 +299,7 @@ export default function UniversityDashboard() {
         <Grid item xs={12} sm={6} md={4}>
           <StatCard
             icon={<SchoolIcon fontSize="large" color="primary" />}
-            label="Total Teachers"
+            label={t("teachers")}
             value={dashboardData?.totalTeachers ?? 0}
             cardColor="#E3F2FD"
           />
@@ -306,7 +307,7 @@ export default function UniversityDashboard() {
         <Grid item xs={12} sm={6} md={4}>
           <StatCard
             icon={<GroupIcon fontSize="large" color="success" />}
-            label="Total Students"
+            label={t("students")}
             value={dashboardData?.totalStudents ?? 0}
             cardColor="#E8F5E9"
           />
@@ -314,7 +315,7 @@ export default function UniversityDashboard() {
         <Grid item xs={12} sm={6} md={4}>
           <StatCard
             icon={<MailIcon fontSize="large" color="warning" />}
-            label="Applications Submitted"
+            label={t("applications")}
             value={dashboardData?.totalApplicationsSubmitted ?? 0}
             cardColor="#FFFDE7"
           />
@@ -326,8 +327,8 @@ export default function UniversityDashboard() {
         <Grid item xs={12} width={"100%"}> 
           <Card elevation={4} sx={{ borderRadius: 3, height: "100%", display: 'flex', flexDirection: 'column' }}>
             <CardHeader
-              title={<Typography variant="h6" fontWeight="bold">Application Status Breakdown</Typography>}
-              subheader={<Typography variant="subtitle2" color="text.secondary">Total applications by status for the year {selectedYear}</Typography>}
+              title={<Typography variant="h6" fontWeight="bold">{t("applicationBreakdown")}</Typography>}
+              subheader={<Typography variant="subtitle2" color="text.secondary">{t("applicationBreakdownSub")} {selectedYear}</Typography>}
             />
             <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 350 }}>
               {dashboardData?.applicationStatusData?.some(value => value.value > 0) ? (
@@ -336,7 +337,7 @@ export default function UniversityDashboard() {
                 </Box>
               ) : (
                 <Typography color="text.secondary" textAlign="center" mt={4}>
-                  No application data available for {selectedYear}.
+                 {t("noApplicationData")}{selectedYear}.
                 </Typography>
               )}
             </CardContent>
@@ -347,8 +348,8 @@ export default function UniversityDashboard() {
            <Grid item xs={12} width={"100%"}>  
           <Card elevation={4} sx={{ borderRadius: 3, height: "100%", display: 'flex', flexDirection: 'column' }}>
             <CardHeader
-              title={<Typography variant="h6" fontWeight="bold">Latest User Registrations</Typography>}
-              subheader={<Typography variant="subtitle2" color="text.secondary">Recently added teachers and students for {selectedYear}</Typography>}
+              title={<Typography variant="h6" fontWeight="bold">{t("latestRegistrations")}</Typography>}
+              subheader={<Typography variant="subtitle2" color="text.secondary">{t("latestRegistrationsSub")} {selectedYear}</Typography>}
             />
             <CardContent sx={{ flexGrow: 1, overflowY: 'auto' }}>
               {dashboardData?.latestUsers && dashboardData.latestUsers.length > 0 ? (
@@ -363,11 +364,11 @@ export default function UniversityDashboard() {
     </Typography>
   }
   secondary={ 
-    <Box component="span"> 
-      <Typography variant="body2" color="text.secondary" component="span">
+    <Box> 
+      <Typography variant="body2" color="text.secondary">
         {user.role} &bull; {new Date(user.createdAt).toLocaleDateString()}
       </Typography>
-      <Typography variant="caption" color="text.secondary" component="span">
+      <Typography variant="caption" color="text.secondary">
         {user.email}
       </Typography>
     </Box>
@@ -380,7 +381,7 @@ export default function UniversityDashboard() {
                 </List>
               ) : (
                 <Typography color="text.secondary" textAlign="center" mt={4}>
-                  No new user registrations for {selectedYear}.
+                 {t("noRegistrations")}{selectedYear}.
                 </Typography>
               )}
             </CardContent>

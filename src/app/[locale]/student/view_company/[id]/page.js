@@ -25,6 +25,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import NewReleasesIcon from "@mui/icons-material/NewReleases";
+import { ButtonOutline, ButtonPrimary } from "@/components/Button";
 
 export default function CompanyProfilePage() {
   const { id, locale } = useParams();
@@ -81,7 +82,9 @@ export default function CompanyProfilePage() {
         <VerifiedIcon
           sx={{ width: 16, height: 16, color: "green", m: "0 8px" }}
         />
-        <Typography component={"span"} fontSize={"12px"}>verified</Typography>
+        <Typography component={"span"} fontSize={"12px"}>
+          verified
+        </Typography>
       </Tooltip>
     </>
   ) : (
@@ -181,7 +184,7 @@ export default function CompanyProfilePage() {
             <Typography variant="h6" fontWeight="medium" gutterBottom>
               Contact Person
             </Typography>
-            <Stack spacing={1}>
+            <Stack spacing={1} sx={{ mb: 4 }}>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <PersonIcon color="action" />
                 <Typography>{company.user.name}</Typography>
@@ -198,16 +201,70 @@ export default function CompanyProfilePage() {
               </Typography>
             </Stack>
 
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ mt: 3 }}
+            <ButtonPrimary
+              startIcon={<EmailIcon />}
               href={`mailto:${company.user.email}`}
             >
               Contact {company.user.name}
-            </Button>
+            </ButtonPrimary>
           </Grid>
         </Grid>
+        <Divider sx={{ my: 4 }} />
+        {company.posts?.length > 0 && (
+          <>
+            <Typography variant="h6" fontWeight="bold" sx={{ mt: 6, mb: 2 }}>
+              Internship Posts by {company.name}
+            </Typography>
+
+            <Grid container spacing={2}>
+              {company.posts.map((post) => (
+                <Grid item xs={12} md={6} key={post.id}>
+                  <Paper
+                    elevation={4}
+                    sx={{ p: 3, borderRadius: 2, height: "100%" }}
+                  >
+                    <Stack spacing={1}  color="buttonmain.main">
+                      <Typography variant="h6" fontWeight="bold">
+                        {post.title}
+                      </Typography>
+
+                      <Typography variant="body2" color="text.secondary">
+                        Job Type: {post.job_type || "N/A"}
+                      </Typography>
+
+                      <Typography variant="body2" color="text.secondary">
+                        Location: {post.location || "N/A"}
+                      </Typography>
+
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: post.paid ? "primary.main" : "warning.main",
+                          fontWeight: 500,
+                        }}
+                      >
+                        {post.paid
+                          ? `Paid Internship${
+                              post.salary ? ` - ${post.salary} Ks` : ""
+                            }`
+                          : "Unpaid Internship"}
+                      </Typography>
+
+                      <ButtonOutline
+                        size="small"
+                        variant="outlined"
+                        href={`/${locale}/jobs/${post.id}?backUrl=/${locale}/student/view_company/${company.id}`}
+                        sx={{ mt: 2, alignSelf: "flex-start" }}
+                      >
+                        View Details
+                      </ButtonOutline>
+                    </Stack>
+                  </Paper>
+                </Grid>
+              ))}
+            </Grid>
+          </>
+        )}
       </Paper>
     </Container>
   );

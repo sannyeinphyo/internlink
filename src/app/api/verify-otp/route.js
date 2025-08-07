@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { sendPendingApprovalEmail } from "@/lib/sendPendingApprovalEmail";
 
 export async function POST(req) {
   try {
@@ -41,6 +42,12 @@ export async function POST(req) {
         otpExpiresAt: null,
       },
     });
+
+    const { role, name } = user;
+
+    if (["student", "company"].includes(role)) {
+      await sendPendingApprovalEmail(email, name);
+    }
 
     return NextResponse.json({ message: "Email verified successfully" }, { status: 200 });
   } catch (err) {

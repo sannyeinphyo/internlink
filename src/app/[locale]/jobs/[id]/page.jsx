@@ -24,8 +24,14 @@ import {
   AttachMoney,
   Email,
 } from "@mui/icons-material";
+import { useTranslations } from "next-intl";
+import { showConfirmDialog } from "@/components/ConfirmDialog";
+import { ButtonPrimary } from "@/components/Button";
+import { toast } from "react-toastify";
 
 export default function JobPage() {
+  const jobst = useTranslations("Jobs");
+  const t = useTranslations("view_company");
   const params = useParams();
   const { id, locale } = params || {};
   const router = useRouter();
@@ -35,6 +41,8 @@ export default function JobPage() {
   const backUrl = searchParams.get("backUrl") || `/${locale}/jobs`;
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [applyLoading, setApplyLoading] = useState(false);
+  const alreadyApplied = job?.applications?.length > 0;
 
   useEffect(() => {
     if (!id) return;
@@ -55,6 +63,37 @@ export default function JobPage() {
 
     fetchJob();
   }, [id]);
+
+  const handleApply = async (postId, companyUserId) => {
+    const confirmed = await showConfirmDialog({
+      title: jobst("title"),
+      text: jobst("text"),
+      confirmButtonText: jobst("confirm"),
+      cancelButtonText: jobst("cancel"),
+    });
+
+    if (!confirmed) return toast.error(jobst("cancel"));
+
+    try {
+      setApplyLoading(true);
+
+      await axios.post("/api/internshipapplication", {
+        post_id: postId,
+      });
+
+      toast.success(jobst("success"));
+
+      router.refresh();
+    } catch (error) {
+      toast.error(
+        jobst("error") ||
+          error.response?.data?.message ||
+          "Something went wrong"
+      );
+    } finally {
+      setApplyLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -88,7 +127,6 @@ export default function JobPage() {
     );
   }
 
-
   return (
     <Box sx={{ bgcolor: "#fafafa", py: 6, minHeight: "90vh" }}>
       <Container maxWidth="lg">
@@ -111,14 +149,37 @@ export default function JobPage() {
                 backgroundColor: "#ffffff",
               }}
             >
-              <Typography
-                variant="h4"
-                fontWeight="bold"
-                gutterBottom
-                color="primary"
+              <Box
+                display={"flex"}
+                flexDirection="row"
+                gap={2}
+                justifyContent={"space-between"}
               >
-                {job.title}
-              </Typography>
+                <Typography
+                  variant="h4"
+                  fontWeight="bold"
+                  gutterBottom
+                  color="primary"
+                >
+                  {job.title}
+                </Typography>
+                {alreadyApplied ? (
+                  <Button variant="outlined" disabled>
+                    {t("already_applied")}
+                  </Button>
+                ) : (
+                  <ButtonPrimary
+                    onClick={() => handleApply(job.id, job.company.user_id)}
+                    disabled={applyLoading}
+                  >
+                    {applyLoading ? (
+                      <CircularProgress size={20} />
+                    ) : (
+                      t("applynow")
+                    )}
+                  </ButtonPrimary>
+                )}
+              </Box>
 
               <Typography
                 variant="subtitle1"
@@ -126,7 +187,7 @@ export default function JobPage() {
                 color="text.secondary"
                 sx={{ mb: 3 }}
               >
-                Company: <strong>{job.company?.name || "Unknown"}</strong>
+                {t("company_name")} <strong>{job.company?.name || "Unknown"}</strong>
               </Typography>
 
               <Divider sx={{ mb: 3 }} />
@@ -134,14 +195,14 @@ export default function JobPage() {
               {/* Tags */}
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 3 }}>
                 <Chip
-                  label={job.paid ? "Paid" : "Unpaid"}
+                  label={job.paid ? t("paid"): t("unpaid")}
                   color={job.paid ? "success" : "default"}
                 />
                 {job.job_type && <Chip label={job.job_type} color="info" />}
-                {job.remote && <Chip label="Remote" color="secondary" />}
+                {job.remote && <Chip label={t("remote")} color="secondary" />}
                 {job.positions && (
                   <Chip
-                    label={`${job.positions} Position${
+                    label={`${job.positions} ${t("positions")} ${
                       job.positions > 1 ? "s" : ""
                     }`}
                   />
@@ -151,7 +212,7 @@ export default function JobPage() {
               <Stack spacing={3}>
                 <Box>
                   <Typography variant="h6" gutterBottom fontWeight={"bold"}>
-                    Description
+                    
                   </Typography>
                   <Typography>{job.description}</Typography>
                 </Box>
@@ -159,7 +220,7 @@ export default function JobPage() {
                 {job.responsibilities && (
                   <Box>
                     <Typography variant="h6" gutterBottom fontWeight={"bold"}>
-                      Responsibilities
+                      {t("responsibilities")}
                     </Typography>
                     <Typography>{job.responsibilities}</Typography>
                   </Box>
@@ -167,7 +228,7 @@ export default function JobPage() {
 
                 <Box>
                   <Typography variant="h6" gutterBottom fontWeight={"bold"}>
-                    Requirements
+                    {t("requirements")}
                   </Typography>
                   <Typography>{job.requirements}</Typography>
                 </Box>
@@ -175,7 +236,7 @@ export default function JobPage() {
                 {job.benefits && (
                   <Box>
                     <Typography variant="h6" gutterBottom fontWeight={"bold"}>
-                      Benefits
+                      {t("benefits")}
                     </Typography>
                     <Typography>{job.benefits}</Typography>
                   </Box>
@@ -183,13 +244,13 @@ export default function JobPage() {
 
                 <Box>
                   <Typography variant="h6" gutterBottom fontWeight={"bold"}>
-                    Details
+                    {t("details")}
                   </Typography>
                   <Stack direction="row" spacing={3} flexWrap="wrap">
                     {job.salary && (
                       <Box display="flex" alignItems="center" gap={1}>
                         <AttachMoney fontSize="small" />
-                        <Typography>Salary: ${job.salary}</Typography>
+                        <Typography>{t("salary")}: ${job.salary}</Typography>
                       </Box>
                     )}
                     <Box display="flex" alignItems="center" gap={1}>
@@ -199,20 +260,20 @@ export default function JobPage() {
                     <Box display="flex" alignItems="center" gap={1}>
                       <CalendarToday fontSize="small" />
                       <Typography>
-                        Start: {new Date(job.start_date).toLocaleDateString()}
+                        {t("start")}: {new Date(job.start_date).toLocaleDateString()}
                       </Typography>
                     </Box>
                     <Box display="flex" alignItems="center" gap={1}>
                       <CalendarToday fontSize="small" />
                       <Typography>
-                        End: {new Date(job.end_date).toLocaleDateString()}
+                        {t("end")}: {new Date(job.end_date).toLocaleDateString()}
                       </Typography>
                     </Box>
                     {job.application_deadline && (
                       <Box display="flex" alignItems="center" gap={1}>
                         <CalendarToday fontSize="small" />
                         <Typography>
-                          Deadline:{" "}
+                          {t("application_deadline")}:{" "}
                           {new Date(
                             job.application_deadline
                           ).toLocaleDateString()}
@@ -225,7 +286,7 @@ export default function JobPage() {
                 {job.contact_email && (
                   <Box>
                     <Typography variant="h6" gutterBottom fontWeight={"bold"}>
-                      Contact
+                      {t("contact_email")}
                     </Typography>
                     <Box display="flex" alignItems="center" gap={1}>
                       <Email fontSize="small" />
@@ -235,15 +296,13 @@ export default function JobPage() {
                 )}
               </Stack>
 
-            
               <Stack direction="row" spacing={2} sx={{ mt: 4 }}>
                 <Button variant="outlined" onClick={() => router.push(backUrl)}>
-                  ← Back to Jobs
+                  ← {t("backtojobs")}
                 </Button>
               </Stack>
             </Paper>
 
-            
             <Box
               sx={{
                 flex: 1,
@@ -264,12 +323,10 @@ export default function JobPage() {
                 gutterBottom
                 color="primary"
               >
-                Why This Job?
+                {t("whythisjob")}
               </Typography>
               <Typography sx={{ mb: 2 }}>
-                This internship offers a great opportunity to gain real-world
-                experience, work with a talented team, and build your
-                professional skills.
+                {t("subtitle")}
               </Typography>
 
               <Typography
@@ -277,8 +334,7 @@ export default function JobPage() {
                 color="text.secondary"
                 gutterBottom
               >
-                Remember to tailor your application to highlight relevant skills
-                and experience.
+               {t("subtitle2")}
               </Typography>
 
               <Divider sx={{ my: 2 }} />
@@ -289,13 +345,13 @@ export default function JobPage() {
                 gutterBottom
                 color="primary"
               >
-                Quick Tips
+               {t("tips")}
               </Typography>
               <ul style={{ paddingLeft: "1.2rem", marginTop: 0 }}>
-                <li>Read the job description carefully.</li>
-                <li>Customize your resume and cover letter.</li>
-                <li>Prepare for the interview by researching the company.</li>
-                <li>Follow up after submitting your application.</li>
+                <li>{t("tip_list1")}</li>
+                <li>{t("tip_list2")}</li>
+                <li>{t("tip_list3")}</li>
+                <li>{t("tip_list4")}</li>
               </ul>
             </Box>
           </Stack>
