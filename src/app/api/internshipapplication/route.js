@@ -31,8 +31,6 @@ export async function GET() {
       },
     });
 
-    console.log("Applications fetched:", applications);
-
     return NextResponse.json({
       message: "Getting internship applications",
       data: applications,

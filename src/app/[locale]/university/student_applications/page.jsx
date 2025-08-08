@@ -22,7 +22,6 @@ import {
 } from "@mui/material";
 import WorkIcon from "@mui/icons-material/Work";
 import BusinessIcon from "@mui/icons-material/Business";
-import Link from "next/link";
 
 export default function TeacherDashboardApplications() {
   const [applications, setApplications] = useState([]);
@@ -120,7 +119,6 @@ export default function TeacherDashboardApplications() {
         </FormControl>
       </Box>
 
-      {/* If no matching applications */}
       {filteredApps.length === 0 ? (
         <Typography variant="h6" align="center" className="text-gray-600 py-10">
           No internship applications found for the selected filters.

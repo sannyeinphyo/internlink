@@ -223,7 +223,7 @@ export default function CompanyProfilePage() {
                     elevation={4}
                     sx={{ p: 3, borderRadius: 2, height: "100%" }}
                   >
-                    <Stack spacing={1}  color="buttonmain.main">
+                    <Stack spacing={1}  color="primary.main">
                       <Typography variant="h6" fontWeight="bold">
                         {post.title}
                       </Typography>
@@ -239,7 +239,7 @@ export default function CompanyProfilePage() {
                       <Typography
                         variant="body2"
                         sx={{
-                          color: post.paid ? "primary.main" : "warning.main",
+                          color: post.paid ? "buttonmain.main" : "warning.main",
                           fontWeight: 500,
                         }}
                       >

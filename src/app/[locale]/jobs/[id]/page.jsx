@@ -159,7 +159,7 @@ export default function JobPage() {
                   variant="h4"
                   fontWeight="bold"
                   gutterBottom
-                  color="primary"
+                  color="buttonmain.main"
                 >
                   {job.title}
                 </Typography>
@@ -192,7 +192,6 @@ export default function JobPage() {
 
               <Divider sx={{ mb: 3 }} />
 
-              {/* Tags */}
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 3 }}>
                 <Chip
                   label={job.paid ? t("paid"): t("unpaid")}
@@ -309,7 +308,7 @@ export default function JobPage() {
                 position: "sticky",
                 top: theme.spacing(12),
                 alignSelf: "flex-start",
-                bgcolor: "#e3f2fd",
+                bgcolor: "#e3fdf4ff",
                 borderRadius: 4,
                 p: 3,
                 boxShadow: 2,
@@ -321,7 +320,7 @@ export default function JobPage() {
                 variant="h6"
                 fontWeight="bold"
                 gutterBottom
-                color="primary"
+                color="buttonmain.main"
               >
                 {t("whythisjob")}
               </Typography>
@@ -343,13 +342,12 @@ export default function JobPage() {
                 variant="h6"
                 fontWeight="bold"
                 gutterBottom
-                color="primary"
+                color="buttonmain.main"
               >
                {t("tips")}
               </Typography>
               <ul style={{ paddingLeft: "1.2rem", marginTop: 0 }}>
                 <li>{t("tip_list1")}</li>
-                <li>{t("tip_list2")}</li>
                 <li>{t("tip_list3")}</li>
                 <li>{t("tip_list4")}</li>
               </ul>

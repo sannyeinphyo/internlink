@@ -117,7 +117,7 @@ export default function AdminProfileMenu() {
         <MenuItem
           onClick={() => {
             handleClose();
-            goTo(`/${locale}/reset_password`);
+            goTo(`/${locale}/university/settings/password`);
           }}
           sx={{
             "&:hover": {

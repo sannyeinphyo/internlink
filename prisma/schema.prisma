@@ -123,7 +123,7 @@ model InternshipPost {
   id                   Int       @id @default(autoincrement())
   company_id           Int
   title                String
-  description          String
+  description          String    @db.MediumText
   requirements         String
   paid                 Boolean
   salary               Int?

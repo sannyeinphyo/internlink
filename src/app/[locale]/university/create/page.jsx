@@ -22,6 +22,7 @@ import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 
 import { combinedUniversityAccountSchema } from "@/schemas/universityCreateAccount";
 
@@ -74,7 +75,8 @@ const MAJORS = [
 export default function UniversityCreateAccount() {
   const { data: session, status } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [universityName, setUniversityName] = useState("Loading University..."); // State to hold the current university name
+  const [universityName, setUniversityName] = useState("Loading University...");
+  const t = useTranslations("university_create");
 
   const {
     register,
@@ -95,7 +97,7 @@ export default function UniversityCreateAccount() {
       department: "",
       batch_year: "",
       major: "",
-      skills: [], // Initialize skills as an empty array to match Autocomplete's default
+      skills: [],
       facebook: "",
       linkedIn: "",
     },
@@ -113,28 +115,24 @@ export default function UniversityCreateAccount() {
             `/api/university/get-university-name/${currentUserId}`
           );
 
-          if (
-            response.status === 200 &&
-            response.data?.name &&
-            response.data?.id
-          ) {
+          if (response.status === 200 && response.data?.name && response.data?.id) {
             setUniversityName(response.data.name);
             setValue("university_id", response.data.id);
           } else {
             setUniversityName("Error loading name");
-            toast.error("Failed to fetch university name or ID.");
+            toast.error(t("fetch_fail"));
           }
         } catch (error) {
           setUniversityName("Error loading name");
-          toast.error("Failed to load university info.");
+          toast.error(t("fetch_fail"));
         }
       };
 
       fetchUniversityName();
     } else if (status === "unauthenticated") {
-      setUniversityName("Not authorized");
+      setUniversityName(t("unauthorized"));
     }
-  }, [status, session, setValue]);
+  }, [status, session, setValue, t]);
 
   useEffect(() => {
     reset((prev) => ({
@@ -142,7 +140,7 @@ export default function UniversityCreateAccount() {
       department: "",
       batch_year: "",
       major: "",
-      skills: [], // Reset to an empty array
+      skills: [],
       facebook: "",
       linkedIn: "",
     }));
@@ -151,10 +149,6 @@ export default function UniversityCreateAccount() {
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
     try {
-      console.log("onSubmit function triggered!");
-      console.log("Form Data Submitted:", formData);
-
-      // Convert skills array to a comma-separated string if it's not empty
       const skillsString =
         formData.skills && formData.skills.length > 0
           ? formData.skills.join(", ")
@@ -171,126 +165,66 @@ export default function UniversityCreateAccount() {
           batch_year: parseInt(formData.batch_year, 10),
         }),
         ...(formData.major && { major: formData.major }),
-        ...(skillsString && { skills: skillsString }), // Use the converted string
+        ...(skillsString && { skills: skillsString }),
         ...(formData.facebook && { facebook: formData.facebook }),
         ...(formData.linkedIn && { linkedIn: formData.linkedIn }),
         status: "approved",
       };
 
       let apiPath;
-      if (formData.role === "teacher") {
-        apiPath = "/api/university/teacher";
-      } else if (formData.role === "student") {
-        apiPath = "/api/university/student";
-      } else {
-        throw new Error("Invalid role selected. Please choose a role.");
-      }
+      if (formData.role === "teacher") apiPath = "/api/university/teacher";
+      else if (formData.role === "student") apiPath = "/api/university/student";
+      else throw new Error(t("invalid_role"));
 
       const response = await axios.post(apiPath, bodyData);
 
       if (response.status >= 200 && response.status < 300) {
-        toast.success(
-          response.data.message || "Account created successfully! 🎉"
-        );
-        reset({
-          name: "",
-          email: "",
-          password: "",
-          role: "",
-          university_id: session?.user?.university_id || "",
-          department: "",
-          batch_year: "",
-          major: "",
-          skills: [], // Reset to an empty array
-          facebook: "",
-          linkedIn: "",
-        });
+        toast.success(t("success"));
+        reset();
       } else {
-        toast.error(
-          response.data.message || "Something went wrong during creation."
-        );
+        toast.error(t("creation_fail"));
       }
     } catch (err) {
-      console.error("Submission error:", err);
-      console.log("Submitting skills:", formData.skills); // This will still log the array before conversion
-
-      if (axios.isAxiosError(err)) {
-        if (err.response) {
-          console.error("Server response error:", err.response.data);
-          console.error("Status:", err.response.status);
-          console.error("Headers:", err.response.headers);
-
-          if (err.response.data && err.response.data.message) {
-            toast.error(err.response.data.message);
-          } else if (err.response.data && err.response.data.errors) {
-            err.response.data.errors.forEach((errorMsg) =>
-              toast.error(errorMsg)
-            );
-          } else {
-            toast.error(`Server Error: ${err.response.status}`);
-          }
-        } else if (err.request) {
-          console.error("No response received:", err.request);
-          toast.error("No response from server. Network issue?");
-        } else {
-          console.error("Axios request setup error:", err.message);
-          toast.error(`Request Error: ${err.message}`);
-        }
-      } else {
-        toast.error(err.message || "An unexpected error occurred.");
-      }
+      toast.error(err.message || t("unexpected_error"));
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleCancel = () => {
-    reset({
-      name: "",
-      email: "",
-      password: "",
-      role: "",
-      university_id: session?.user?.university_id || "",
-      department: "",
-      batch_year: "",
-      major: "",
-      skills: [], // Reset to an empty array
-      facebook: "",
-      linkedIn: "",
-    });
-    toast("Form has been reset.");
+    reset();
+    toast(t("form_reset"));
   };
 
   if (status === "loading") {
-    return <Typography>Loading session...</Typography>;
+    return <Typography>{t("loading_session")}</Typography>;
   }
 
   if (status === "unauthenticated" || session?.user?.role !== "university") {
     return (
       <Typography color="error" variant="h6" sx={{ p: 3 }}>
-        You are not authorized to access this page. Please log in as a
-        university user.
+        {t("not_authorized")}
       </Typography>
     );
   }
 
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "#ffff", p: 3 }}>
+    <Box sx={{ minHeight: "100vh", backgroundColor: "#fff", p: 3 }}>
       <Typography variant="h5" mb={2}>
-        Create Teacher/Student Account
+        {t("title")}
       </Typography>
       <Paper sx={{ p: 3, borderRadius: 2 }}>
         <Box component="form" sx={{ p: 2 }} onSubmit={handleSubmit(onSubmit)}>
           <Box display="flex" gap={2} mb={2}>
             <TextField
-              label="Name"
+              label={t("name")}
               fullWidth
               {...register("name")}
               error={!!errors.name}
               helperText={errors.name?.message}
             />
             <TextField
-              label="Email"
+              label={t("email")}
               fullWidth
               {...register("email")}
               error={!!errors.email}
@@ -298,19 +232,18 @@ export default function UniversityCreateAccount() {
             />
           </Box>
 
-          <Box display="flex" mb={2}>
-            <TextField
-              label="Password"
-              type="password"
-              fullWidth
-              {...register("password")}
-              error={!!errors.password}
-              helperText={errors.password?.message}
-            />
-          </Box>
+          <TextField
+            label={t("password")}
+            type="password"
+            fullWidth
+            sx={{ mb: 2 }}
+            {...register("password")}
+            error={!!errors.password}
+            helperText={errors.password?.message}
+          />
 
           <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.role}>
-            <InputLabel id="role-label">Role</InputLabel>
+            <InputLabel id="role-label">{t("role")}</InputLabel>
             <Controller
               name="role"
               control={control}
@@ -318,12 +251,12 @@ export default function UniversityCreateAccount() {
                 <Select
                   {...field}
                   labelId="role-label"
-                  label="Role"
+                  label={t("role")}
                   value={field.value || ""}
                 >
                   {ROLES.map((role, index) => (
                     <MenuItem key={index} value={role.value}>
-                      {role.label}
+                      {t(role.value)}
                     </MenuItem>
                   ))}
                 </Select>
@@ -333,13 +266,11 @@ export default function UniversityCreateAccount() {
           </FormControl>
 
           <TextField
-            label="University Name"
+            label={t("universityName")}
             fullWidth
             sx={{ mb: 2 }}
             value={universityName}
-            InputProps={{
-              readOnly: true,
-            }}
+            InputProps={{ readOnly: true }}
             error={!!errors.university_id}
             helperText={errors.university_id?.message}
           />
@@ -347,23 +278,20 @@ export default function UniversityCreateAccount() {
           {selectedRole === "teacher" && (
             <TextField
               select
-              label="Department"
+              label={t("department")}
               fullWidth
               sx={{ mb: 2 }}
               {...register("department")}
               error={!!errors.department}
               helperText={errors.department?.message}
             >
-              {[
-                "Computer Science",
-                "Information Technology",
-                "Business",
-                "Engineering",
-              ].map((dept) => (
-                <MenuItem key={dept} value={dept}>
-                  {dept}
-                </MenuItem>
-              ))}
+              {["Computer Science", "Information Technology", "Business", "Engineering"].map(
+                (dept) => (
+                  <MenuItem key={dept} value={dept}>
+                    {dept}
+                  </MenuItem>
+                )
+              )}
             </TextField>
           )}
 
@@ -371,7 +299,7 @@ export default function UniversityCreateAccount() {
             <>
               <Box display="flex" gap={2} mb={2}>
                 <TextField
-                  label="Batch Year"
+                  label={t("batchYear")}
                   fullWidth
                   type="number"
                   {...register("batch_year")}
@@ -379,7 +307,7 @@ export default function UniversityCreateAccount() {
                   helperText={errors.batch_year?.message}
                 />
                 <FormControl fullWidth error={!!errors.major}>
-                  <InputLabel id="major-label">Major</InputLabel>
+                  <InputLabel id="major-label">{t("major")}</InputLabel>
                   <Controller
                     name="major"
                     control={control}
@@ -387,7 +315,7 @@ export default function UniversityCreateAccount() {
                       <Select
                         {...field}
                         labelId="major-label"
-                        label="Major"
+                        label={t("major")}
                         value={field.value || ""}
                       >
                         {MAJORS.map((major, index) => (
@@ -401,57 +329,50 @@ export default function UniversityCreateAccount() {
                   <FormHelperText>{errors.major?.message}</FormHelperText>
                 </FormControl>
               </Box>
-              <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.skills}>
-                <Controller
-                  name="skills"
-                  control={control}
-                  defaultValue={[]} // Ensure default value is an empty array
-                  render={({ field: { onChange, value } }) => (
-                    <Autocomplete
-                      multiple
-                      freeSolo
-                      options={skillOptions}
-                      value={value || []} // Ensure value is an array for Autocomplete
-                      onChange={(_, data) => onChange(data)}
-                      renderTags={(value, getTagProps) =>
-                        value.map((option, index) => (
-                          <Chip
-                            {...getTagProps({ index })}
-                            key={option}
-                            label={option}
-                            sx={{
-                              height: 25,
-                              borderRadius: 1,
-                              border: "1px solid blue",
-                              backgroundColor: "#ebfffa",
-                            }}
-                          />
-                        ))
-                      }
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          label="Skills"
-                          placeholder="Type and press enter..."
-                          error={!!errors.skills}
-                          helperText={errors.skills?.message}
-                        />
-                      )}
-                    />
-                  )}
-                />
-              </FormControl>
 
-              <Box display="flex" gap={2} mb={2}>
+              <Controller
+                name="skills"
+                control={control}
+                defaultValue={[]}
+                render={({ field: { onChange, value } }) => (
+                  <Autocomplete
+                    multiple
+                    freeSolo
+                    options={skillOptions}
+                    value={value || []}
+                    onChange={(_, data) => onChange(data)}
+                    renderTags={(value, getTagProps) =>
+                      value.map((option, index) => (
+                        <Chip
+                          {...getTagProps({ index })}
+                          key={option}
+                          label={option}
+                        />
+                      ))
+                    }
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label={t("skills")}
+                        placeholder={t("skillsPlaceholder")}
+                        error={!!errors.skills}
+                        helperText={errors.skills?.message}
+                      />
+                    )}
+                  />
+                )}
+              />
+
+              <Box display="flex" gap={2} mt={2}>
                 <TextField
-                  label="Facebook URL"
+                  label={t("facebook")}
                   fullWidth
                   {...register("facebook")}
                   error={!!errors.facebook}
                   helperText={errors.facebook?.message}
                 />
                 <TextField
-                  label="LinkedIn URL"
+                  label={t("linkedIn")}
                   fullWidth
                   {...register("linkedIn")}
                   error={!!errors.linkedIn}
@@ -466,9 +387,8 @@ export default function UniversityCreateAccount() {
               variant="contained"
               type="submit"
               disabled={isSubmitting}
-              sx={{ px: 4 }}
             >
-              {isSubmitting ? "Creating..." : "Create Account"}
+              {isSubmitting ? t("creating") : t("create")}
             </Button>
             <Button
               variant="outlined"
@@ -476,9 +396,8 @@ export default function UniversityCreateAccount() {
               color="error"
               onClick={handleCancel}
               disabled={isSubmitting}
-              sx={{ px: 4 }}
             >
-              Cancel
+              {t("cancel")}
             </Button>
           </Stack>
         </Box>

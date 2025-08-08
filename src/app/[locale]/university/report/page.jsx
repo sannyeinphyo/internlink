@@ -14,10 +14,12 @@ import {
   Divider,
 } from "@mui/material";
 import TeacherReportDownload from "@/components/TeacherReportDownload";
+import { useTranslations } from "next-intl";
 
 const statuses = ["", "applied", "accepted", "rejected"];
 
 export default function TeacherReportGenerator() {
+  const t = useTranslations("TeacherReport");
   const [batches, setBatches] = useState([]);
   const [batch, setBatch] = useState("");
   const [status, setStatus] = useState("");
@@ -44,11 +46,11 @@ export default function TeacherReportGenerator() {
 
   const handleGenerate = async () => {
     setLoading(true);
-    setReportData(null); 
+    setReportData(null);
 
     try {
       const filters = {
-        batch_year: batch || undefined, 
+        batch_year: batch || undefined,
         status: status || undefined,
       };
 
@@ -81,11 +83,12 @@ export default function TeacherReportGenerator() {
     >
       <CardContent>
         <Typography
-          variant="h4"
-          className="text-center mb-2 font-semibold text-gray-900 tracking-wide"
-          sx={{ fontFamily: "'Poppins', sans-serif" }}
+          variant="h5"
+        
+          className="text-center font-semibold text-gray-900 tracking-wide"
+          sx={{ fontFamily: "'Poppins', sans-serif", marginBottom:4}}
         >
-          Internship Report Generator
+          {t("title")}
         </Typography>
 
         <Typography
@@ -94,9 +97,7 @@ export default function TeacherReportGenerator() {
           className="text-center text-gray-600 max-w-[420px] mx-auto"
           sx={{ lineHeight: 1.6 }}
         >
-          Generate detailed PDF reports for internship applications for{" "}
-          <strong>{universityName || "your university"}</strong> based on
-          filters like batch year and application status.
+          {t("description", { university: universityName || t("yourUniversity") })}
         </Typography>
 
         <Divider sx={{ my: 4 }} />
@@ -107,25 +108,25 @@ export default function TeacherReportGenerator() {
           className="font-medium text-gray-800 tracking-wide"
           sx={{ letterSpacing: "0.02em" }}
         >
-          Select Filters
+          {t("filters")}
         </Typography>
 
         <Stack spacing={4}>
           <TextField
             select
-            label="Batch Year"
+            label={t("batchLabel")}
             value={batch}
             onChange={(e) => setBatch(e.target.value)}
             fullWidth
             size="medium"
-            helperText="Choose a batch year or all batches"
+            helperText={t("batchHelper")}
             sx={{
               "& .MuiInputLabel-root": { fontWeight: 600, mb: 1 },
               "& .MuiSelect-select": { paddingY: 1.5, fontSize: 15 },
               "& .MuiFormHelperText-root": { mt: 1.5 },
             }}
           >
-            <MenuItem value="">All Batches</MenuItem>
+            <MenuItem value="">{t("allBatches")}</MenuItem>
             {batches.map((b) => (
               <MenuItem key={b} value={b}>
                 {b}
@@ -135,22 +136,22 @@ export default function TeacherReportGenerator() {
 
           <TextField
             select
-            label="Application Status"
+            label={t("statusLabel")}
             value={status}
             onChange={(e) => setStatus(e.target.value)}
             fullWidth
             size="medium"
-            helperText="Filter applications by status"
+            helperText={t("statusHelper")}
             sx={{
               "& .MuiInputLabel-root": { fontWeight: 600, mb: 1 },
               "& .MuiSelect-select": { paddingY: 1.5, fontSize: 15 },
               "& .MuiFormHelperText-root": { mt: 1.5 },
             }}
           >
-            <MenuItem value="">All Statuses</MenuItem>
+            <MenuItem value="">{t("allStatuses")}</MenuItem>
             {statuses.map((s) => (
               <MenuItem key={s} value={s}>
-                {s || "All"}
+                {s || t("all")}
               </MenuItem>
             ))}
           </TextField>
@@ -169,14 +170,10 @@ export default function TeacherReportGenerator() {
               fontSize: "1.1rem",
               py: 1.8,
               boxShadow: "0 5px 16px rgba(59, 130, 246, 0.4)",
-              mt: 2, 
+              mt: 2,
             }}
           >
-            {loading ? (
-              <CircularProgress size={24} color="inherit" />
-            ) : (
-              "Generate Report"
-            )}
+            {loading ? <CircularProgress size={24} color="inherit" /> : t("generate")}
           </Button>
 
           {!loading && reportData && (
@@ -185,16 +182,12 @@ export default function TeacherReportGenerator() {
                 <TeacherReportDownload
                   reportData={reportData}
                   university={generatedUniversity}
-                  batch={generatedBatch ? `Batch ${generatedBatch}` : "All Batches"}
+                  batch={generatedBatch ? `${t("batchPrefix")} ${generatedBatch}` : t("allBatches")}
                   logo={"http://localhost:3000/uni/ucsh.jpg"}
                 />
               ) : (
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ textAlign: "center" }}
-                >
-                  No internship records found for the selected filters.
+                <Typography variant="body2" color="text.secondary" sx={{ textAlign: "center" }}>
+                  {t("noRecords")}
                 </Typography>
               )}
             </Stack>
@@ -207,7 +200,7 @@ export default function TeacherReportGenerator() {
           className="block mt-8 text-center"
           sx={{ fontStyle: "italic" }}
         >
-          * Filters apply only to your university&apos;s applications.
+          {t("note")}
         </Typography>
       </CardContent>
     </Card>

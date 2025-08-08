@@ -10,6 +10,7 @@ import {
 import axios from "axios";
 import { useState, useEffect } from "react";
 import ImageUploadCircle from "@/components/ImageUploadCircle";
+import toast from "react-hot-toast";
 
 export default function CompanyProfile() {
   const [loading, setLoading] = useState(true);
@@ -60,7 +61,7 @@ export default function CompanyProfile() {
     setError("");
     try {
       await axios.put(`/api/company/profile`, { ...profile, image });
-      alert("Profile updated successfully!");
+      toast.success("Profile saved successfully!");
     } catch (error) {
       console.error("Failed to save profile", error);
       setError("Failed to save profile.");

@@ -162,10 +162,9 @@ export default function TeacherSideBar({ children }) {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" noWrap color="#ea9635ff" fontWeight={"bold"}>
-              Intern
+              UniJob
               <span
                 style={{
-                  fontStyle: "italic",
                   fontWeight: "bold",
                   color: "#8e38ffff",
                 }}

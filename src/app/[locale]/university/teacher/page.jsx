@@ -36,9 +36,11 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function UniversityList() {
+  const t = useTranslations("teacher_list");
   const { locale } = useParams();
   const { data: session, status: sessionStatus } = useSession();
 
@@ -51,15 +53,14 @@ export default function UniversityList() {
 
   const teacherPerPage = 5;
 
-  // Fetch teacher list
   const getTeacherList = useCallback(async () => {
     if (
       sessionStatus === "unauthenticated" ||
       session?.user?.role !== "university" ||
       !session?.user?.id
     ) {
-      setError("You are not authorized to view this list.");
-      toast.error("Unauthorized access or invalid session.");
+      setError(t("not_authorized"));
+      toast.error(t("not_authorized"));
       setTeachers([]);
       setLoading(false);
       return;
@@ -72,29 +73,28 @@ export default function UniversityList() {
       const { data } = await axios.get("/api/university/teacher");
       setTeachers(Array.isArray(data.data) ? data.data : []);
     } catch (err) {
-      const msg =
-        err.response?.data?.message || "Failed to load teachers. Please try again.";
+      const msg = err.response?.data?.message || t("fetch_failed");
       toast.error(msg);
       setError(msg);
       setTeachers([]);
     } finally {
       setLoading(false);
     }
-  }, [session, sessionStatus]);
+  }, [session, sessionStatus, t]);
 
   useEffect(() => {
     if (sessionStatus !== "loading") getTeacherList();
   }, [sessionStatus, getTeacherList]);
 
-  // Delete handler with toast confirmation
   const handleDeleteTeacher = (teacherId) => {
     toast.warn(
       ({ closeToast }) => (
         <Box>
-          <Typography>Are you sure you want to delete this Teacher?</Typography>
+          <Typography>{t("confirm_delete")}</Typography>
+          <Typography>{t("irreversible")}</Typography>
           <Stack direction="row" spacing={2} mt={2} justifyContent="flex-end">
             <Button onClick={closeToast} variant="outlined" color="inherit">
-              Cancel
+              {t("cancel")}
             </Button>
             <Button
               variant="contained"
@@ -105,17 +105,14 @@ export default function UniversityList() {
                   const response = await axios.delete(
                     `/api/university/teacher/${teacherId}/delete`
                   );
-                  toast.success(response.data.message || "Teacher deleted.");
+                  toast.success(response.data.message || t("delete_success"));
                   getTeacherList();
                 } catch (error) {
-                  toast.error(
-                    "Delete failed. " +
-                      (error.response?.data?.message || error.message)
-                  );
+                  toast.error(t("delete_failed"));
                 }
               }}
             >
-              Delete
+              {t("delete")}
             </Button>
           </Stack>
         </Box>
@@ -131,7 +128,6 @@ export default function UniversityList() {
     );
   };
 
-  // Filter + Paginate
   const filteredTeachers = teachers.filter((teacher) => {
     const q = searchQuery.toLowerCase();
     const matchesSearch =
@@ -153,17 +149,15 @@ export default function UniversityList() {
   const totalPages = Math.ceil(filteredTeachers.length / teacherPerPage);
   const uniqueStatuses = [...new Set(teachers.map((t) => t.status).filter(Boolean))];
 
-  // Loading UI
   if (sessionStatus === "loading" || loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
         <CircularProgress />
-        <Typography ml={2}>Loading teachers...</Typography>
+        <Typography ml={2}>{t("loading")}</Typography>
       </Box>
     );
   }
 
-  // Error or unauthorized
   if (error) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
@@ -179,22 +173,21 @@ export default function UniversityList() {
   ) {
     return (
       <Typography color="error" sx={{ p: 3 }}>
-        You are not authorized to view the teacher list.
+        {t("not_authorized")}
       </Typography>
     );
   }
 
-  // UI Render
   return (
     <Box sx={{ p: 4 }}>
       <ToastContainer />
       <Box display="flex" justifyContent="space-between" flexWrap="wrap" mb={2} gap={2}>
-        <Typography variant="h5">Teachers</Typography>
+        <Typography variant="h5">{t("title")}</Typography>
 
         <Stack direction="row" spacing={2} flexWrap="wrap">
           <TextField
             variant="outlined"
-            placeholder="Search"
+            placeholder={t("search_placeholder")}
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
@@ -210,16 +203,16 @@ export default function UniversityList() {
             }}
           />
           <FormControl sx={{ minWidth: 150 }}>
-            <InputLabel>Status</InputLabel>
+            <InputLabel>{t("status")}</InputLabel>
             <Select
               value={filterStatus}
-              label="Status"
+              label={t("status")}
               onChange={(e) => {
                 setFilterStatus(e.target.value);
                 setCurrentPage(1);
               }}
             >
-              <MenuItem value="">All</MenuItem>
+              <MenuItem value="">{t("all")}</MenuItem>
               {uniqueStatuses.map((status) => (
                 <MenuItem key={status} value={status}>
                   {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -234,12 +227,12 @@ export default function UniversityList() {
         <Table>
           <TableHead sx={{ backgroundColor: "#f0f4fc" }}>
             <TableRow>
-              <TableCell>No.</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Department</TableCell>
-              <TableCell align="center">Action</TableCell>
+              <TableCell>{t("No")}</TableCell>
+              <TableCell>{t("name")}</TableCell>
+              <TableCell>{t("email")}</TableCell>
+              <TableCell>{t("status")}</TableCell>
+              <TableCell>{t("department")}</TableCell>
+              <TableCell align="center">{t("action")}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -287,7 +280,7 @@ export default function UniversityList() {
             ) : (
               <TableRow>
                 <TableCell colSpan={7} align="center">
-                  No teachers found.
+                  {t("no_teachers")}
                 </TableCell>
               </TableRow>
             )}
@@ -295,7 +288,6 @@ export default function UniversityList() {
         </Table>
       </TableContainer>
 
-      {/* Pagination */}
       <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
         <Button
           variant="outlined"
@@ -305,7 +297,7 @@ export default function UniversityList() {
           <KeyboardArrowLeftIcon />
         </Button>
         <Box display="flex" alignItems="center">
-          Page {currentPage} of {totalPages}
+          {t("page")} {currentPage} of {totalPages}
         </Box>
         <Button
           variant="outlined"

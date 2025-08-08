@@ -17,7 +17,6 @@ export async function GET() {
         university: true,
       },
     });
-   console.log(student)
     return NextResponse.json({
       message: "Getting student information",
       student,

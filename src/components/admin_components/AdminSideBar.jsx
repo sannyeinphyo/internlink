@@ -139,7 +139,6 @@ export default function AdminSideBar({ children }) {
               UniJob
               <span
                 style={{
-                  fontStyle: "italic",
                   fontWeight: "bold",
                   color: "#8e38ffff",
                 }}

@@ -33,8 +33,10 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export default function UniversityStudentList() {
+  const t = useTranslations("student_list");
   const { locale } = useParams();
   const { data: session, status: sessionStatus } = useSession();
 
@@ -55,9 +57,9 @@ export default function UniversityStudentList() {
       session?.user?.role !== "university" ||
       !session?.user?.id
     ) {
-      setError("You are not authorized to view this list.");
+      setError(t("fetch_failed"));
       setLoading(false);
-      toast.error("You are not authorized to view this student list.");
+      toast.error(t("not_authorized"));
       return;
     }
 
@@ -96,10 +98,11 @@ export default function UniversityStudentList() {
       ({ closeToast }) => (
         <Box>
           <Typography variant="body1">
-            Are you sure you want to delete this student and their user account?
+            {t("confirm_delete")}
             <br />
-            This action is irreversible.
+            {t("irreversible")}
           </Typography>
+
           <Stack direction="row" spacing={2} mt={2} justifyContent="flex-end">
             <Button
               variant="outlined"
@@ -108,13 +111,13 @@ export default function UniversityStudentList() {
                 closeToast();
               }}
             >
-              Cancel
+              {t("cancel")}
             </Button>
             <Button
               variant="contained"
               color="error"
               onClick={async () => {
-                closeToast(); // Close the confirmation toast immediately
+                closeToast();
                 try {
                   const response = await axios.delete(
                     `/api/university/student/${studentId}/delete`
@@ -122,7 +125,7 @@ export default function UniversityStudentList() {
                   toast.success(
                     response.data.message || "Student deleted successfully!"
                   );
-                  getStudentList(); // Refresh the list
+                  getStudentList();
                 } catch (error) {
                   console.error("Error deleting student:", error);
                   toast.error(
@@ -132,7 +135,7 @@ export default function UniversityStudentList() {
                 }
               }}
             >
-              Delete
+             {t("delete")}
             </Button>
           </Stack>
         </Box>
@@ -241,11 +244,11 @@ export default function UniversityStudentList() {
         mb={2}
         gap={2}
       >
-        <Typography variant="h5">University Students</Typography>
+        <Typography variant="h5">{t("title")}</Typography>
         <Stack direction="row" spacing={2} flexWrap="wrap">
           <TextField
             variant="outlined"
-            placeholder="Search by name, email, major, etc."
+            placeholder={t("search_placeholder")}
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
@@ -267,7 +270,7 @@ export default function UniversityStudentList() {
               labelId="status-filter-label"
               id="status-filter"
               value={filterStatus}
-              label="Status"
+              label={t("status")}
               onChange={(e) => {
                 setFilterStatus(e.target.value);
                 setCurrentPage(1);
@@ -288,7 +291,7 @@ export default function UniversityStudentList() {
               labelId="major-filter-label"
               id="major-filter"
               value={filterMajor}
-              label="Major"
+              label={t("major")}
               onChange={(e) => {
                 setFilterMajor(e.target.value);
                 setCurrentPage(1);
@@ -307,17 +310,18 @@ export default function UniversityStudentList() {
 
       <TableContainer component={Paper}>
         <Table>
-          <TableHead sx={{ backgroundColor: "#f0f4fc" }}>
+          <TableHead>
             <TableRow>
-              <TableCell>No.</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Account Status</TableCell>
-              <TableCell>Batch Year</TableCell>
-              <TableCell>Major</TableCell>
-              <TableCell align="center">Action</TableCell>
+              <TableCell>{t("No")}.</TableCell>
+              <TableCell>{t("name")}</TableCell>
+              <TableCell>{t("email")}</TableCell>
+              <TableCell>{t("account_status")}</TableCell>
+              <TableCell>{t("batch_year")}</TableCell>
+              <TableCell>{t("major")}</TableCell>
+              <TableCell align="center">{t("action")}</TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
             {currentStudents.length > 0 ? (
               currentStudents.map((student, index) => (
@@ -360,7 +364,6 @@ export default function UniversityStudentList() {
                         <VisibilityIcon sx={{ color: "blue" }} />
                       </IconButton>
                     </Link>
-                    {/* Delete button for University staff */}
                     <IconButton onClick={() => handleDeleteStudent(student.id)}>
                       <DeleteIcon sx={{ color: "red" }} />
                     </IconButton>

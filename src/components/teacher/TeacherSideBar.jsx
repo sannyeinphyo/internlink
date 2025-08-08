@@ -68,7 +68,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
   padding: theme.spacing(0, 1),
   ...theme.mixins.toolbar,
-  
 }));
 
 const AppBar = styled(MuiAppBar, {
@@ -89,7 +88,7 @@ const Drawer = styled(MuiDrawer, {
   flexShrink: 0,
   whiteSpace: "nowrap",
   boxSizing: "border-box",
-  color:"black",
+  color: "black",
   ...(open && {
     ...openedMixin(theme),
     "& .MuiDrawer-paper": openedMixin(theme),
@@ -97,7 +96,7 @@ const Drawer = styled(MuiDrawer, {
   ...(!open && {
     ...closedMixin(theme),
     "& .MuiDrawer-paper": closedMixin(theme),
-      color:"black"
+    color: "black",
   }),
 }));
 
@@ -107,12 +106,31 @@ export default function TeacherSideBar({ children }) {
   const [open, setOpen] = React.useState(true);
   const pathname = usePathname();
   const navItems = [
-    { text: "Dashboard", path: `/${locale}/teacher/dashboard`, icon: <DashboardIcon /> },
-    { text: "Students", path: `/${locale}/teacher/view_student`, icon: <PostAddIcon /> },
-    { text: "Generate Report", path: `/${locale}/teacher/report`, icon: <WorkIcon /> },
-    { text: "Applications", path: `/${locale}/teacher/student_applications`, icon: <DescriptionIcon /> },
-    { text: "Settings", path: `/${locale}/teacher/settings`, icon: <SettingsIcon /> },
-
+    {
+      text: "Dashboard",
+      path: `/${locale}/teacher/dashboard`,
+      icon: <DashboardIcon />,
+    },
+    {
+      text: "Students",
+      path: `/${locale}/teacher/view_student`,
+      icon: <PostAddIcon />,
+    },
+    {
+      text: "Generate Report",
+      path: `/${locale}/teacher/report`,
+      icon: <WorkIcon />,
+    },
+    {
+      text: "Applications",
+      path: `/${locale}/teacher/student_applications`,
+      icon: <DescriptionIcon />,
+    },
+    {
+      text: "Settings",
+      path: `/${locale}/teacher/settings`,
+      icon: <SettingsIcon />,
+    },
   ];
 
   return (
@@ -129,9 +147,14 @@ export default function TeacherSideBar({ children }) {
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" noWrap color="#ea9635ff" fontWeight={"bold"}>
-              Intern
-              <span style={{ fontStyle: "italic", fontWeight:"bold", color: "#8e38ffff" }}>
+            <Typography
+              variant="h6"
+              noWrap
+              color="#ea9635ff"
+              fontWeight={"bold"}
+            >
+              UniJob
+              <span style={{ fontWeight: "bold", color: "#8e38ffff" }}>
                 Link
               </span>
             </Typography>

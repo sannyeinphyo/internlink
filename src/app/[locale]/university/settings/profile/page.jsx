@@ -14,7 +14,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import ImageUploadCircle from "@/components/ImageUploadCircle";
 import { useRouter } from "next/navigation";
-
+import { useTranslations } from "next-intl";
 export default function UniversityProfile() {
   const router = useRouter();
 
@@ -30,6 +30,7 @@ export default function UniversityProfile() {
   const [image, setImage] = useState(null);
   const [initialImage, setInitialImage] = useState(null);
   const [error, setError] = useState("");
+  const t = useTranslations("uni-profile")
 
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -113,14 +114,13 @@ export default function UniversityProfile() {
 
   return (
     <Box display={"flex"} justifyContent={"center"} p={6}>
-      <Box boxShadow={3} width={400} p={3} borderRadius={2}>
-        {/* Back Button */}
+      <Box boxShadow={3} width={900} p={3} borderRadius={2}>
         <Button variant="outlined" sx={{ mb: 2 }} onClick={() => router.back()}>
-          Back
+         {t("back")}
         </Button>
 
         <Typography fontSize={24} fontWeight={700} mb={3}>
-          University Profile
+          {t("title")}
         </Typography>
 
         <Box display="flex" justifyContent="center" mb={2}>
@@ -130,6 +130,7 @@ export default function UniversityProfile() {
             setImage={setImage}
             size={120}
             showRemove={true}
+            borderRadius="0"
           />
         </Box>
         <TextField
@@ -182,7 +183,7 @@ export default function UniversityProfile() {
             disabled={saving}
             fullWidth
           >
-            {saving ? "Saving..." : "Save"}
+            {saving ? "Saving..." : t("save")}
           </Button>
           <Button
             variant="outlined"
@@ -191,7 +192,7 @@ export default function UniversityProfile() {
             disabled={saving}
             fullWidth
           >
-            Cancel
+            {t("cancel")}
           </Button>
         </Stack>
 

@@ -58,7 +58,6 @@ export default function ImageUploadCircle({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            borderRadius:"50%"
           }}
         >
           {image ? (
