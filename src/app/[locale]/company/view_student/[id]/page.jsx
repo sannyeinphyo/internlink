@@ -14,7 +14,6 @@ import {
   Button,
 } from "@mui/material";
 import { GitHub, LinkedIn } from "@mui/icons-material";
-import { Edit } from "lucide-react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";

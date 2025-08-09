@@ -33,7 +33,6 @@ export async function POST(req) {
 
   try {
     const body = await req.json();
-    // This line will now correctly validate 'skills' as a string
     await studentSchema.validate(body, { abortEarly: false });
 
     const {
@@ -44,9 +43,10 @@ export async function POST(req) {
       university_id: submittedUniversityId,
       batch_year,
       major,
-      skills, // 'skills' is now a string from the frontend
+      skills,
       facebook,
       linkedIn,
+      student_id_image, // Assuming this is optional and handled in the schema
     } = body;
 
     const userId = session.user.id;
@@ -121,6 +121,7 @@ export async function POST(req) {
         skills: Array.isArray(skills) ? skills.join(", ") : skills || null,
         facebook: facebook || null,
         linkedIn: linkedIn || null,
+        student_id_image: student_id_image,
       },
     });
 

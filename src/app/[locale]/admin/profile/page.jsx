@@ -13,12 +13,15 @@ import {
   CardActions,
   CircularProgress,
 } from "@mui/material";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 
 export default function AdminProfilePage() {
   const [admin, setAdmin] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -91,12 +94,38 @@ export default function AdminProfilePage() {
               src={preview}
               alt="Admin Avatar"
               sx={{ width: 80, height: 80 }}
+              onClick = {() => setOpen(true)}
             />
             {isEditing && (
               <Button component="label" variant="outlined" size="small">
                 Upload Photo
-                <input hidden accept="image/*" type="file" onChange={handleImageChange} />
+                <input
+                  hidden
+                  accept="image/*"
+                  type="file"
+                  onChange={handleImageChange}
+                />
               </Button>
+            )}
+            {open && (
+              <Lightbox
+                open={open}
+                close={() => setOpen(false)}
+                slides={[{ src: preview }]}
+                render={{
+                  slide: ({ slide }) => (
+                    <img
+                      src={slide.src}
+                      alt="Admin Avatar"
+                      style={{
+                        width: "50%",
+                        height: "auto",
+                        userSelect: "none",
+                      }}
+                    />
+                  ),
+                }}
+              />
             )}
           </Stack>
 
@@ -123,7 +152,12 @@ export default function AdminProfilePage() {
         <CardActions sx={{ px: 2, pb: 2 }}>
           {isEditing ? (
             <>
-              <Button variant="contained" color="primary" onClick={handleSave} sx={{ mr: 1 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSave}
+                sx={{ mr: 1 }}
+              >
                 Save
               </Button>
               <Button variant="outlined" onClick={() => setIsEditing(false)}>

@@ -17,8 +17,20 @@ import {
   Alert,
   Button,
   Snackbar,
+  Modal,
+  IconButton,
 } from "@mui/material";
-import { Business, School, Person, ArrowBack } from "@mui/icons-material";
+import {
+  Business,
+  School,
+  Person,
+  ArrowBack,
+  Close,
+} from "@mui/icons-material";
+import Image from "next/image";
+import { useParams } from "next/navigation";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 
 const getStatusChipColor = (status) => {
   switch (status) {
@@ -32,7 +44,6 @@ const getStatusChipColor = (status) => {
       return "default";
   }
 };
-import { useParams } from "next/navigation";
 
 export default function UserDetailsPage() {
   const { id: userId } = useParams();
@@ -42,8 +53,12 @@ export default function UserDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(false);
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
-
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const [open, setOpen] = useState(false);
   const baseUrl =
     typeof window !== "undefined"
       ? window.location.origin
@@ -56,10 +71,16 @@ export default function UserDetailsPage() {
       setLoading(true);
       setError(null);
       try {
-        const { data } = await axios.get(`${baseUrl}/api/admin/reviewaccount/${userId}`);
+        const { data } = await axios.get(
+          `${baseUrl}/api/admin/reviewaccount/${userId}`
+        );
         setUser(data);
       } catch (err) {
-        setError(err.response?.data?.error || err.message || "An unknown error occurred");
+        setError(
+          err.response?.data?.error ||
+            err.message ||
+            "An unknown error occurred"
+        );
       } finally {
         setLoading(false);
       }
@@ -73,7 +94,9 @@ export default function UserDetailsPage() {
     setSnackbar({ open: false, message: "", severity: "success" });
 
     try {
-      await axios.patch(`${baseUrl}/api/admin/reviewaccount/${userId}`, { status: newStatus });
+      await axios.patch(`${baseUrl}/api/admin/reviewaccount/${userId}`, {
+        status: newStatus,
+      });
       setUser((prev) => ({
         ...prev,
         status: newStatus,
@@ -81,13 +104,18 @@ export default function UserDetailsPage() {
       }));
       setSnackbar({
         open: true,
-        message: `Account successfully ${newStatus === "approved" ? "approved" : "declined"}!`,
+        message: `Account successfully ${
+          newStatus === "approved" ? "approved" : "declined"
+        }!`,
         severity: "success",
       });
     } catch (err) {
       setSnackbar({
         open: true,
-        message: err.response?.data?.error || err.message || "An unknown error occurred",
+        message:
+          err.response?.data?.error ||
+          err.message ||
+          "An unknown error occurred",
         severity: "error",
       });
     } finally {
@@ -103,7 +131,12 @@ export default function UserDetailsPage() {
   if (loading)
     return (
       <Box
-        sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "80vh" }}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "80vh",
+        }}
       >
         <CircularProgress />
         <Typography variant="h6" ml={2}>
@@ -128,7 +161,9 @@ export default function UserDetailsPage() {
         <Typography variant="h5" color="error">
           User not found.
         </Typography>
-        <Typography>The requested user does not exist or could not be loaded.</Typography>
+        <Typography>
+          The requested user does not exist or could not be loaded.
+        </Typography>
       </Box>
     );
 
@@ -137,8 +172,20 @@ export default function UserDetailsPage() {
 
   return (
     <Box sx={{ maxWidth: 800, mx: "auto", p: 3 }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-        <Button variant="outlined" startIcon={<ArrowBack />} onClick={() => router.back()} disabled={processing}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
+        <Button
+          variant="outlined"
+          startIcon={<ArrowBack />}
+          onClick={() => router.back()}
+          disabled={processing}
+        >
           Back
         </Button>
         {isPending && (
@@ -150,7 +197,11 @@ export default function UserDetailsPage() {
               onClick={() => handleStatusUpdate("approved")}
               disabled={processing}
             >
-              {processing ? <CircularProgress size={24} color="inherit" /> : "Approve"}
+              {processing ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Approve"
+              )}
             </Button>
             <Button
               variant="outlined"
@@ -158,13 +209,19 @@ export default function UserDetailsPage() {
               onClick={() => handleStatusUpdate("declined")}
               disabled={processing}
             >
-              {processing ? <CircularProgress size={24} color="inherit" /> : "Reject"}
+              {processing ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Reject"
+              )}
             </Button>
           </Box>
         )}
         {!isPending && (
           <Chip
-            label={`Account ${status.charAt(0).toUpperCase() + status.slice(1)}`}
+            label={`Account ${
+              status.charAt(0).toUpperCase() + status.slice(1)
+            }`}
             color={getStatusChipColor(status)}
             variant="filled"
             sx={{ ml: "auto" }}
@@ -174,8 +231,12 @@ export default function UserDetailsPage() {
 
       <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
         <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-          <Avatar src={image || ""} sx={{ width: 80, height: 80, mr: 3, bgcolor: "primary.main" }}>
-            {!image && (name ? name[0].toUpperCase() : <Person sx={{ fontSize: 40 }} />)}
+          <Avatar
+            src={image || ""}
+            sx={{ width: 80, height: 80, mr: 3, bgcolor: "primary.main" }}
+          >
+            {!image &&
+              (name ? name[0].toUpperCase() : <Person sx={{ fontSize: 40 }} />)}
           </Avatar>
           <Box>
             <Typography variant="h4" fontWeight={700}>
@@ -195,7 +256,9 @@ export default function UserDetailsPage() {
             variant="outlined"
           />
           <Chip
-            label={`Status: ${status.charAt(0).toUpperCase() + status.slice(1)}`}
+            label={`Status: ${
+              status.charAt(0).toUpperCase() + status.slice(1)
+            }`}
             color={getStatusChipColor(status)}
             variant="filled"
           />
@@ -210,20 +273,33 @@ export default function UserDetailsPage() {
             </Typography>
             <List disablePadding>
               <ListItem disableGutters>
-                <ListItemText primary="Company Name" secondary={company.name || "N/A"} />
+                <ListItemText
+                  primary="Company Name"
+                  secondary={company.name || "N/A"}
+                />
               </ListItem>
               <ListItem disableGutters>
-                <ListItemText primary="Location" secondary={company.location || "N/A"} />
+                <ListItemText
+                  primary="Location"
+                  secondary={company.location || "N/A"}
+                />
               </ListItem>
               <ListItem disableGutters>
-                <ListItemText primary="Contact Info" secondary={company.contact_info || "N/A"} />
+                <ListItemText
+                  primary="Contact Info"
+                  secondary={company.contact_info || "N/A"}
+                />
               </ListItem>
               <ListItem disableGutters>
                 <ListItemText
                   primary="Website"
                   secondary={
                     company.website ? (
-                      <a href={company.website} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={company.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         {company.website}
                       </a>
                     ) : (
@@ -233,7 +309,10 @@ export default function UserDetailsPage() {
                 />
               </ListItem>
               <ListItem disableGutters>
-                <ListItemText primary="Description" secondary={company.description || "N/A"} />
+                <ListItemText
+                  primary="Description"
+                  secondary={company.description || "N/A"}
+                />
               </ListItem>
             </List>
           </Box>
@@ -246,19 +325,30 @@ export default function UserDetailsPage() {
             </Typography>
             <List disablePadding>
               <ListItem disableGutters>
-                <ListItemText primary="University" secondary={student.university?.name || "N/A"} />
+                <ListItemText
+                  primary="University"
+                  secondary={student.university?.name || "N/A"}
+                />
               </ListItem>
               <ListItem disableGutters>
-                <ListItemText primary="Major" secondary={student.major || "N/A"} />
+                <ListItemText
+                  primary="Major"
+                  secondary={student.major || "N/A"}
+                />
               </ListItem>
               <ListItem disableGutters>
-                <ListItemText primary="Batch Year" secondary={student.batch_year || "N/A"} />
+                <ListItemText
+                  primary="Batch Year"
+                  secondary={student.batch_year || "N/A"}
+                />
               </ListItem>
               <ListItem disableGutters>
                 <ListItemText
                   primary="Skills"
                   secondary={
-                    student.skills && typeof student.skills === "string" && student.skills.length > 0
+                    student.skills &&
+                    typeof student.skills === "string" &&
+                    student.skills.length > 0
                       ? student.skills
                           .split(",")
                           .map((skill) => skill.trim())
@@ -273,7 +363,11 @@ export default function UserDetailsPage() {
                   primary="LinkedIn"
                   secondary={
                     student.linkedIn ? (
-                      <a href={student.linkedIn} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={student.linkedIn}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         {student.linkedIn}
                       </a>
                     ) : (
@@ -287,9 +381,56 @@ export default function UserDetailsPage() {
                   primary="GitHub"
                   secondary={
                     student.Github ? (
-                      <a href={student.Github} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={student.Github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         {student.Github}
                       </a>
+                    ) : (
+                      "N/A"
+                    )
+                  }
+                />
+              </ListItem>
+              <ListItem disableGutters>
+                <ListItemText
+                  primary="Student ID Card"
+                  secondary={
+                    student.student_id_image ? (
+                      <Box>
+                        <Image
+                          src={student.student_id_image}
+                          alt="Student ID Card"
+                          width={200}
+                          height={100}
+                          style={{ borderRadius: "8px", cursor: "pointer" }}
+                          onClick={() => setOpen(true)}
+                        />
+                        <Lightbox
+                          open={open}
+                          close={() => setOpen(false)}
+                          slides={[{ src: student.student_id_image }]}
+                          render={{
+                            closeButton: (props) => (
+                              <IconButton
+                                {...props}
+                                sx={{
+                                  position: "absolute",
+                                  top: 16,
+                                  right: 16,
+                                }}
+                              >
+                                <Close />
+                              </IconButton>
+                            ),
+                          }}
+                        />
+                        <Typography variant="caption" color="text.secondary">
+                          Click to view full image
+                        </Typography>
+                      </Box>
                     ) : (
                       "N/A"
                     )
@@ -307,7 +448,11 @@ export default function UserDetailsPage() {
         onClose={closeSnackbar}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
-        <Alert onClose={closeSnackbar} severity={snackbar.severity} sx={{ width: "100%" }}>
+        <Alert
+          onClose={closeSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
           {snackbar.message}
         </Alert>
       </Snackbar>

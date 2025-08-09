@@ -177,7 +177,7 @@ export default function InternshipApplicationList() {
 
   return (
     <Box>
-      <Typography variant="h5" gutterBottom>{t("applications")}</Typography>
+      {/* <Typography variant="h5" gutterBottom>{t("applications")}</Typography> */}
 
       <Box display="flex" flexWrap="wrap" gap={2} mb={2} justifyContent={"flex-end"}>
         <TextField

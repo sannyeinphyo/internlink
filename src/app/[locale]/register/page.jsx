@@ -33,6 +33,7 @@ import ImageUploadCircle from "@/components/ImageUploadCircle";
 import React from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { set } from "date-fns";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -41,6 +42,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("student");
   const [image, setImage] = React.useState("");
+  const [studentIdImage, setStudentIdImage] = React.useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { locale } = useParams();
@@ -124,6 +126,7 @@ export default function RegisterPage() {
         facebook,
         linkedIn,
         university_id: universityId ? parseInt(universityId) : undefined,
+        student_id_image: studentIdImage,
       });
     } else if (role === "company") {
       Object.assign(formData, {
@@ -182,6 +185,7 @@ export default function RegisterPage() {
         setCompanyDescription("");
         setContactInfo("");
         setImage("");
+        setStudentIdImage("");
         setErrors({});
         toast.success("OTP sent to your email!");
         router.push(`/${locale}/verify-email?email=${email}`);
@@ -217,9 +221,13 @@ export default function RegisterPage() {
             boxShadow: 2,
           }}
         >
-          <Typography variant="h4" fontWeight="bold" gutterBottom color="#ea9635ff">
+          <Typography
+            variant="h4"
+            fontWeight="bold"
+            gutterBottom
+            color="#ea9635ff"
+          >
             {greetingt("welcomeMessage")}
-            
           </Typography>
           <Typography variant="body1" sx={{ mt: 2 }}>
             {greetingt("introMessage")}
@@ -472,6 +480,34 @@ export default function RegisterPage() {
                     error={!!errors.linkedIn}
                     helperText={errors.linkedIn}
                   />
+                </Box>
+                <Box>
+                  <FormLabel>Upload Student ID</FormLabel>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setStudentIdImage(reader.result);
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
+                  {studentIdImage && (
+                    <img
+                      src={studentIdImage}
+                      alt="Student ID Preview"
+                      style={{
+                        width: "150px",
+                        marginTop: "10px",
+                        borderRadius: "8px",
+                      }}
+                    />
+                  )}
                 </Box>
               </>
             )}

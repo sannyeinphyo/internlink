@@ -186,9 +186,9 @@ export default function TeacherList() {
 
   return (
     <Box>
-      <Typography variant="h5" mb={2}>
+      {/* <Typography variant="h5" mb={2}>
         {t("teachers")}
-      </Typography>
+      </Typography> */}
       <Stack direction="row" spacing={2} flexWrap="wrap" mb={2} justifyContent="flex-end">
         <TextField
           variant="outlined"

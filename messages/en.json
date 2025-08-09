@@ -273,7 +273,7 @@
     "accepted": "accepted",
     "rejected": "rejected",
     "default": "default",
-    "CANCLED": "CANCLED",
+    "CANCELLED": "CANCELED",
     "APPLIED": "APPLIED",
     "ACCEPTED": "ACCEPTED",
     "PENDING": "PENDING",
@@ -375,7 +375,15 @@
     "filter_status": "Filter by Status",
     "filter_post": "Filter by Post",
     "all_posts": "All Posts",
-    "all_statuses": "All Statuses"
+    "all_statuses": "All Statuses",
+    "view_details": "View details",
+    "schedule_interview": "Schedule interview",
+    "interview_already_scheduled": "Interview already scheduled",
+    "cannot_schedule_status": "Cannot schedule interview in current status",
+    "accept_application": "Accept application",
+    "cannot_accept_status": "Cannot accept application in current status",
+    "reject_application": "Reject application",
+    "cannot_reject_status": "Cannot reject application in current status"
   },
   "applicationDetail": {
     "page_title": "Internship Application Details",
@@ -606,6 +614,7 @@
     "errorInvalidRole": "Invalid role selected. Please choose a role.",
     "networkError": "No response from server. Network issue?",
     "unexpectedError": "An unexpected error occurred.",
+    "upload_student_id_tooltip": "Upload a clear photo of your student ID card to verify your student status.",
     "teacher": "Teacher",
     "student": "Student",
     "departments": {
@@ -685,7 +694,8 @@
     "success": "Account created successfully! 🎉",
     "creation_fail": "Something went wrong during creation.",
     "unexpected_error": "An unexpected error occurred.",
-    "invalid_role": "Invalid role selected. Please choose a role."
+    "invalid_role": "Invalid role selected. Please choose a role.",
+    "upload_student_id_tooltip": "Upload a clear photo of your student ID card to verify your student status."
   },
   "student_list": {
     "title": "University Students",
@@ -751,10 +761,19 @@
     "noRecords": "No internship records found for the selected filters.",
     "note": "* Filters apply only to your university's applications."
   },
-  "uni-profile":{
-    "title":"Universiy Profile",
-    "back":"Back",
-    "save":"Save",
-    "cancel":"Cancel"
+  "uni-profile": {
+    "title": "Universiy Profile",
+    "back": "Back",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+
+  "TeacherDashboardApplications":{
+    "applied":"Applied",
+    "accepted":"Accepted",
+    "rejected":"Rejected",
+    "pending":"Pending",
+    "all":"All",
+    "batch_year": "Batch Year"
   }
 }

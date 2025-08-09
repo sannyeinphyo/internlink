@@ -28,6 +28,7 @@ export async function POST(request) {
       facebook_company,
       description,
       contact_info,
+      student_id_image,
     } = body;
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -76,6 +77,7 @@ export async function POST(request) {
           facebook,
           linkedIn,
           university: { connect: { id: parseInt(university_id) } },
+          student_id_image: student_id_image,
         },
       });
     }
@@ -85,6 +87,7 @@ export async function POST(request) {
         data: {
           user_id: user.id,
           name,
+          image: image || null,
           location,
           website: website || null,
           facebook: facebook_company || null,
@@ -95,7 +98,6 @@ export async function POST(request) {
     }
 
     await sendOtpToEmail(email, otp);
-
 
     return NextResponse.json(
       { message: "User registered successfully. OTP sent to email." },

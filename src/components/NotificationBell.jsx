@@ -17,7 +17,6 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
-
 export default function NotificationBell({ userId }) {
   const [notifications, setNotifications] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -126,12 +125,12 @@ export default function NotificationBell({ userId }) {
             sx={{
               alignItems: "flex-start",
               bgcolor: n.read ? "background.paper" : "rgba(25, 118, 210, 0.1)",
-              borderLeft: n.read ? "none" : "4px solid #1976d2",
+              borderLeft: n.read ? "none" : "4px solid #5c2eb2ff",
               py: 1,
               px: 2,
               cursor: "pointer",
               whiteSpace: "normal",
-              "&:hover": { bgcolor: "primary.light", color: "white" },
+              "&:hover": { bgcolor: "#9dbdedff" },
             }}
           >
             <Box sx={{ flexGrow: 1 }}>
@@ -139,8 +138,27 @@ export default function NotificationBell({ userId }) {
                 {n.title}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {n.body}
+                {n.body
+                  .split(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g)
+                  .map((part, i) =>
+                    /\S+@\S+\.\S+/.test(part) ? (
+                      <a
+                        key={i}
+                        href={`mailto:${part}`}
+                        style={{
+                          color: "#1976d2",
+                          textDecoration: "underline",
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {part}
+                      </a>
+                    ) : (
+                      part
+                    )
+                  )}
               </Typography>
+
               <Typography
                 variant="caption"
                 color="text.disabled"

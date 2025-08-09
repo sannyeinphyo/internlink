@@ -21,8 +21,11 @@ import {
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import PersonIcon from "@mui/icons-material/Person";
 import BusinessIcon from "@mui/icons-material/Business";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 
 export default function InternshipApplicationDetailPage() {
+  const [open, setOpen] = useState(false);
   const { id } = useParams();
   const router = useRouter();
 
@@ -38,7 +41,9 @@ export default function InternshipApplicationDetailPage() {
       setError(null);
 
       try {
-        const response = await axios.get(`/api/admin/internshipapplication/${id}`);
+        const response = await axios.get(
+          `/api/admin/internshipapplication/${id}`
+        );
         if (response.data?.data) {
           setApplicationData(response.data.data);
         } else {
@@ -46,7 +51,9 @@ export default function InternshipApplicationDetailPage() {
         }
       } catch (err) {
         console.error("Error fetching internship application details:", err);
-        setError("Failed to load internship application details. Please try again or check the ID.");
+        setError(
+          "Failed to load internship application details. Please try again or check the ID."
+        );
       } finally {
         setLoading(false);
       }
@@ -68,7 +75,6 @@ export default function InternshipApplicationDetailPage() {
     }
   };
 
-  // Loading state
   if (loading) {
     return (
       <Box
@@ -85,7 +91,6 @@ export default function InternshipApplicationDetailPage() {
     );
   }
 
-  // Error state
   if (error) {
     return (
       <Box
@@ -134,7 +139,6 @@ export default function InternshipApplicationDetailPage() {
 
   return (
     <Box sx={{ p: 4 }}>
-      {/* Header with Back Button */}
       <Stack direction="row" alignItems="center" mb={4}>
         <Button
           variant="outlined"
@@ -148,14 +152,18 @@ export default function InternshipApplicationDetailPage() {
         </Typography>
       </Stack>
 
-      <Paper elevation={3} sx={{ p: 4, maxWidth: 900, mx: "auto", borderRadius: 2 }}>
-        {/* Application Status & Applied Date */}
+      <Paper
+        elevation={3}
+        sx={{ p: 4, maxWidth: 900, mx: "auto", borderRadius: 2 }}
+      >
         <Typography variant="h5" gutterBottom sx={{ fontWeight: 600 }}>
           Application Status & Date
         </Typography>
         <Stack direction="row" spacing={2} alignItems="center" mb={3}>
           <Chip
-            label={`Status: ${status.charAt(0).toUpperCase() + status.slice(1)}`}
+            label={`Status: ${
+              status.charAt(0).toUpperCase() + status.slice(1)
+            }`}
             color={getStatusColor(status)}
             variant="filled"
           />
@@ -175,13 +183,35 @@ export default function InternshipApplicationDetailPage() {
               <Avatar
                 src={student.user.image || ""}
                 sx={{ width: 60, height: 60, mr: 2, bgcolor: "primary.main" }}
+                onClick={() => setOpen(true)}
               >
-                {!student.user.image && (
-                  student.user.name
-                    ? student.user.name[0].toUpperCase()
-                    : <PersonIcon />
-                )}
+                {!student.user.image &&
+                  (student.user.name ? (
+                    student.user.name[0].toUpperCase()
+                  ) : (
+                    <PersonIcon />
+                  ))}
               </Avatar>
+              {open && (
+                <Lightbox
+                  open={open}
+                  close={() => setOpen(false)}
+                  slides={[{ src: student.user.image || "" }]}
+                  render={{
+                    slide: ({ slide }) => (
+                      <img
+                        src={slide.src}
+                        alt="Admin Avatar"
+                        style={{
+                          width: "50%",
+                          height: "auto",
+                          userSelect: "none",
+                        }}
+                      />
+                    ),
+                  }}
+                />
+              )}
               <Box>
                 <Typography variant="h6">{student.user.name}</Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -208,16 +238,23 @@ export default function InternshipApplicationDetailPage() {
                 </ListItem>
               )}
               <ListItem disableGutters>
-                <ListItemText primary="Major" secondary={student.major || "N/A"} />
+                <ListItemText
+                  primary="Major"
+                  secondary={student.major || "N/A"}
+                />
               </ListItem>
               <ListItem disableGutters>
-                <ListItemText primary="Batch Year" secondary={student.batch_year || "N/A"} />
+                <ListItemText
+                  primary="Batch Year"
+                  secondary={student.batch_year || "N/A"}
+                />
               </ListItem>
               <ListItem disableGutters>
                 <ListItemText
                   primary="Skills"
                   secondary={
-                    typeof student.skills === "string" && student.skills.length > 0
+                    typeof student.skills === "string" &&
+                    student.skills.length > 0
                       ? student.skills
                           .split(",")
                           .map((skill) => skill.trim())
@@ -232,7 +269,11 @@ export default function InternshipApplicationDetailPage() {
                   <ListItemText
                     primary="LinkedIn"
                     secondary={
-                      <a href={student.linkedIn} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={student.linkedIn}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         {student.linkedIn}
                       </a>
                     }
@@ -244,7 +285,11 @@ export default function InternshipApplicationDetailPage() {
                   <ListItemText
                     primary="GitHub"
                     secondary={
-                      <a href={student.Github} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={student.Github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         {student.Github}
                       </a>
                     }
@@ -271,11 +316,12 @@ export default function InternshipApplicationDetailPage() {
                 src={post.company.image || ""}
                 sx={{ width: 60, height: 60, mr: 2, bgcolor: "secondary.main" }}
               >
-                {!post.company.image && (
-                  post.company.name
-                    ? post.company.name[0].toUpperCase()
-                    : <BusinessIcon />
-                )}
+                {!post.company.image &&
+                  (post.company.name ? (
+                    post.company.name[0].toUpperCase()
+                  ) : (
+                    <BusinessIcon />
+                  ))}
               </Avatar>
               <Box>
                 <Typography variant="h6">{post.company.name}</Typography>
@@ -286,14 +332,21 @@ export default function InternshipApplicationDetailPage() {
             </Box>
             <List disablePadding>
               <ListItem disableGutters>
-                <ListItemText primary="Location" secondary={post.company.location || "N/A"} />
+                <ListItemText
+                  primary="Location"
+                  secondary={post.company.location || "N/A"}
+                />
               </ListItem>
               {post.company.website && (
                 <ListItem disableGutters>
                   <ListItemText
                     primary="Website"
                     secondary={
-                      <a href={post.company.website} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={post.company.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         {post.company.website}
                       </a>
                     }
@@ -305,7 +358,11 @@ export default function InternshipApplicationDetailPage() {
                   <ListItemText
                     primary="Facebook"
                     secondary={
-                      <a href={post.company.facebook} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={post.company.facebook}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         {post.company.facebook}
                       </a>
                     }
@@ -313,7 +370,10 @@ export default function InternshipApplicationDetailPage() {
                 </ListItem>
               )}
               <ListItem disableGutters>
-                <ListItemText primary="Description" secondary={post.company.description || "N/A"} />
+                <ListItemText
+                  primary="Description"
+                  secondary={post.company.description || "N/A"}
+                />
               </ListItem>
             </List>
           </Box>
@@ -332,19 +392,34 @@ export default function InternshipApplicationDetailPage() {
             </Typography>
             <List disablePadding>
               <ListItem disableGutters>
-                <ListItemText primary="Post Title" secondary={post.title || "N/A"} />
+                <ListItemText
+                  primary="Post Title"
+                  secondary={post.title || "N/A"}
+                />
               </ListItem>
               <ListItem disableGutters>
-                <ListItemText primary="Description" secondary={post.description || "N/A"} />
+                <ListItemText
+                  primary="Description"
+                  secondary={post.description || "N/A"}
+                />
               </ListItem>
               <ListItem disableGutters>
-                <ListItemText primary="Requirements" secondary={post.requirements || "N/A"} />
+                <ListItemText
+                  primary="Requirements"
+                  secondary={post.requirements || "N/A"}
+                />
               </ListItem>
               <ListItem disableGutters>
-                <ListItemText primary="Responsibilities" secondary={post.responsibilities || "N/A"} />
+                <ListItemText
+                  primary="Responsibilities"
+                  secondary={post.responsibilities || "N/A"}
+                />
               </ListItem>
               <ListItem disableGutters>
-                <ListItemText primary="Benefits" secondary={post.benefits || "N/A"} />
+                <ListItemText
+                  primary="Benefits"
+                  secondary={post.benefits || "N/A"}
+                />
               </ListItem>
               <ListItem disableGutters>
                 <ListItemText
@@ -353,7 +428,10 @@ export default function InternshipApplicationDetailPage() {
                 />
               </ListItem>
               <ListItem disableGutters>
-                <ListItemText primary="Created At" secondary={post.createdAt || "N/A"} />
+                <ListItemText
+                  primary="Created At"
+                  secondary={post.createdAt || "N/A"}
+                />
               </ListItem>
             </List>
           </Box>

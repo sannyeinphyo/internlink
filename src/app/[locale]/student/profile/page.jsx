@@ -22,6 +22,8 @@ import { useParams } from "next/navigation";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import NewReleasesIcon from "@mui/icons-material/NewReleases";
 import Link from "next/link";
+import lightbox, { Lightbox } from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 
 const skillOptions = [
   "React",
@@ -98,6 +100,8 @@ export default function StudentProfileView() {
   const [profile, setProfile] = useState(defaultProfile);
   const router = useRouter();
   const { locale } = useParams();
+  const [openUni, setOpenUni] = useState(false);
+  const [openStudent, setOpenStudent] = useState(false);
 
   useEffect(() => {
     async function fetchProfile() {
@@ -170,6 +174,7 @@ export default function StudentProfileView() {
           <Avatar
             src={profile.image}
             alt={profile.name}
+            onClick={() => setOpenStudent(true)}
             sx={{
               width: 120,
               height: 120,
@@ -198,6 +203,7 @@ export default function StudentProfileView() {
                   src={profile.uniimage}
                   alt="University Image"
                   style={{ maxWidth: "100px", borderRadius: "8px" }}
+                  onClick={() => setOpenUni(true)}
                 />
               ) : (
                 <Box
@@ -210,6 +216,43 @@ export default function StudentProfileView() {
                 />
               )}
             </Box>
+            <Lightbox
+              open={openUni}
+              close={() => setOpenUni(false)}
+              slides={[{ src: profile.uniimage }]}
+              render={{
+                slide: ({ slide }) => (
+                  <img
+                    src={slide.src}
+                    alt="University Image"
+                    style={{
+                      width: "50%",
+                      height: "auto",
+                      userSelect: "none",
+                    }}
+                  />
+                ),
+              }}
+            />
+            <Lightbox
+              open={openStudent}
+              close={() => setOpenStudent(false)}
+              slides={[{ src: profile.image }]}
+              render={{
+                slide: ({ slide }) => (
+                  <img
+                    src={slide.src}
+                    alt="Student Profile"
+                    style={{
+                      width: "50%",
+                      height: "auto",
+                      userSelect: "none",
+                    }}
+                  />
+                ),
+              }}
+            />
+
             <Typography color="text.secondary" fontSize="1.1rem" gutterBottom>
               {profile.university}
             </Typography>

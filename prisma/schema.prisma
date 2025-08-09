@@ -102,15 +102,16 @@ model Teacher {
 }
 
 model Student {
-  id            Int     @id @default(autoincrement())
-  user_id       Int     @unique
-  university_id Int
-  batch_year    Int
-  major         String
-  skills        String?
-  facebook      String?
-  linkedIn      String?
-  Github        String?
+  id               Int     @id @default(autoincrement())
+  user_id          Int     @unique
+  university_id    Int
+  student_id_image String  @db.LongText
+  batch_year       Int
+  major            String
+  skills           String?
+  facebook         String?
+  linkedIn         String?
+  Github           String?
 
   user         User                    @relation(fields: [user_id], references: [id], onDelete: Cascade)
   university   University              @relation(fields: [university_id], references: [id], onDelete: Cascade)

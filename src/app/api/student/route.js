@@ -21,16 +21,19 @@ export async function GET() {
       message: "Getting student information",
       student,
     });
-     
   } catch (error) {
     console.error("GET error:", error);
-    return NextResponse.json({ message: "Error getting student information" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error getting student information" },
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(req) {
   try {
     const body = await req.json();
+    console.log("Received POST body:", body);
 
     const {
       name,
@@ -45,7 +48,9 @@ export async function POST(req) {
       skills,
       facebook,
       university_id,
+      student_id_image,
     } = body;
+
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const linkedIn = body.linkedIn || body.linkedln || null;
@@ -62,7 +67,7 @@ export async function POST(req) {
       },
     });
 
-    if (role?.toLowerCase() === "student") {
+    if (role === "student") {
       await prisma.student.create({
         data: {
           user_id: user.id,
@@ -72,6 +77,7 @@ export async function POST(req) {
           facebook: facebook || null,
           linkedIn,
           university_id: parseInt(university_id),
+          student_id_image:student_id_image,
         },
       });
     }

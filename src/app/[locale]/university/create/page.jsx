@@ -14,6 +14,8 @@ import {
   Typography,
   Autocomplete,
   Chip,
+  FormLabel,
+  Tooltip,
 } from "@mui/material";
 
 import { useEffect, useState } from "react";
@@ -21,8 +23,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 import axios from "axios";
+
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
+import { IconButton, InputAdornment } from "@mui/material";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 import { combinedUniversityAccountSchema } from "@/schemas/universityCreateAccount";
 
@@ -77,6 +83,8 @@ export default function UniversityCreateAccount() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [universityName, setUniversityName] = useState("Loading University...");
   const t = useTranslations("university_create");
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
   const {
     register,
@@ -115,7 +123,11 @@ export default function UniversityCreateAccount() {
             `/api/university/get-university-name/${currentUserId}`
           );
 
-          if (response.status === 200 && response.data?.name && response.data?.id) {
+          if (
+            response.status === 200 &&
+            response.data?.name &&
+            response.data?.id
+          ) {
             setUniversityName(response.data.name);
             setValue("university_id", response.data.id);
           } else {
@@ -143,6 +155,7 @@ export default function UniversityCreateAccount() {
       skills: [],
       facebook: "",
       linkedIn: "",
+      student_id_image: "",
     }));
   }, [selectedRole, reset]);
 
@@ -168,6 +181,7 @@ export default function UniversityCreateAccount() {
         ...(skillsString && { skills: skillsString }),
         ...(formData.facebook && { facebook: formData.facebook }),
         ...(formData.linkedIn && { linkedIn: formData.linkedIn }),
+        student_id_image: formData.student_id_image,
         status: "approved",
       };
 
@@ -190,6 +204,8 @@ export default function UniversityCreateAccount() {
       setIsSubmitting(false);
     }
   };
+
+  console.log("Current form values:", watch());
 
   const handleCancel = () => {
     reset();
@@ -230,9 +246,9 @@ export default function UniversityCreateAccount() {
               error={!!errors.email}
               helperText={errors.email?.message}
             />
-          </Box>
+            </Box>
 
-          <TextField
+            {/* <TextField
             label={t("password")}
             type="password"
             fullWidth
@@ -240,7 +256,28 @@ export default function UniversityCreateAccount() {
             {...register("password")}
             error={!!errors.password}
             helperText={errors.password?.message}
-          />
+          /> */}
+            <Box width="100%" mb={2} size="medium">
+              <TextField
+                label={t("password")}
+                fullWidth
+                type={showPassword ? "text" : "password"}
+                size="medium"
+                {...register("password")}
+                helperText={errors.password?.message}
+                required
+                error={!!errors.password}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={togglePasswordVisibility} edge="end">
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Box>
 
           <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.role}>
             <InputLabel id="role-label">{t("role")}</InputLabel>
@@ -285,13 +322,16 @@ export default function UniversityCreateAccount() {
               error={!!errors.department}
               helperText={errors.department?.message}
             >
-              {["Computer Science", "Information Technology", "Business", "Engineering"].map(
-                (dept) => (
-                  <MenuItem key={dept} value={dept}>
-                    {dept}
-                  </MenuItem>
-                )
-              )}
+              {[
+                "Computer Science",
+                "Information Technology",
+                "Business",
+                "Engineering",
+              ].map((dept) => (
+                <MenuItem key={dept} value={dept}>
+                  {dept}
+                </MenuItem>
+              ))}
             </TextField>
           )}
 
@@ -379,15 +419,72 @@ export default function UniversityCreateAccount() {
                   helperText={errors.linkedIn?.message}
                 />
               </Box>
+              <Controller
+                name="student_id_image"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <Tooltip title={t("upload_student_id_tooltip")}>
+                    <Box mt={2}>
+                      <FormLabel>Upload Student ID</FormLabel>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        style={{ display: "none" }}
+                        id="upload-file"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              field.onChange(reader.result);
+                            };
+                            reader.readAsDataURL(file);
+                          } else {
+                            field.onChange("");
+                          }
+                        }}
+                      />
+                      <label
+                        htmlFor="upload-file"
+                        style={{
+                          fontWeight: "bold",
+                          margin: "10px",
+                          display: "inline-block",
+                          cursor: "pointer",
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.color = "#6e0faaff")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.color = "#363636ff")
+                        }
+                      >
+                        Upload Your Student Id
+                      </label>
+
+                      {field.value && (
+                        <img
+                          src={field.value}
+                          alt="Student ID Preview"
+                          style={{
+                            width: "200px",
+                            height: "200px",
+                            objectFit: "contain",
+                            marginTop: "10px",
+                            borderRadius: "8px",
+                          }}
+                        />
+                      )}
+                    </Box>
+                  </Tooltip>
+                )}
+              />
             </>
           )}
 
           <Stack direction="row" spacing={2} mt={3}>
-            <Button
-              variant="contained"
-              type="submit"
-              disabled={isSubmitting}
-            >
+            <Button variant="contained" type="submit" disabled={isSubmitting}>
               {isSubmitting ? t("creating") : t("create")}
             </Button>
             <Button

@@ -186,9 +186,9 @@ export default function UniversityList() {
 
   return (
     <Box>
-      <Typography variant="h5" gutterBottom>
+      {/* <Typography variant="h5" gutterBottom>
        {t("title")}
-      </Typography>
+      </Typography> */}
 
       <Box
         display="flex"

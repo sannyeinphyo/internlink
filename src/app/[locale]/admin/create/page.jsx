@@ -19,6 +19,9 @@ import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useTranslations } from "next-intl";
+import { IconButton, InputAdornment } from "@mui/material";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 import { combinedAccountSchema } from "@/schemas/adminAccountCreation";
 
@@ -56,6 +59,8 @@ export default function CreateAccount() {
   });
 
   const selectedRole = watch("role");
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
@@ -73,7 +78,7 @@ export default function CreateAccount() {
         ...(formData.website && { website: formData.website }),
         ...(formData.facebook && { facebook: formData.facebook }),
         ...(formData.description && { description: formData.description }),
-        status: formData.status, 
+        status: formData.status,
       };
 
       let apiPath;
@@ -178,15 +183,25 @@ export default function CreateAccount() {
             />
           </Box>
 
-          <Box display="flex" sx={{ mb: 2 }}>
+          <Box width="100%" mb={2} size="medium">
             <TextField
               label={t("password")}
-              type="password"
               fullWidth
+              type={showPassword ? "text" : "password"}
+              size="medium"
               {...register("password")}
-              error={!!errors.password}
               helperText={errors.password?.message}
               required
+              error={!!errors.password}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={togglePasswordVisibility} edge="end">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
           </Box>
 
@@ -301,7 +316,7 @@ export default function CreateAccount() {
               onClick={handleCancel}
               disabled={isSubmitting}
             >
-             {t("cancel")}
+              {t("cancel")}
             </Button>
           </Stack>
         </Box>

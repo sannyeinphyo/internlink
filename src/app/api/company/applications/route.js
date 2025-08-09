@@ -36,6 +36,7 @@ export async function GET() {
             user: { select: { name: true, email: true } },
           },
         },
+        Interview: true, 
       },
       orderBy: {
         applied_at: "desc",
@@ -90,7 +91,7 @@ export async function PATCH(req) {
         { status: 404 }
       );
     }
-    
+
     const updated = await prisma.internshipApplication.updateMany({
       where: {
         student_id: Number(student_id),
@@ -155,7 +156,10 @@ export async function POST(req) {
     });
 
     if (!application) {
-      return NextResponse.json({ message: "Application not found" }, { status: 404 });
+      return NextResponse.json(
+        { message: "Application not found" },
+        { status: 404 }
+      );
     }
 
     const company = await prisma.company.findUnique({
@@ -163,7 +167,10 @@ export async function POST(req) {
     });
 
     if (!company || company.id !== application.post.company_id) {
-      return NextResponse.json({ message: "Unauthorized for this application" }, { status: 403 });
+      return NextResponse.json(
+        { message: "Unauthorized for this application" },
+        { status: 403 }
+      );
     }
 
     const interview = await prisma.interview.create({
@@ -183,7 +190,9 @@ export async function POST(req) {
       data: {
         user_id: application.student.user_id,
         title: `Interview Scheduled`,
-        body: `Your interview for "${application.post.title}" has been scheduled on ${new Date(
+        body: `Your interview for "${
+          application.post.title
+        }" has been scheduled on ${new Date(
           scheduledAt
         ).toLocaleString()}. Location: ${location || "To be confirmed"}.`,
       },

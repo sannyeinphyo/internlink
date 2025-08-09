@@ -115,7 +115,7 @@ export async function GET() {
         },
       },
       orderBy: {
-        scheduledAt: "asc",
+        scheduledAt: "desc",
       },
     });
 

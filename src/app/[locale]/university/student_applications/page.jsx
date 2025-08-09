@@ -22,13 +22,18 @@ import {
 } from "@mui/material";
 import WorkIcon from "@mui/icons-material/Work";
 import BusinessIcon from "@mui/icons-material/Business";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
+import { useTranslations } from "next-intl";
 
 export default function TeacherDashboardApplications() {
+  const t = useTranslations("TeacherDashboardApplications");
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [batchYearFilter, setBatchYearFilter] = useState("all");
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     async function fetchApplications() {
@@ -48,7 +53,7 @@ export default function TeacherDashboardApplications() {
 
     fetchApplications();
   }, []);
-
+  console.log("Applications:", applications);
   const batchYears = Array.from(
     new Set(applications.map((app) => app.student?.batch_year).filter(Boolean))
   ).sort((a, b) => b - a);
@@ -62,6 +67,13 @@ export default function TeacherDashboardApplications() {
         : app.student?.batch_year === batchYearFilter;
     return matchStatus && matchBatch;
   });
+
+  const statuses = [
+    { key: "all", label: t("all") },
+    { key: "applied", label: t("applied") },
+    { key: "accepted", label: t("accepted") },
+    { key: "rejected", label: t("rejected") },
+  ];
 
   if (loading) {
     return (
@@ -83,33 +95,33 @@ export default function TeacherDashboardApplications() {
     <Box className="p-6">
       <Box className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <ButtonGroup variant="outlined">
-          {["all", "applied", "accepted", "rejected"].map((status) => (
+          {statuses.map(({key , label}) => (
             <Button
-              key={status}
-              onClick={() => setStatusFilter(status)}
-              variant={statusFilter === status ? "contained" : "outlined"}
+              key={key}
+              onClick={() => setStatusFilter(key)}
+              variant={statusFilter === key ? "contained" : "outlined"}
               color={
-                status === "accepted"
+                key === "accepted"
                   ? "success"
-                  : status === "rejected"
+                  : key === "rejected"
                   ? "error"
-                  : status === "applied"
+                  : key === "applied"
                   ? "primary"
                   : "info"
               }
             >
-              {status.charAt(0).toUpperCase() + status.slice(1)}
+              {label}
             </Button>
           ))}
         </ButtonGroup>
         <FormControl size="small" sx={{ minWidth: 150 }}>
-          <InputLabel>Batch Year</InputLabel>
+          <InputLabel>{t("batch_year")}</InputLabel>
           <Select
             value={batchYearFilter}
             label="Batch Year"
             onChange={(e) => setBatchYearFilter(e.target.value)}
           >
-            <MenuItem value="all">All</MenuItem>
+            <MenuItem value="all">{t("all")}</MenuItem>
             {batchYears.map((year) => (
               <MenuItem key={year} value={year}>
                 {year}
@@ -141,6 +153,7 @@ export default function TeacherDashboardApplications() {
                   <Avatar
                     sx={{ bgcolor: "#1976d2", width: 56, height: 56 }}
                     size="large"
+                    onClick={() => setOpen(true)}
                   >
                     {app.student?.user?.image ? (
                       <img
@@ -156,6 +169,24 @@ export default function TeacherDashboardApplications() {
                       app.student?.user?.name?.[0] || "S"
                     )}
                   </Avatar>
+                  <Lightbox
+                    open={open}
+                    close={() => setOpen(false)}
+                    slides={[{ src: app.student?.user?.image }]}
+                    render={{
+                      slide: ({ slide }) => (
+                        <img
+                          src={slide.src}
+                          alt="Student Profile"
+                          style={{
+                            width: "50%",
+                            height: "auto",
+                            userSelect: "none",
+                          }}
+                        />
+                      ),
+                    }}
+                  />
                   <Box>
                     <Typography fontWeight={600} fontSize="1.1rem">
                       {app.student?.user?.name}
@@ -211,19 +242,6 @@ export default function TeacherDashboardApplications() {
                   />
                 </Tooltip>
               </CardContent>
-
-              {/* <Box sx={{ p: 2, pt: 0 }}>
-                <Link href={`/teacher/applications/${app.id}`} passHref>
-                  <Button
-                    variant="outlined"
-                    fullWidth
-                    size="medium"
-                    sx={{ textTransform: "none" }}
-                  >
-                    View Details
-                  </Button>
-                </Link>
-              </Box> */}
             </Card>
           ))}
         </Box>

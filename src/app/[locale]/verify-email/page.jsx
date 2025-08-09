@@ -31,7 +31,7 @@ export default function VerifyEmailPage() {
     setLoading(true);
     try {
       const { data } = await axios.post("/api/verify-otp", { email, otp });
-      toast.success("✅ Email verified!");
+      toast.success(" Email had been verified successfully!");
       router.push(`/${locale}/login`);
     } catch (error) {
       toast.error(error.response?.data?.message || "OTP verification failed");

@@ -173,7 +173,9 @@ export default function MyApplications() {
           <Button
             variant="outlined"
             size="small"
-            disabled={params.row.status !== "applied"}
+            disabled={
+              params.row.status !== "applied" || params.row.hasInterview
+            }
             onClick={() => {
               setDialogRow(params.row);
               setInterviewDialogOpen(true);
@@ -241,8 +243,9 @@ export default function MyApplications() {
       post_title: app.post.title,
       application_id: app.id,
       company_id: app.post.company_id,
+      hasInterview: app.Interview && app.Interview.length > 0,
     }));
-
+console.log
   return (
     <Box>
       <Typography
@@ -265,7 +268,6 @@ export default function MyApplications() {
           <Box display="flex" gap={2} mb={2} justifyContent={"flex-end"}>
             <TextField
               select
-              // label={t("filter_status")}
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               SelectProps={{ native: true }}

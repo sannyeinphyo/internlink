@@ -146,7 +146,7 @@ export default function Navbar() {
           <Typography
             sx={{ fontSize: "16px", fontWeight: "bold", color: "bgmain.main" }}
           >
-            {name}
+            {profile.name}
           </Typography>
           <Tooltip title="Company Profile">
             {/* <IconButton

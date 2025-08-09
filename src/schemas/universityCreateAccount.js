@@ -1,4 +1,3 @@
-
 import * as yup from "yup";
 
 const baseUserSchema = yup.object().shape({
@@ -6,7 +5,7 @@ const baseUserSchema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Email is required"),
   password: yup
     .string()
-    .min(6, "Password must be at least 6 characters")
+    .min(8, "Password must be at least 8 characters")
     .required("Password is required"),
 });
 
@@ -37,6 +36,19 @@ export const studentSchema = baseUserSchema.shape({
   skills: yup.string().nullable(),
   facebook: yup.string().url("Must be a valid URL").nullable(),
   linkedIn: yup.string().url("Must be a valid URL").nullable(),
+student_id_image: yup
+    .string()
+    .when("role", {
+      is: "student",
+      then: (schema) =>
+        schema
+          .required("Student ID image is required")
+          .test("isBase64", "Invalid image format", (value) => {
+            const base64Pattern = /^data:image\/(jpeg|png|gif|webp|jpg);base64,[A-Za-z0-9+/=]+$/;
+            return base64Pattern.test(value);
+          }),
+      otherwise: (schema) => schema.notRequired().nullable(),
+    }),
 });
 
 export const combinedUniversityAccountSchema = yup.object().shape({
@@ -85,6 +97,19 @@ export const combinedUniversityAccountSchema = yup.object().shape({
       schema.min(1, "Please add at least one skill").required(),
     otherwise: (schema) => schema.notRequired(),
   }),
+student_id_image: yup
+    .string()
+    .when("role", {
+      is: "student",
+      then: (schema) =>
+        schema
+          .required("Student ID image is required")
+          .test("isBase64", "Invalid image format", (value) => {
+            const base64Pattern = /^data:image\/(jpeg|png|gif|webp|jpg);base64,[A-Za-z0-9+/=]+$/;
+            return base64Pattern.test(value);
+          }),
+      otherwise: (schema) => schema.notRequired().nullable(),
+    }),
 
   facebook: yup.string().when("role", {
     is: "student",

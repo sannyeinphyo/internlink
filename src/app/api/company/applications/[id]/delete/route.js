@@ -1,15 +1,20 @@
-// app/api/admin/internshipapplication/[id]/delete/route.js
-import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+
 export async function DELETE(request, { params }) {
   const session = await getServerSession(authOptions);
-  if (!session || session.user.role !== "admin") {
-    return NextResponse.json({ message: "Your Not Authorized" });
+
+  if (!session || (session.user.role !== "admin" && session.user.role !== "student")) {
+    return NextResponse.json(
+      { message: "You are not authorized" },
+      { status: 403 }
+    );
   }
+
   try {
-    const { id } = params; // Extract the application ID from the URL parameters
+    const { id } = params;
 
     if (!id) {
       return NextResponse.json(
@@ -18,7 +23,6 @@ export async function DELETE(request, { params }) {
       );
     }
 
-    // Convert id to an integer
     const applicationId = parseInt(id, 10);
     if (isNaN(applicationId)) {
       return NextResponse.json(
@@ -27,19 +31,11 @@ export async function DELETE(request, { params }) {
       );
     }
 
-    // Delete the internship application record
     const deletedApplication = await prisma.internshipApplication.delete({
       where: {
         id: applicationId,
       },
     });
-
-    if (!deletedApplication) {
-      return NextResponse.json(
-        { message: "Internship application not found or could not be deleted" },
-        { status: 404 }
-      );
-    }
 
     return NextResponse.json(
       {

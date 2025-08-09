@@ -12,7 +12,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -21,6 +21,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Delete } from "@mui/icons-material";
 
 export default function Applications() {
   const statusColors = {
@@ -102,6 +103,24 @@ export default function Applications() {
     }
   };
 
+  const handleDeleteApplication = async (applicationId) => {
+    console.log("Deleting application id:", applicationId);
+    try {
+      await axios.delete(`/api/company/applications/${applicationId}/delete`);
+      setSnack({
+        open: true,
+        message: "Application deleted successfully",
+        severity: "success",
+      });
+      fetchApplications();
+    } catch (error) {
+      setSnack({
+        open: true,
+        message: "Failed to delete application",
+        severity: "error",
+      });
+    }
+  };
   const columns = [
     {
       field: "id",
@@ -244,17 +263,28 @@ export default function Applications() {
       sortable: false,
       filterable: false,
       renderCell: (params) => (
-        <IconButton
-          color="primary"
-          size="small"
-          onClick={() =>
-            router.push(
-              `/${locale}/jobs/${params.row.post.id}?backUrl=/${locale}/applications`
-            )
-          }
-        >
-          <VisibilityIcon />
-        </IconButton>
+        <>
+          <IconButton
+            color="primary"
+            size="small"
+            onClick={() =>
+              router.push(
+                `/${locale}/jobs/${params.row.post.id}?backUrl=/${locale}/applications`
+              )
+            }
+          >
+            <VisibilityIcon />
+          </IconButton>
+          {params.row.status === "applied" && (
+            <IconButton
+              color="secondary"
+              size="small"
+              onClick={() => handleDeleteApplication(params.row.id)}
+            >
+              <Delete />
+            </IconButton>
+          )}
+        </>
       ),
     },
   ];
@@ -302,9 +332,11 @@ export default function Applications() {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button variant="outlined" onClick={handleDialogClose}>{t("cancel")}</Button>
+          <Button variant="outlined" onClick={handleDialogClose}>
+            {t("cancel")}
+          </Button>
           <Button
-          variant="contained"
+            variant="contained"
             onClick={handleDialogConfirm}
             color={dialogAction === "ACCEPTED" ? "primary" : "error"}
           >

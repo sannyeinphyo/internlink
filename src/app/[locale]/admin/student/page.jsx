@@ -31,7 +31,7 @@ import { useTranslations } from "next-intl";
 
 export default function StudentList() {
   const { locale } = useParams();
-  const t = useTranslations("admin_student"); 
+  const t = useTranslations("admin_student");
   const [students, setStudents] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
@@ -40,8 +40,6 @@ export default function StudentList() {
   const [error, setError] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedStudentId, setSelectedStudentId] = useState(null);
-
-
 
   const getStudentList = useCallback(async () => {
     setLoading(true);
@@ -208,14 +206,13 @@ export default function StudentList() {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" flexWrap="wrap" mb={2}>
-<Typography variant="h5">{t("students")}</Typography>
+      <Box display="flex" justifyContent="flex-end" flexWrap="wrap" mb={2}>
+        {/* <Typography variant="h5">{t("students")}</Typography> */}
 
-
-        <Stack direction="row" spacing={2} flexWrap="wrap">
+        <Stack direction="row" spacing={2} flexWrap="wrap" justifyContent={"flex-end"}>
           <TextField
             variant="outlined"
-            placeholder= {t("search")}
+            placeholder={t("search")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             InputProps={{
@@ -228,13 +225,13 @@ export default function StudentList() {
             }}
           />
           <FormControl sx={{ minWidth: 150 }}>
-           <InputLabel>{t("status")}</InputLabel>
+            <InputLabel>{t("status")}</InputLabel>
             <Select
               value={filterStatus}
               label="Status"
               onChange={(e) => setFilterStatus(e.target.value)}
             >
-            <MenuItem value="">{t("all")}</MenuItem>
+              <MenuItem value="">{t("all")}</MenuItem>
               {uniqueStatuses.map((status) => (
                 <MenuItem key={status} value={status}>
                   {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -243,7 +240,7 @@ export default function StudentList() {
             </Select>
           </FormControl>
           <FormControl sx={{ minWidth: 150 }}>
-            <InputLabel>Major</InputLabel>
+            <InputLabel>{t("major")}</InputLabel>
             <Select
               value={filterMajor}
               label="Major"
@@ -277,19 +274,18 @@ export default function StudentList() {
       </Box>
 
       <Dialog open={deleteDialogOpen} onClose={closeDeleteDialog}>
-        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogTitle>{t("delete_confirm_title")}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete this student? This action cannot be
-            undone.
+           {t("delete_confirm_text")}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={closeDeleteDialog} color="inherit">
-            Cancel
+            {t("cancel")}
           </Button>
           <Button onClick={confirmDelete} color="error" variant="contained">
-            Delete
+           {t("delete")}
           </Button>
         </DialogActions>
       </Dialog>

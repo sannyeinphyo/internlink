@@ -196,8 +196,8 @@ export default function CompanyList() {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" flexWrap="wrap" mb={2}>
-        <Typography variant="h5">{t("companies")}</Typography>
+      <Box display="flex" justifyContent="flex-end" flexWrap="wrap" mb={2}>
+        {/* <Typography variant="h5">{t("companies")}</Typography> */}
         <Stack direction="row" spacing={2} flexWrap="wrap">
           <TextField
             variant="outlined"
@@ -247,21 +247,19 @@ export default function CompanyList() {
         />
       </Box>
 
-      {/* ==== Delete Confirmation Dialog ==== */}
       <Dialog open={deleteDialogOpen} onClose={closeDeleteDialog}>
-        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogTitle>{t("delete_confirm_title")}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete this company? This action cannot be
-            undone.
+           {t("delete_confirm_text")}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={closeDeleteDialog} color="inherit">
-            Cancel
+            {t("cancel")}
           </Button>
           <Button onClick={confirmDelete} color="error" variant="contained">
-            Delete
+            {t("delete")}
           </Button>
         </DialogActions>
       </Dialog>
