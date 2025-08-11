@@ -20,7 +20,6 @@ export async function GET(req, { params }) {
       );
     }
 
-    // Get student profile linked to user
     const student = await prisma.student.findUnique({
       where: { user_id: session.user.id },
     });

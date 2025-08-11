@@ -16,12 +16,14 @@ import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
+import { useTranslations } from "next-intl";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 export default function TeacherDashboardPage() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const t = useTranslations("teacher-dashboard");
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -73,17 +75,17 @@ export default function TeacherDashboardPage() {
     labels: batchLabels,
     datasets: [
       {
-        label: "Applied",
+        label:t("applied"),
         data: batchLabels.map((y) => stats.batchYearStats[y].applied),
         backgroundColor: "rgba(255, 206, 86, 0.7)",
       },
       {
-        label: "Accepted",
+        label: t("accept"),
         data: batchLabels.map((y) => stats.batchYearStats[y].accepted),
         backgroundColor: "rgba(75, 192, 192, 0.7)",
       },
       {
-        label: "Rejected",
+        label: t("reject"),
         data: batchLabels.map((y) => stats.batchYearStats[y].rejected),
         backgroundColor: "rgba(255, 99, 132, 0.7)",
       },
@@ -114,18 +116,18 @@ export default function TeacherDashboardPage() {
   const columns = [
     {
       field: "no",
-      headerName: "No.",
+      headerName: t("no"),
       width: 70,
       sortable: false,
       filterable: false,
       renderCell: (params) => params.row.no,
     },
-    { field: "studentName", headerName: "Student", flex: 1, minWidth: 150 },
-    { field: "companyName", headerName: "Company", flex: 1, minWidth: 150 },
-    { field: "batch_year", headerName: "Batch Year", width: 110 },
+    { field: "studentName", headerName:t("students"), flex: 1, minWidth: 150 },
+    { field: "companyName", headerName: t("company"), flex: 1, minWidth: 150 },
+    { field: "batch_year", headerName: t("batch_year"), width: 110 },
     {
       field: "status",
-      headerName: "Status",
+      headerName: t("status"),
       width: 130,
       renderCell: (params) => (
         <Box
@@ -164,7 +166,7 @@ export default function TeacherDashboardPage() {
       }}
     >
       <Typography variant="h4" component="h1" fontWeight="bold" gutterBottom>
-        📊 Teacher Dashboard
+        📊 {t("teacher_dashboard")}
       </Typography>
       <Typography variant="subtitle1" color="text.secondary" gutterBottom>
         {stats.universityName || "Your University"}{", "}
@@ -185,17 +187,17 @@ export default function TeacherDashboardPage() {
         }}
       >
         <StatCard
-          title="Total Applications"
+          title= {t("total_applications")}
           value={stats.total}
           color="primary.light"
         />
-        <StatCard title="Applied" value={stats.applied} color="warning.light" />
+        <StatCard title={t("applied")} value={stats.applied} color="warning.light" />
         <StatCard
-          title="Accepted"
+          title={t("accept")}
           value={stats.accepted}
           color="success.light"
         />
-        <StatCard title="Rejected" value={stats.rejected} color="error.light" />
+        <StatCard title={t("reject")} value={stats.rejected} color="error.light" />
       </Box>
 
       {batchLabels.length > 0 && (
@@ -206,7 +208,7 @@ export default function TeacherDashboardPage() {
             gutterBottom
             fontWeight="medium"
           >
-            Applications by Batch Year
+            {t("application_by_batch_year")}
           </Typography>
           <Bar data={batchData} options={batchOptions} />
         </Card>
@@ -220,7 +222,7 @@ export default function TeacherDashboardPage() {
             gutterBottom
             fontWeight="medium"
           >
-            Recent Applications
+            {t("recent_application")}
           </Typography>
           <DataGrid
             rows={rows}

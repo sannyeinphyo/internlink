@@ -23,6 +23,7 @@ import {
 import WorkIcon from "@mui/icons-material/Work";
 import BusinessIcon from "@mui/icons-material/Business";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export default function TeacherDashboardApplications() {
   const [applications, setApplications] = useState([]);
@@ -30,7 +31,7 @@ export default function TeacherDashboardApplications() {
   const [error, setError] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [batchYearFilter, setBatchYearFilter] = useState("all");
-
+  const t = useTranslations("teacher_applications");
   useEffect(() => {
     async function fetchApplications() {
       try {

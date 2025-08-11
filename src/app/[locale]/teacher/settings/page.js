@@ -21,6 +21,7 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
+import { useTranslations } from "next-intl";
 
 const menuItems = [
   { id: "profile", label: "Profile Settings", description: "Update your teacher profile information." },
@@ -30,7 +31,7 @@ const menuItems = [
 export default function SettingsHomePage() {
   const { locale } = useParams();
   const router = useRouter();
-
+  const t = useTranslations("teacher-setting");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
@@ -66,10 +67,10 @@ export default function SettingsHomePage() {
     <Box maxWidth={700} mx="auto" mt={5} px={2}>
       <Paper sx={{ p: 4, borderRadius: 3, boxShadow: 4 }}>
         <Typography variant="h4" fontWeight="bold" gutterBottom>
-          Teacher Settings
+          {t("heading")}
         </Typography>
         <Typography variant="body1" mb={3}>
-          Manage your teacher account settings. Use the options below to update your profile or change your password.
+          {t("sub_heading")}
         </Typography>
 
         <List>
@@ -104,35 +105,34 @@ export default function SettingsHomePage() {
         {/* Delete Account Section */}
         <Box mt={6} borderTop="1px solid #ddd" pt={4}>
           <Typography variant="h6" fontWeight="bold" color="error" gutterBottom>
-            Delete Teacher Account
+            {t("delete_teacher_account")}
           </Typography>
           <Typography variant="body2" mb={2} color="text.secondary">
-            Warning: This action is irreversible. Deleting your teacher account will permanently remove all related data.
+            {t("delete_teacher_account_description")}
           </Typography>
           <Button
             variant="outlined"
             color="error"
             onClick={handleDeleteClick}
             disabled={deleting}
-          >
-            {deleting ? <CircularProgress size={24} color="error" /> : "Delete Account"}
+          >           {deleting ? <CircularProgress size={24} color="error" /> : t("delete_teacher_button")}
           </Button>
         </Box>
 
         {/* Confirmation Dialog */}
         <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-          <DialogTitle>Confirm Account Deletion</DialogTitle>
+          <DialogTitle>{t("confirm_delete")}</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              Are you sure you want to permanently delete your teacher account? This action cannot be undone.
+              {t("message")}
             </DialogContentText>
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setDeleteDialogOpen(false)} disabled={deleting}>
-              Cancel
+              {t("cancel")}
             </Button>
             <Button onClick={handleDeleteConfirm} color="error" disabled={deleting}>
-              {deleting ? <CircularProgress size={20} color="inherit" /> : "Delete"}
+              {deleting ? <CircularProgress size={20} color="inherit" /> : t("confirm")}
             </Button>
           </DialogActions>
         </Dialog>

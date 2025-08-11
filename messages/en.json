@@ -260,7 +260,8 @@
     "location": "Location",
     "contact": "Contact",
     "description": "Description",
-    "website": "Website"
+    "website": "Website",
+    "studentIdImage": "Upload Student ID Image"
   },
   "authmenu": {
     "title": "Confirm Logout",
@@ -327,8 +328,8 @@
 
   "company_sidebar": {
     "dashboard": "Dashboard",
-    "viewinternship": "View Internship",
-    "post_internship": "Post Internship Post",
+    "viewinternship": "View Internship Post(s)",
+    "post_internship": "Post Internship ",
     "Setting": "Setting",
     "post": "Post Internship",
     "application": "Student Applications",
@@ -532,7 +533,8 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "loading": "Loading applications...",
-    "load_error": "Failed to load internship applications."
+    "load_error": "Failed to load internship applications.",
+    "batch_year":"Batch Year"
   },
   "review": {
     "no": "No",
@@ -775,5 +777,79 @@
     "pending":"Pending",
     "all":"All",
     "batch_year": "Batch Year"
+  },
+  "teacher-nav": {
+    "dashboard": "Teacher Dashboard",
+    "student":"Students",
+    "generate_report":"Generate Report",
+    "applications": "Applications",
+    "settings": "Settings"
+  },
+  "teacher-dashboard": {
+    "teacher_dashboard": "Teacher Dashboard",
+    "total_applications":"Total Applications",
+    "applied":"Applied",
+    "accept":"Accepted",
+    "reject":"Rejected",
+    "application_by_batch_year":"Applications by Batch year",
+    "recent_application":"Recent Application",
+    "no":"No",
+    "students":"Students",
+    "company":"Company",
+    "batch_year":"Batch Year",
+    "status":"Status"
+  },
+  "teacher-student":{
+    "register_student":"Register Students",
+    "search_by_name":"Search by name",
+    "batch_year":"Batch Year",
+    "all_batch":"All Batch Years"
+  },
+  "teacher-generate":{
+    "internship_report":"Internship Report Generator",
+    "description":"Generate detailed PDF reports for internship applications for your university based on filters like batch year and application status.",
+    "select_filter":"Select Filters",
+    "batch_year":"Batch Year",
+    "description1":"Choose a batch year or all batches",
+    "application_status":"Application Status",
+    "description2":"Filter applications by status"
+  },
+  "teacher-application": {
+    "all":"All",
+    "applied":"Applied",
+    "accepted":"Accepted",
+    "rejected":"Rejected",
+    "batch_year": "Batch Year"
+  },
+  "teacher-setting": {
+    "heading": "Teacher Settings",
+    "sub_heading": "Manage your teacher account settings. Use the options below to update your profile or change your password.",
+    "profile_settings": "Profile Settings",
+    "profile_settings_description": "Update your teacher profile information.",
+    "change_password": "Change Password",
+    "change_password_description": "Change your account password.",
+    "delete_teacher_account": "Delete Teacher Account",
+    "delete_teacher_account_description": "Warning:This action is irreversible. Deleting your account will remove all associated data.",
+    "delete_teacher_button": "Delete Teacher",
+    "confirm_delete": "Confirm Delete",
+    "message": "Are you sure you want to permanently delete your account? This action cannot be undone.",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "student-profile":{
+    "edit_profile":"Edit Profile",
+    "personal_info":"Personal Information",
+    "student_id":"Student ID Card Information",
+    "email":"Email",
+    "academic_info":"Academic Information",
+    "major":"Major",
+    "batch_year":"Batch Year",
+    "skills":"Skills",
+    "social":"Social Profiles",
+    "university":"University",
+    "roll":"Roll",
+    "name":"Name",
+    "issue_date":"Issued Date",
+    "retry":"Retry ORC"
   }
 }

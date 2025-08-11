@@ -44,6 +44,7 @@ export async function GET() {
       student_name: app.student.user.name,
       status: app.status,
       applied_at: app.applied_at.toISOString().split("T")[0], 
+      batch_year : app.student.batch_year
     }));
 
     return NextResponse.json({

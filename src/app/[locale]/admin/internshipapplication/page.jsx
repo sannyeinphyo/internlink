@@ -41,11 +41,11 @@ export default function InternshipApplicationList() {
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedAppId, setSelectedAppId] = useState(null);
+  const [batchYearFilter, setBatchYearFilter] = useState("");
 
   const internshipApplicationsPerPage = 10;
   const applicationStatuses = ["applied", "accepted", "rejected"];
 
-  // ✅ Fetch all applications once
   useEffect(() => {
     const fetchApplications = async () => {
       setLoading(true);
@@ -76,11 +76,16 @@ export default function InternshipApplicationList() {
       app.student_name.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesStatus = filterStatus ? app.status === filterStatus : true;
+    const matchesBatchYear = batchYearFilter
+      ? app.batch_year === batchYearFilter
+      : true;
 
-    return matchesSearch && matchesStatus;
+    return matchesSearch && matchesStatus && matchesBatchYear;
   });
 
-  const totalPages = Math.ceil(filteredApplications.length / internshipApplicationsPerPage);
+  const totalPages = Math.ceil(
+    filteredApplications.length / internshipApplicationsPerPage
+  );
 
   const paginatedApplications = filteredApplications.slice(
     (currentPage - 1) * internshipApplicationsPerPage,
@@ -94,8 +99,12 @@ export default function InternshipApplicationList() {
 
   const confirmDelete = async () => {
     try {
-      await axios.delete(`/api/admin/internshipapplication/${selectedAppId}/delete`);
-      setAllApplications((prev) => prev.filter((app) => app.id !== selectedAppId));
+      await axios.delete(
+        `/api/admin/internshipapplication/${selectedAppId}/delete`
+      );
+      setAllApplications((prev) =>
+        prev.filter((app) => app.id !== selectedAppId)
+      );
       setOpenDialog(false);
       setSelectedAppId(null);
     } catch (error) {
@@ -110,12 +119,14 @@ export default function InternshipApplicationList() {
     student_name: app.student_name,
     status: app.status,
     applied_at: app.applied_at,
+    batch_year: app.batch_year,
   }));
 
   const columns = [
     { field: "no", headerName: t("no"), width: 80 },
     { field: "post_name", headerName: t("post_name"), flex: 1 },
     { field: "student_name", headerName: t("student_name"), flex: 1 },
+    { field: "batch_year", headerName: t("batch_year"), flex: 1 },
     {
       field: "status",
       headerName: t("status"),
@@ -145,7 +156,10 @@ export default function InternshipApplicationList() {
       sortable: false,
       renderCell: (params) => (
         <>
-          <Link href={`/${locale}/admin/internshipapplication/${params.row.id}`} passHref>
+          <Link
+            href={`/${locale}/admin/internshipapplication/${params.row.id}`}
+            passHref
+          >
             <IconButton>
               <VisibilityIcon sx={{ color: "blue" }} />
             </IconButton>
@@ -160,7 +174,12 @@ export default function InternshipApplicationList() {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="200px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="200px"
+      >
         <CircularProgress />
         <Typography ml={2}>{t("loading")}</Typography>
       </Box>
@@ -169,7 +188,12 @@ export default function InternshipApplicationList() {
 
   if (error) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="200px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="200px"
+      >
         <Alert severity="error">{error}</Alert>
       </Box>
     );
@@ -179,7 +203,13 @@ export default function InternshipApplicationList() {
     <Box>
       {/* <Typography variant="h5" gutterBottom>{t("applications")}</Typography> */}
 
-      <Box display="flex" flexWrap="wrap" gap={2} mb={2} justifyContent={"flex-end"}>
+      <Box
+        display="flex"
+        flexWrap="wrap"
+        gap={2}
+        mb={2}
+        justifyContent={"flex-end"}
+      >
         <TextField
           variant="outlined"
           placeholder={t("search_placeholder")}
@@ -216,6 +246,27 @@ export default function InternshipApplicationList() {
             ))}
           </Select>
         </FormControl>
+        <FormControl sx={{ minWidth: 150 }}>
+          <InputLabel>{t("batch_year")}</InputLabel>
+          <Select
+            value={batchYearFilter}
+            label={t("batch_year")}
+            onChange={(e) => {
+              setBatchYearFilter(e.target.value);
+              setCurrentPage(1);
+            }}
+          >
+            <MenuItem value="">{t("all")}</MenuItem>
+            {/* You can dynamically extract unique years from allApplications to avoid hardcoding */}
+            {[...new Set(allApplications.map((app) => app.batch_year))]
+              .sort()
+              .map((year) => (
+                <MenuItem key={year} value={year}>
+                  {year}
+                </MenuItem>
+              ))}
+          </Select>
+        </FormControl>
       </Box>
 
       <Box sx={{ height: 550, width: "100%", backgroundColor: "white" }}>
@@ -232,9 +283,7 @@ export default function InternshipApplicationList() {
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <DialogTitle>{t("confirm_delete")}</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            {t("delete_warning")}
-          </DialogContentText>
+          <DialogContentText>{t("delete_warning")}</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)} color="inherit">

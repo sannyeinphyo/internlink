@@ -6,6 +6,7 @@ import Link from "next/link";
 import { styled, useTheme } from "@mui/material/styles";
 import TeacherProfileMenu from "./TeacherProfileMenu";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 import {
   Box,
@@ -37,7 +38,7 @@ import WorkIcon from "@mui/icons-material/Work";
 import DescriptionIcon from "@mui/icons-material/Description";
 import SettingsIcon from "@mui/icons-material/Settings";
 
-const drawerWidth = 240;
+const drawerWidth = 280;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -103,31 +104,32 @@ const Drawer = styled(MuiDrawer, {
 export default function TeacherSideBar({ children }) {
   const { locale } = useParams();
   const theme = useTheme();
+  const t = useTranslations("teacher-nav");
   const [open, setOpen] = React.useState(true);
   const pathname = usePathname();
   const navItems = [
     {
-      text: "Dashboard",
+      text: t("dashboard"),
       path: `/${locale}/teacher/dashboard`,
       icon: <DashboardIcon />,
     },
     {
-      text: "Students",
+      text: t("student"),
       path: `/${locale}/teacher/view_student`,
       icon: <PostAddIcon />,
     },
     {
-      text: "Generate Report",
+      text: t("generate_report"),
       path: `/${locale}/teacher/report`,
       icon: <WorkIcon />,
     },
     {
-      text: "Applications",
+      text: t("applications"),
       path: `/${locale}/teacher/student_applications`,
       icon: <DescriptionIcon />,
     },
     {
-      text: "Settings",
+      text: t("settings"),
       path: `/${locale}/teacher/settings`,
       icon: <SettingsIcon />,
     },
@@ -207,6 +209,7 @@ export default function TeacherSideBar({ children }) {
                     </ListItemIcon>
                     <ListItemText
                       primary={text}
+                      slotProps={{ primary: { sx: {fontSize: "14px"} } }}
                       sx={{
                         opacity: open ? 1 : 0,
                         fontWeight: isActive ? "bold" : "normal",

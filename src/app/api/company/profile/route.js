@@ -11,6 +11,9 @@ export async function GET() {
 
   const company = await prisma.company.findUnique({
     where: { user_id: session.user.id },
+    include : {
+      user: true,
+    }
   });
 
   if (!company) {

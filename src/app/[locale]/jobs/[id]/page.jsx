@@ -187,14 +187,15 @@ export default function JobPage() {
                 color="text.secondary"
                 sx={{ mb: 3 }}
               >
-                {t("company_name")} <strong>{job.company?.name || "Unknown"}</strong>
+                {t("company_name")}{" "}
+                <strong>{job.company?.name || "Unknown"}</strong>
               </Typography>
 
               <Divider sx={{ mb: 3 }} />
 
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 3 }}>
                 <Chip
-                  label={job.paid ? t("paid"): t("unpaid")}
+                  label={job.paid ? t("paid") : t("unpaid")}
                   color={job.paid ? "success" : "default"}
                 />
                 {job.job_type && <Chip label={job.job_type} color="info" />}
@@ -210,9 +211,11 @@ export default function JobPage() {
 
               <Stack spacing={3}>
                 <Box>
-                  <Typography variant="h6" gutterBottom fontWeight={"bold"}>
-                    
-                  </Typography>
+                  <Typography
+                    variant="h6"
+                    gutterBottom
+                    fontWeight={"bold"}
+                  ></Typography>
                   <Typography>{job.description}</Typography>
                 </Box>
 
@@ -229,7 +232,20 @@ export default function JobPage() {
                   <Typography variant="h6" gutterBottom fontWeight={"bold"}>
                     {t("requirements")}
                   </Typography>
-                  <Typography>{job.requirements}</Typography>
+
+                  <ul style={{ paddingLeft: "1.5rem", marginTop: 0 , listStyleType: "decimal"}}>
+                    {job.requirements
+                      ?.split(",")
+                      .map((req) => req.trim()) 
+                      .filter((req) => req !== "")
+                      .map((req, index) => (
+                        <li key={index} style={{ marginBottom: "0.5rem" }}>
+                          <Typography variant="body1" component="span">
+                            {req}
+                          </Typography>
+                        </li>
+                      ))}
+                  </ul>
                 </Box>
 
                 {job.benefits && (
@@ -249,7 +265,9 @@ export default function JobPage() {
                     {job.salary && (
                       <Box display="flex" alignItems="center" gap={1}>
                         <AttachMoney fontSize="small" />
-                        <Typography>{t("salary")}: ${job.salary}</Typography>
+                        <Typography>
+                          {t("salary")}: ${job.salary}
+                        </Typography>
                       </Box>
                     )}
                     <Box display="flex" alignItems="center" gap={1}>
@@ -259,13 +277,15 @@ export default function JobPage() {
                     <Box display="flex" alignItems="center" gap={1}>
                       <CalendarToday fontSize="small" />
                       <Typography>
-                        {t("start")}: {new Date(job.start_date).toLocaleDateString()}
+                        {t("start")}:{" "}
+                        {new Date(job.start_date).toLocaleDateString()}
                       </Typography>
                     </Box>
                     <Box display="flex" alignItems="center" gap={1}>
                       <CalendarToday fontSize="small" />
                       <Typography>
-                        {t("end")}: {new Date(job.end_date).toLocaleDateString()}
+                        {t("end")}:{" "}
+                        {new Date(job.end_date).toLocaleDateString()}
                       </Typography>
                     </Box>
                     {job.application_deadline && (
@@ -324,16 +344,14 @@ export default function JobPage() {
               >
                 {t("whythisjob")}
               </Typography>
-              <Typography sx={{ mb: 2 }}>
-                {t("subtitle")}
-              </Typography>
+              <Typography sx={{ mb: 2 }}>{t("subtitle")}</Typography>
 
               <Typography
                 variant="subtitle2"
                 color="text.secondary"
                 gutterBottom
               >
-               {t("subtitle2")}
+                {t("subtitle2")}
               </Typography>
 
               <Divider sx={{ my: 2 }} />
@@ -344,7 +362,7 @@ export default function JobPage() {
                 gutterBottom
                 color="buttonmain.main"
               >
-               {t("tips")}
+                {t("tips")}
               </Typography>
               <ul style={{ paddingLeft: "1.2rem", marginTop: 0 }}>
                 <li>{t("tip_list1")}</li>

@@ -213,7 +213,7 @@ export default function UniversityList() {
         />
 
         <FormControl sx={{ minWidth: 150 }}>
-          <InputLabel>Status</InputLabel>
+          <InputLabel>{t("status")}</InputLabel>
           <Select
             value={filterStatus}
             label="Status"

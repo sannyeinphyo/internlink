@@ -1,12 +1,28 @@
 import * as yup from "yup";
 
 export const registerSchema = yup.object().shape({
-  email: yup.string().email("Invalid email format").required("Email is required"),
+  name: yup.string().when("role", {
+    is: "company",
+    then: (schema) => schema.required("Company name is required"),
+    otherwise: (schema) => schema.required("Name is required"),
+  }),
+
+  email: yup
+    .string()
+    .email("Invalid email format")
+    .required("Email is required"),
 
   password: yup
     .string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
+    .required("Password is required")
+    .min(8, "Password must be at least 8 characters long")
+    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .matches(/[0-9]/, "Password must contain at least one interger")
+    .matches(
+      /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/,
+      "Password must contain at least one special character"
+    ),
 
   role: yup
     .string()
@@ -31,12 +47,15 @@ export const registerSchema = yup.object().shape({
     otherwise: (schema) => schema.notRequired(),
   }),
 
-  skills: yup.array().of(yup.string()).when("role", {
-    is: "student",
-    then: (schema) =>
-      schema.min(1, "Please add at least one skill").required(),
-    otherwise: (schema) => schema.notRequired(),
-  }),
+  skills: yup
+    .array()
+    .of(yup.string())
+    .when("role", {
+      is: "student",
+      then: (schema) =>
+        schema.min(1, "Please add at least one skill").required(),
+      otherwise: (schema) => schema.notRequired(),
+    }),
 
   university_id: yup.number().when("role", {
     is: "student",
@@ -50,15 +69,21 @@ export const registerSchema = yup.object().shape({
   facebook: yup.string().url("Invalid URL").nullable(),
   linkedIn: yup.string().url("Invalid URL").nullable(),
 
+  student_id_image: yup.string().when("role", {
+    is: "student",
+    then: (schema) =>
+      schema
+        .required("Student ID image is required")
+        .test("is-image", "Invalid file format", (value) => {
+          if (!value) return true;
+          return value.startsWith("data:image/");
+        }),
+    otherwise: (schema) => schema.strip(),
+  }),
+
   department: yup.string().when("role", {
     is: "teacher",
     then: (schema) => schema.required("Department is required"),
-    otherwise: (schema) => schema.notRequired(),
-  }),
-
-  name: yup.string().when("role", {
-    is: "company",
-    then: (schema) => schema.required("Company name is required"),
     otherwise: (schema) => schema.notRequired(),
   }),
 
@@ -67,15 +92,18 @@ export const registerSchema = yup.object().shape({
     then: (schema) => schema.required("Location is required"),
     otherwise: (schema) => schema.notRequired(),
   }),
-  
-  image: yup.string().nullable(),
 
+  image: yup.string().nullable(),
 
   website: yup.string().url("Invalid URL").nullable(),
 
   facebook_company: yup.string().url("Invalid URL").nullable(),
 
-  description: yup.string().nullable(),
+  description: yup.string().when("role", {
+    is: "company",
+    then: (schema) => schema.required("Description is required"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
 
   contact_info: yup.string().when("role", {
     is: "company",

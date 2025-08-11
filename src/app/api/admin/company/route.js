@@ -5,8 +5,7 @@ import bcrypt from "bcryptjs";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import * as yup from "yup";
-import { companySchema } from "@/schemas/adminAccountCreation"; // Assuming companySchema is part of combinedAccountSchema in the client
-
+import { companySchema } from "@/schemas/adminAccountCreation"; 
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session || session.user.role !== "admin") {
@@ -18,7 +17,7 @@ export async function GET() {
         role: "company",
       },
       include: {
-        company: true, // Include company details if they exist
+        company: true,
       },
     });
 

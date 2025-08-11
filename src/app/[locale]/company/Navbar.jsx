@@ -41,29 +41,29 @@ export default function Navbar() {
   };
 
   const handleClose = () => setAnchorEl(null);
-  useEffect(() => {
-    if (session?.user) {
-      console.log("User session exists:", session.user);
-      if (session.user.name) {
-        console.log("Setting name from session.user.name:", session.user.name);
-        setName(session.user.name);
-      } else {
-        console.log("Fetching company profile because name not in session...");
-        axios
-          .get("/api/company/profile")
-          .then((res) => {
-            console.log("Company profile response:", res.data);
-            setName(res.data.name || "Company");
-          })
-          .catch((error) => {
-            console.error("Failed to fetch company profile:", error);
-            setName("Company");
-          });
-      }
-    } else {
-      console.log("No user session found");
-    }
-  }, [session]);
+  // useEffect(() => {
+  //   if (session?.user) {
+  //     console.log("User session exists:", session.user);
+  //     if (session.user.name) {
+  //       console.log("Setting name from session.user.name:", session.user.name);
+  //       setName(session.user.name);
+  //     } else {
+  //       console.log("Fetching company profile because name not in session...");
+  //       axios
+  //         .get("/api/company/profile")
+  //         .then((res) => {
+  //           console.log("Company profile response:", res.data);
+  //           setName(res.data.data || "Company");
+  //         })
+  //         .catch((error) => {
+  //           console.error("Failed to fetch company profile:", error);
+  //           setName("Company");
+  //         });
+  //     }
+  //   } else {
+  //     console.log("No user session found");
+  //   }
+  // }, [session]);
   useEffect(() => {
     const getProfile = async () => {
       try {
@@ -75,6 +75,9 @@ export default function Navbar() {
     };
     getProfile();
   }, []);
+
+  console.log("Getting Profile", profile);
+
   if (status === "loading") {
     console.log("Session is loading...");
     return (
@@ -136,46 +139,43 @@ export default function Navbar() {
           >
             UniJob
           </Typography>
-          <Typography variant="h6" fontWeight={"bold"} color="#8e38ffff" component={"span"}>
+          <Typography
+            variant="h6"
+            fontWeight={"bold"}
+            color="#8e38ffff"
+            component={"span"}
+          >
             Link
           </Typography>
         </Box>
 
         <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
           {session?.user?.id && <NotificationBell userId={session.user.id} />}
-          <Typography
-            sx={{ fontSize: "16px", fontWeight: "bold", color: "bgmain.main" }}
-          >
-            {profile.name}
-          </Typography>
+
           <Tooltip title="Company Profile">
             {/* <IconButton
-              onClick={handleToggle}
-              color="inherit"
-              size="medium"
-              sx={{ display: "flex", gap: 1, boxShadow: 2 }}
-            >
-              <Avatar src={profile.image} alt={name} />
-            </IconButton> */}
+            onClick={handleToggle}
+            color="inherit"
+            size="medium"
+            sx={{ display: "flex", gap: 1, boxShadow: 2 }}
+          >
+            <Avatar src={profile.image} alt={name} />
+          </IconButton> */}
             <Box
-              width={48}
-              height={48}
               onClick={handleToggle}
               sx={{ cursor: "pointer" }}
+              alignItems={"center"}
             >
               <img
                 style={{
-                  borderRadius: "50%",
+                  borderRadius: "8px",
+                  width: "48px",
                   boxShadow: "0px 0 4px 2px rgba(0,0,0,0.1)",
                 }}
                 alt={profile.name}
-                src={profile.image || "/default-avatar.png"}
-                sx={{
-                  borderRadius: "50%",
-                  width: 32,
-                  height: 32,
-                  pointerEvents: "none",
-                }}
+                src={
+                  profile.image || "/default-avatar.jpg" || profile.user.image
+                }
               />
             </Box>
           </Tooltip>
@@ -196,6 +196,17 @@ export default function Navbar() {
               },
             }}
           >
+            <MenuItem>
+              <Typography
+                sx={{
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                  color: "bgmain.main",
+                }}
+              >
+                {profile.name}
+              </Typography>
+            </MenuItem>
             <MenuItem
               onClick={() => {
                 handleClose();

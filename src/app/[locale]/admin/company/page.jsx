@@ -201,7 +201,7 @@ export default function CompanyList() {
         <Stack direction="row" spacing={2} flexWrap="wrap">
           <TextField
             variant="outlined"
-            placeholder="Search by any field"
+            placeholder={t("search")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             InputProps={{
@@ -214,15 +214,15 @@ export default function CompanyList() {
             }}
           />
           <FormControl sx={{ minWidth: 150 }}>
-            <InputLabel>Status</InputLabel>
+            <InputLabel>{t("status")}</InputLabel>
             <Select
               value={filterStatus}
-              label="Status"
+              label={t("status")}
               onChange={(e) => setFilterStatus(e.target.value)}
             >
               <MenuItem value="">All</MenuItem>
               {uniqueStatuses.map((status) => (
-                <MenuItem key={status} value={status}>
+                <MenuItem key={status} value={status} >
                   {status.charAt(0).toUpperCase() + status.slice(1)}
                 </MenuItem>
               ))}

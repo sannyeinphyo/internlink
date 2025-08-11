@@ -35,6 +35,7 @@ function EditPostDialog({ open, onClose, post, onUpdated }) {
     title: post.title || "",
     job_type: post.job_type || "",
     salary: post.salary || 0,
+    description: post.description || "",
     application_deadline: post.application_deadline
       ? post.application_deadline.slice(0, 10)
       : "",
@@ -45,6 +46,7 @@ function EditPostDialog({ open, onClose, post, onUpdated }) {
       title: post.title || "",
       job_type: post.job_type || "",
       salary: post.salary || 0,
+      description: post.description || "",
       application_deadline: post.application_deadline
         ? post.application_deadline.slice(0, 10)
         : "",
@@ -79,15 +81,23 @@ function EditPostDialog({ open, onClose, post, onUpdated }) {
           value={formData.title}
           onChange={handleChange}
         />
-        <TextField
+        {/* <TextField
           margin="dense"
           label="Job Type"
           name="job_type"
           fullWidth
           value={formData.job_type}
           onChange={handleChange}
+        /> */}
+         <TextField
+          margin="dense"
+          label="Description"
+          name="description"
+          fullWidth
+          value={formData.description}
+          onChange={handleChange}
         />
-        <TextField
+        {/* <TextField
           margin="dense"
           label="Salary"
           name="salary"
@@ -95,7 +105,7 @@ function EditPostDialog({ open, onClose, post, onUpdated }) {
           fullWidth
           value={formData.salary}
           onChange={handleChange}
-        />
+        /> */}
         <TextField
           margin="dense"
           label="Application Deadline"
@@ -206,7 +216,7 @@ export default function MyInternship() {
             >
               <CardContent sx={{ flexGrow: 1 }}>
                 <Typography
-                component={"span"}
+                  component={"span"}
                   variant="h6"
                   fontWeight="bold"
                   pr={2}
@@ -221,13 +231,18 @@ export default function MyInternship() {
                   {post.title}
                 </Typography>
 
-                <Stack  display = {"inline"}  fontWeight="700" direction="row" alignItems="center" spacing={1}>
+                <Stack
+                  display={"inline"}
+                  fontWeight="700"
+                  direction="row"
+                  alignItems="center"
+                  spacing={1}
+                >
                   <Chip
                     label={`${t("applied")}: ${post._count?.applications || 0}`}
                     color="primary"
                     size="small"
                     variant="contained"
-                   
                   />
                 </Stack>
 
@@ -320,7 +335,7 @@ export default function MyInternship() {
                   size="small"
                   onClick={() => setEditPost(post)}
                 >
-                 {t("edit")}
+                  {t("edit")}
                 </Button>
                 <Button
                   variant="contained"
@@ -328,7 +343,7 @@ export default function MyInternship() {
                   color="error"
                   onClick={() => handleDeleteClick(post)}
                 >
-                {t("delete")}
+                  {t("delete")}
                 </Button>
               </CardActions>
             </Card>
@@ -353,8 +368,7 @@ export default function MyInternship() {
         <DialogTitle id="delete-dialog-title">Confirm Delete</DialogTitle>
         <DialogContent>
           <DialogContentText id="delete-dialog-description">
-          {t("confirm_delete_text", { title: postToDelete?.title })}
-
+            {t("confirm_delete_text", { title: postToDelete?.title })}
           </DialogContentText>
         </DialogContent>
         <DialogActions>

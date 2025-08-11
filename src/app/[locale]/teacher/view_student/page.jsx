@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export default function ViewStudentsPage() {
   const [students, setStudents] = useState([]);
@@ -22,6 +23,7 @@ export default function ViewStudentsPage() {
   const [searchName, setSearchName] = useState("");
   const [batchFilter, setBatchFilter] = useState("all");
   const { locale } = useParams();
+  const  t  = useTranslations("teacher-student"); 
 
   useEffect(() => {
     axios
@@ -86,13 +88,13 @@ export default function ViewStudentsPage() {
         gutterBottom
         className="text-center mb-8"
       >
-        Registered Students
+        {t("register_student")}
       </Typography>
 
       {/* Filters */}
       <Box className="flex flex-col sm:flex-row sm:justify-center gap-4 mb-8">
         <TextField
-          label="Search by name"
+          label={t("search_by_name")}
           variant="outlined"
           size="small"
           value={searchName}
@@ -102,14 +104,14 @@ export default function ViewStudentsPage() {
 
         <TextField
           select
-          label="Batch Year"
+          label={t("batch_year")}
           variant="outlined"
           size="small"
           value={batchFilter}
           onChange={(e) => setBatchFilter(e.target.value)}
           className="w-full sm:w-48"
         >
-          <MenuItem value="all">All Batch Years</MenuItem>
+          <MenuItem value="all">{t("all_batch")}</MenuItem>
           {batchYears.map((year) => (
             <MenuItem key={year} value={year}>
               {year}

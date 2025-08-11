@@ -19,6 +19,7 @@ import {
   Select,
   MenuItem,
   FormHelperText,
+  Divider,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
@@ -481,9 +482,14 @@ export default function RegisterPage() {
                     helperText={errors.linkedIn}
                   />
                 </Box>
+                <Divider sx={{ my: 2 }} />
                 <Box>
+                  <Typography variant="h6" mb={1}>
+                    {formt("studentIdImage")}
+                  </Typography>
                   <FormLabel>Upload Student ID</FormLabel>
                   <input
+                    style={{ marginLeft: "10px" }}
                     type="file"
                     accept="image/*"
                     onChange={(e) => {
@@ -507,6 +513,11 @@ export default function RegisterPage() {
                         borderRadius: "8px",
                       }}
                     />
+                  )}
+                  {errors.student_id_image && (
+                    <Typography variant="caption" color="error">
+                      {errors.student_id_image}
+                    </Typography>
                   )}
                 </Box>
               </>
@@ -563,6 +574,7 @@ export default function RegisterPage() {
                     label={formt("description")}
                     fullWidth
                     size="small"
+                    required
                     multiline
                     rows={3}
                     value={companyDescription}

@@ -12,6 +12,7 @@ import {
   IconButton,
   Tooltip,
   Button,
+  Collapse,
 } from "@mui/material";
 import { GitHub, LinkedIn, Facebook } from "@mui/icons-material";
 import { Edit } from "lucide-react";
@@ -22,8 +23,12 @@ import { useParams } from "next/navigation";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import NewReleasesIcon from "@mui/icons-material/NewReleases";
 import Link from "next/link";
-import lightbox, { Lightbox } from "yet-another-react-lightbox";
+import  { Lightbox } from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Tesseract from "tesseract.js";
+import StudentIdFromBase64 from "@/components/StudentIdFromBase64";
+import { useTranslations } from "next-intl";
 
 const skillOptions = [
   "React",
@@ -102,6 +107,14 @@ export default function StudentProfileView() {
   const { locale } = useParams();
   const [openUni, setOpenUni] = useState(false);
   const [openStudent, setOpenStudent] = useState(false);
+  const [openStudentId, setOpenStudentId] = useState(false);
+  const [showStudentId, setShowStudentId] = useState(true);
+  const [ocrText, setOcrText] = useState("");
+  const [ocrLoading, setOcrLoading] = useState(false);
+  const t = useTranslations("student-profile");
+
+
+
 
   useEffect(() => {
     async function fetchProfile() {
@@ -114,6 +127,7 @@ export default function StudentProfileView() {
           email: student.user?.email || "",
           major: student.major || "",
           batchYear: student.batch_year || "",
+          studentId: student.student_id_image || "",
           skills: student.skills
             ? student.skills.split(",").map((s) => s.trim())
             : [],
@@ -134,7 +148,23 @@ export default function StudentProfileView() {
 
     fetchProfile();
   }, []);
-  console.log(profile);
+
+  const doOCR = async (imageUrl) => {
+    setOcrLoading(true);
+    try {
+      const {
+        data: { text },
+      } = await Tesseract.recognize(imageUrl, "eng");
+      setOcrText(text);
+    } catch (error) {
+      console.error("OCR failed:", error);
+      setOcrText("Failed to extract text from the image.");
+    } finally {
+      setOcrLoading(false);
+    }
+  };
+
+  console.log("Student ID base64:", profile.studentId);
 
   const verifiedRaw = profile.verified;
   const isVerifiedBool = Boolean(verifiedRaw === true || verifiedRaw === 1);
@@ -183,6 +213,7 @@ export default function StudentProfileView() {
               position: "absolute",
               bottom: -60,
               left: "50%",
+              cursor:"pointer",
               transform: "translateX(-50%)",
               "&:": {
                 transform: "scale(1.15)",
@@ -202,7 +233,7 @@ export default function StudentProfileView() {
                 <img
                   src={profile.uniimage}
                   alt="University Image"
-                  style={{ maxWidth: "100px", borderRadius: "8px" }}
+                  style={{ maxWidth: "100px", borderRadius: "8px" , cursor:"pointer" }}
                   onClick={() => setOpenUni(true)}
                 />
               ) : (
@@ -252,6 +283,24 @@ export default function StudentProfileView() {
                 ),
               }}
             />
+             <Lightbox
+              open={openStudentId}
+              close={() => setOpenStudentId(false)}
+              slides={[{ src: profile.studentId }]}
+              render={{
+                slide: ({ slide }) => (
+                  <img
+                    src={slide.src}
+                    alt="Student Profile"
+                    style={{
+                      width: "50%",
+                      height: "auto",
+                      userSelect: "none",
+                    }}
+                  />
+                ),
+              }}
+            />
 
             <Typography color="text.secondary" fontSize="1.1rem" gutterBottom>
               {profile.university}
@@ -262,7 +311,7 @@ export default function StudentProfileView() {
               startIcon={<Edit size={18} />}
               onClick={() => router.push(`/${locale}/student/profile/edit`)}
             >
-              Edit Profile
+              {t("edit_profile")}
             </Button>
           </Box>
 
@@ -275,12 +324,109 @@ export default function StudentProfileView() {
               color="text.primary"
               gutterBottom
             >
-              Personal Information
+              {t("personal_info")}
             </Typography>
-            <Typography>
-              <strong>Email:</strong> {profile.email}{" "}
+
+            <Typography gutterBottom>
+              <strong>{t("email")}:</strong> {profile.email}{" "}
               <span style={{ marginLeft: "4px" }}>{isVerified}</span>
             </Typography>
+
+            {profile.studentId && (
+              <>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  sx={{
+                    mt: 1,
+                    cursor: "pointer",
+                    "&:hover": { color: "primary.main" },
+                  }}
+                  onClick={() => setShowStudentId((prev) => !prev)}
+                >
+                  <Typography fontWeight="bold">{t("student_id")}</Typography>
+                  <IconButton size="small">
+                    <ExpandMoreIcon
+                      sx={{
+                        transform: showStudentId
+                          ? "rotate(180deg)"
+                          : "rotate(0deg)",
+                        transition: "transform 0.3s ease",
+                      }}
+                    />
+                  </IconButton>
+                </Box>
+
+                <Collapse in={showStudentId}>
+                  <Paper
+                    sx={{
+                      mt: 1,
+                      p: 1.5,
+                      bgcolor: "#f5f5f5",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    <Box
+                     onClick = {() => setOpenStudentId(true) }
+                      display={"flex"}
+                      width={"100%"}
+                      justifyContent={"center"}
+                      sx={{cursor:"pointer"}}
+                    >
+                      <img
+
+                        src={profile.studentId}
+                        width={"30%"}
+                        height={"50%"}
+                      />
+                    </Box>
+                  </Paper>
+                </Collapse>
+              </>
+            )}
+            {/* {profile.studentId && (
+              <>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  sx={{ cursor: "pointer", mt: 2 }}
+                  onClick={() => setShowOcr((prev) => !prev)}
+                >
+                  <Typography fontWeight="bold" flexGrow={1}>
+                    Student ID Info
+                  </Typography>
+                  <IconButton size="small">
+                    <ExpandMoreIcon
+                      sx={{
+                        transform: showOcr ? "rotate(180deg)" : "rotate(0deg)",
+                        transition: "transform 0.3s ease",
+                      }}
+                    />
+                  </IconButton>
+                </Box>
+
+                <Collapse in={showOcr}>
+                  <Paper
+                    sx={{
+                      mt: 1,
+                      p: 2,
+                      bgcolor: "#f9f9f9",
+                      whiteSpace: "pre-wrap",
+                      maxHeight: 160,
+                      overflowY: "auto",
+                    }}
+                  >
+                    {ocrLoading ? (
+                      <Typography>Extracting ID info...</Typography>
+                    ) : (
+                      <Typography>{ocrText || "No data extracted."}</Typography>
+                    )}
+                  </Paper>
+                </Collapse>
+              </>
+            )} */}
+
+            <StudentIdFromBase64 base64Image={profile.studentId} />
           </Box>
 
           <Box mb={4}>
@@ -290,13 +436,13 @@ export default function StudentProfileView() {
               color="text.primary"
               gutterBottom
             >
-              Academic Information
+              {t("academic_info")}
             </Typography>
             <Typography>
-              <strong>Major:</strong> {profile.major}
+              <strong>{t("major")}:</strong> {profile.major}
             </Typography>
             <Typography>
-              <strong>Batch Year:</strong> {profile.batchYear}
+              <strong>{t("batch_year")}:</strong> {profile.batchYear}
             </Typography>
           </Box>
 
@@ -308,7 +454,7 @@ export default function StudentProfileView() {
                 color="text.primary"
                 gutterBottom
               >
-                Skills
+                {t("skills")}
               </Typography>
               <Box display="flex" flexWrap="wrap" gap={1}>
                 {profile.skills.map((skill) => (
@@ -334,7 +480,7 @@ export default function StudentProfileView() {
                 color="text.primary"
                 gutterBottom
               >
-                Social Profiles
+                {t("social")}
               </Typography>
               <Box display="flex" gap={2}>
                 {profile.facebook && (

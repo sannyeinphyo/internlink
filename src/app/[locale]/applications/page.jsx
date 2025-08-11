@@ -205,8 +205,12 @@ export default function Applications() {
       sortable: false,
       filterable: false,
       renderCell: (params) => {
+        const applicationstatus = params.row.status || "default";
         const interview = params.row.Interview?.[0];
-        const disabled = !interview || interview.status !== "PENDING";
+        const disabled =
+          !interview ||
+          interview.status !== "PENDING" ||
+          applicationstatus === "rejected";
 
         return (
           <Stack
@@ -259,31 +263,48 @@ export default function Applications() {
       headerName: t("headers.actions"),
       headerAlign: "center",
       align: "center",
+      alignItems:"center",
       width: 150,
       sortable: false,
       filterable: false,
       renderCell: (params) => (
         <>
-          <IconButton
-            color="primary"
-            size="small"
-            onClick={() =>
-              router.push(
-                `/${locale}/jobs/${params.row.post.id}?backUrl=/${locale}/applications`
-              )
-            }
+          <Box display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          height={"100%"}
           >
-            <VisibilityIcon />
-          </IconButton>
-          {params.row.status === "applied" && (
             <IconButton
-              color="secondary"
+              sx={{
+                display: "flex",
+                flex: "1",
+                justifyContent:"flex-start",
+                
+              }}
+              color="primary"
               size="small"
-              onClick={() => handleDeleteApplication(params.row.id)}
+              onClick={() =>
+                router.push(
+                  `/${locale}/jobs/${params.row.post.id}?backUrl=/${locale}/applications`
+                )
+              }
             >
-              <Delete />
+              <VisibilityIcon />
             </IconButton>
-          )}
+            {params.row.status === "applied" && (
+              <IconButton
+                sx={{
+                  display: "flex",
+                  flex: "1",
+                }}
+                color="secondary"
+                size="small"
+                onClick={() => handleDeleteApplication(params.row.id)}
+              >
+                <Delete />
+              </IconButton>
+            )}
+          </Box>
         </>
       ),
     },

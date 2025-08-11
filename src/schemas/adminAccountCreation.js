@@ -3,10 +3,18 @@ import * as yup from "yup";
 const baseUserSchema = yup.object().shape({
   name: yup.string().required("Name is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
+
   password: yup
     .string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
+    .required("Password is required")
+    .min(8, "Password must be at least 8 characters long")
+    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .matches(/[0-9]/, "Password must contain at least one interger")
+    .matches(
+      /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/,
+      "Password must contain at least one special character"
+    ),
   website: yup.string().url("Must be a valid URL").nullable(),
 });
 
@@ -36,8 +44,15 @@ export const combinedAccountSchema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Email is required"),
   password: yup
     .string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
+    .required("Password is required")
+    .min(8, "Password must be at least 8 characters long")
+    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .matches(/[0-9]/, "Password must contain at least one interger")
+    .matches(
+      /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/,
+      "Password must contain at least one special character"
+    ),
   role: yup.string().required("Role is required"),
   address: yup.string().when("role", {
     is: (val) => val === "university",
@@ -55,7 +70,7 @@ export const combinedAccountSchema = yup.object().shape({
     otherwise: (schema) => schema.notRequired().nullable(),
   }),
   website: yup.string().url("Must be a valid URL").nullable(),
-  
+
   facebook: yup.string().when("role", {
     is: (val) => val === "company",
     then: (schema) => schema.url("Must be a valid URL").nullable(),

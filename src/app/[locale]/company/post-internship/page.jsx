@@ -11,6 +11,7 @@ import {
   Stack,
   Paper,
   Divider,
+  Autocomplete,
 } from "@mui/material";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -78,6 +79,13 @@ export default function CreateInternshipPost() {
       toast.error("Failed to create post");
     }
   };
+  const requirementOptions = [
+    "Currently enrolled in Computer Science IT or related field",
+    "Basic knowledge of JavaScript  HTML CSS",
+    "Understanding of database concepts (MySQL preferred)",
+    "Good problem-solving skills",
+    "Able to commit at least 3 months",
+  ];
 
   return (
     <Box sx={{ maxWidth: "900px", mx: "auto", p: 3 }}>
@@ -145,15 +153,31 @@ export default function CreateInternshipPost() {
                   value={formData.responsibilities}
                   onChange={handleChange}
                 />
-                <TextField
-                  label={t("fields.requirements")}
-                  name="requirements"
-                  fullWidth
-                  multiline
-                  rows={2}
+                <Autocomplete
+                  multiple
+                  freeSolo
+                  required
+                  options={requirementOptions}
+                  value={
+                    formData.requirements
+                      ? formData.requirements.split(",").map((r) => r.trim())
+                      : []
+                  }
+                  onChange={(e, newValue) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      requirements: newValue.join(", "),
+                    }));
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label={t("fields.requirements")}
+                      placeholder="Type or select requirements"
+                      fullWidth
+                    />
+                  )}
                   sx={{ flex: 1 }}
-                  value={formData.requirements}
-                  onChange={handleChange}
                 />
               </FlexRow>
             </Section>

@@ -1,4 +1,3 @@
-// app/api/company/dashboard/route.js
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";

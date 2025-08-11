@@ -14,6 +14,7 @@ import {
   Divider,
 } from "@mui/material";
 import TeacherReportDownload from "@/components/TeacherReportDownload";
+import { useTranslations } from "next-intl";
 
 const statuses = ["", "applied", "accepted", "rejected"];
 
@@ -26,6 +27,7 @@ export default function TeacherReportGenerator() {
   const [reportData, setReportData] = useState(null);
   const [generatedUniversity, setGeneratedUniversity] = useState("");
   const [generatedBatch, setGeneratedBatch] = useState("");
+  const t = useTranslations("teacher-generate");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,7 +87,7 @@ export default function TeacherReportGenerator() {
           className="text-center mb-2 font-semibold text-gray-900 tracking-wide"
           sx={{ fontFamily: "'Poppins', sans-serif" }}
         >
-          Internship Report Generator
+          {t("internship_report")}
         </Typography>
 
         <Typography
@@ -94,9 +96,10 @@ export default function TeacherReportGenerator() {
           className="text-center text-gray-600 max-w-[420px] mx-auto"
           sx={{ lineHeight: 1.6 }}
         >
-          Generate detailed PDF reports for internship applications for{" "}
-          <strong>{universityName || "your university"}</strong> based on
-          filters like batch year and application status.
+          
+          {t("description", {
+            university: universityName || "Your University",
+          })}
         </Typography>
 
         <Divider sx={{ my: 4 }} />
@@ -107,18 +110,18 @@ export default function TeacherReportGenerator() {
           className="font-medium text-gray-800 tracking-wide"
           sx={{ letterSpacing: "0.02em" }}
         >
-          Select Filters
+          {t("select_filter")}
         </Typography>
 
         <Stack spacing={4}>
           <TextField
             select
-            label="Batch Year"
+            label={t("batch_year")}
             value={batch}
             onChange={(e) => setBatch(e.target.value)}
             fullWidth
             size="medium"
-            helperText="Choose a batch year or all batches"
+            helperText={t("description1")}
             sx={{
               "& .MuiInputLabel-root": { fontWeight: 600, mb: 1 },
               "& .MuiSelect-select": { paddingY: 1.5, fontSize: 15 },
@@ -135,12 +138,12 @@ export default function TeacherReportGenerator() {
 
           <TextField
             select
-            label="Application Status"
+            label={t("application_status")}
             value={status}
             onChange={(e) => setStatus(e.target.value)}
             fullWidth
             size="medium"
-            helperText="Filter applications by status"
+            helperText={t("description2")}
             sx={{
               "& .MuiInputLabel-root": { fontWeight: 600, mb: 1 },
               "& .MuiSelect-select": { paddingY: 1.5, fontSize: 15 },

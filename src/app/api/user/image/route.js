@@ -22,7 +22,6 @@ export async function GET() {
         email: true,
         image: true,
         role: true,
-        // add any other fields you want to expose
       },
     });
 

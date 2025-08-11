@@ -42,7 +42,7 @@ export async function PUT(request) {
   try {
     const body = await request.json();
 
-    const { name, email, major, batchYear, skills, facebook, linkedin, Github, image } = body;
+    const { name, email, major, batchYear, skills, facebook, linkedin, Github, image , student_id_image } = body;
 
     await prisma.user.update({
       where: { id: session.user.id },
@@ -61,6 +61,7 @@ export async function PUT(request) {
         facebook: facebook || null,
         linkedIn: linkedin || null,
         Github: Github || null,
+        student_id_image: student_id_image || "",
       },
     });
 

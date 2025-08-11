@@ -11,10 +11,12 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import ImageUploadCircle from "@/components/ImageUploadCircle";
 import toast from "react-hot-toast";
+import { useParams } from "next/navigation";
 
 export default function CompanyProfile() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const {locale} = useParams();
   const [profile, setProfile] = useState({
     name: "",
     website: "",
@@ -31,6 +33,7 @@ export default function CompanyProfile() {
       try {
         setLoading(true);
         const res = await axios.get(`/api/company/profile`);
+        console.log(res.status);
         const data = res.data.data || {};
         setProfile({
           name: data.name || "",
