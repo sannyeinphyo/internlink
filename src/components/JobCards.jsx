@@ -22,6 +22,7 @@ import { motion } from "framer-motion";
 import { useRouter, useParams } from "next/navigation";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useTranslations } from "next-intl";
 
 export default function JobCard({
   id,
@@ -44,6 +45,7 @@ export default function JobCard({
   const [loading, setLoading] = useState(true);
   const isSaved = savedPosts?.some((post) => post.internship_post_id === id);
   const { data: session } = useSession();
+  const t = useTranslations("jobs");
 
   useEffect(() => {
     const fetchSavedPosts = async () => {
@@ -110,96 +112,98 @@ export default function JobCard({
         <Card
           sx={{
             width: "400px",
-             height: "350px",
+            height: "350px",
             borderRadius: 2,
             textAlign: "left",
             boxShadow: 3,
           }}
         >
           <Box height={"80px"}>
-          <CardHeader
-            avatar={logo}
-            action={
-              <IconButton onClick={handleBookmarkToggle} aria-label="bookmark">
-                <BookmarkIcon style={{ color: isSaved ? "red" : "gray" }} />
-              </IconButton>
-            }
-            title={subheader}
-            subheader={`${title} • ${timestamp}`}
-          />
+            <CardHeader
+              avatar={logo}
+              action={
+                <IconButton
+                  onClick={handleBookmarkToggle}
+                  aria-label="bookmark"
+                >
+                  <BookmarkIcon style={{ color: isSaved ? "red" : "gray" }} />
+                </IconButton>
+              }
+              title={subheader}
+              subheader={`${title} • ${timestamp}`}
+            />
           </Box>
           <Box height={"180px"}>
-
-      
-          <CardContent mb={2} >
-            <Typography
-              variant="body2"
-              sx={{ color: "text.secondary" }}
-              className="truncate w-[300px]"
-            >
-              {description}
-            </Typography>
-            <Stack spacing={1} mt={2}>
-              <Box display="flex" alignItems="center" gap={1} mt={1}>
-                <LocationOnIcon fontSize="small" color="action" />
-                <Typography variant="body2">{location}</Typography>
-              </Box>
-
-              <Box display="flex" alignItems="center" gap={1} mb={"8px"}>
-                <PaidIcon fontSize="small" color="action" />
-                <Typography
-                  sx={{
-                    color: paid ? "success.main" : "error.main",
-                    fontWeight: 500,
-                  }}
-                  variant="body2"
-                >
-                  {paid ? "Paid" : "Unpaid"}
-                </Typography>
-              </Box>
-
-              {job_type && (
-                <Box display="flex" alignItems="center" gap={1} mb={"8px"}>
-                  <WorkIcon fontSize="small" color="action" />
-                  <Typography variant="body2">{job_type}</Typography>
+            <CardContent mb={2}>
+              <Typography
+                variant="body2"
+                sx={{ color: "text.secondary" }}
+                className="truncate w-[300px]"
+              >
+                {description}
+              </Typography>
+              <Stack spacing={1} mt={2}>
+                <Box display="flex" alignItems="center" gap={1} mt={1}>
+                  <LocationOnIcon fontSize="small" color="action" />
+                  <Typography variant="body2">{location}</Typography>
                 </Box>
-              )}
-            </Stack>
-            {skills.map((skill, index) => {
-              const color = tagColors[index % tagColors.length];
-              return (
-                <Chip
-                  key={index}
-                  label={skill}
-                  size="small"
-                  sx={{
-                    marginTop: "8px",
-                    backgroundColor: color.bg,
-                    color: color.text,
-                    fontWeight: 500,
-                    border: "none",
-                    borderRadius: 1,
-                    margin: "4px 2px 0 2px",
-                    "&:hover": {
+
+                <Box display="flex" alignItems="center" gap={1} mb={"8px"}>
+                  <PaidIcon fontSize="small" color="action" />
+                  <Typography
+                    sx={{
+                      color: paid ? "success.main" : "error.main",
+                      fontWeight: 500,
+                    }}
+                    variant="body2"
+                  >
+                    {paid ? "Paid" : "Unpaid"}
+                  </Typography>
+                </Box>
+
+                {job_type && (
+                  <Box display="flex" alignItems="center" gap={1} mb={"8px"}>
+                    <WorkIcon fontSize="small" color="action" />
+                    <Typography variant="body2">{job_type}</Typography>
+                  </Box>
+                )}
+              </Stack>
+              {skills.slice(0, 3).map((skill, index) => {
+                const color = tagColors[index % tagColors.length];
+                return (
+                  <Chip
+                    // className="truncate w-[100px]"
+                    key={index}
+                    label={skill}
+                    size="small"
+                    sx={{
+                      marginTop: "8px",
                       backgroundColor: color.bg,
-                      opacity: 0.8,
-                    },
-                  }}
-                />
-              );
-            })}
-          </CardContent>
-              </Box>
+                      color: color.text,
+                      fontWeight: 500,
+                      border: "none",
+                      borderRadius: 1,
+                      margin: "4px 2px 0 2px",
+                      "&:hover": {
+                        backgroundColor: color.bg,
+                        opacity: 0.8,
+                      },
+                    }}
+                  />
+                );
+              })}
+            </CardContent>
+          </Box>
           <CardActions sx={{ justifyContent: "space-evenly", gap: 1, mb: 2 }}>
             <ButtonPrimary size="small" onClick={onApply} disabled={disabled}>
-              Apply Now
+              {t("apply_now")}
             </ButtonPrimary>
             <ButtonOutline
               variant="contained"
               size="small"
               onClick={handleViewDetails}
             >
-              View Details
+              {t("view_details")}
             </ButtonOutline>
           </CardActions>
         </Card>

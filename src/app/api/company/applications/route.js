@@ -2,6 +2,11 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import {
+  sendApplicationAcceptEmail,
+  sendApplicationRejectEmail,
+  sendInterviewScheduledEmail,
+} from "@/lib/email";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -36,7 +41,7 @@ export async function GET() {
             user: { select: { name: true, email: true } },
           },
         },
-        Interview: true, 
+        Interview: true,
       },
       orderBy: {
         applied_at: "desc",
@@ -114,6 +119,13 @@ export async function PATCH(req) {
           } to schedule your interview.`,
         },
       });
+
+      await sendApplicationAcceptEmail(
+        application.student.user.email,
+        application.student.user.name,
+        application.post.title,
+        application.post.contact_email || "example@example.com"
+      );
     } else if (status === "rejected") {
       await prisma.notification.create({
         data: {
@@ -122,13 +134,21 @@ export async function PATCH(req) {
           body: `Your application for "${application.post.title}" has been rejected.`,
         },
       });
+
+      await sendApplicationRejectEmail(
+        application.student.user.email,
+        application.student.user.name,
+        application.post.title
+      );
     }
+
     return NextResponse.json({ message: "Status updated", updated });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 }
+
 export async function POST(req) {
   const session = await getServerSession(authOptions);
 
@@ -151,7 +171,9 @@ export async function POST(req) {
       where: { id: application_id },
       include: {
         post: true,
-        student: true,
+        student: {
+          include: { user: true },
+        },
       },
     });
 
@@ -173,6 +195,7 @@ export async function POST(req) {
       );
     }
 
+    // Create the interview record
     const interview = await prisma.interview.create({
       data: {
         post_id: application.post.id,
@@ -186,17 +209,37 @@ export async function POST(req) {
       },
     });
 
-    await prisma.notification.create({
-      data: {
-        user_id: application.student.user_id,
-        title: `Interview Scheduled`,
-        body: `Your interview for "${
-          application.post.title
-        }" has been scheduled on ${new Date(
-          scheduledAt
-        ).toLocaleString()}. Location: ${location || "To be confirmed"}.`,
-      },
-    });
+    // Send interview scheduled email
+    try {
+      await sendInterviewScheduledEmail(
+        application.student.user.email,
+        application.student.user.name,
+        application.post.title,
+        scheduledAt,  // Pass scheduledAt correctly here
+        location
+      );
+      console.log("Interview email sent");
+    } catch (e) {
+      console.error("Interview email failed:", e);
+    }
+
+    // Create notification for the student
+    try {
+      await prisma.notification.create({
+        data: {
+          user_id: application.student.user.id,
+          title: `Interview Scheduled`,
+          body: `Your interview for "${
+            application.post.title
+          }" has been scheduled on ${new Date(
+            scheduledAt
+          ).toLocaleString()}. Location: ${location || "To be confirmed"}.`,
+        },
+      });
+      console.log("Interview notification created");
+    } catch (e) {
+      console.error("Interview notification creation failed:", e);
+    }
 
     return NextResponse.json({ interview }, { status: 201 });
   } catch (error) {
@@ -204,3 +247,4 @@ export async function POST(req) {
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 }
+

@@ -119,7 +119,7 @@ export default function Jobs() {
     if (label === jobst("label1")) bgColor = "#ffffffff";
     else if (label === jobst("label2")) bgColor = "#f3ebffff";
     else if (label === jobst("label3")) bgColor = "#ffeeeeff";
-     else if (label === jobst("label4")) bgColor = "#eefff4ff";
+    else if (label === jobst("label4")) bgColor = "#eefff4ff";
     return (
       <Box
         sx={{
@@ -169,7 +169,14 @@ export default function Jobs() {
                     >
                       <Avatar
                         src={job.company?.image}
-                        sx={{ bgcolor: red[400] }}
+                        sx={{
+                          bgcolor: red[400],
+                          boxShadow: 2,
+                          transition: "transform 0.2s ease",
+                          "&:hover": {
+                            transform: "scale(1.25)",
+                          },
+                        }}
                       >
                         {!job.company?.image && job.company.name?.[0]}
                       </Avatar>

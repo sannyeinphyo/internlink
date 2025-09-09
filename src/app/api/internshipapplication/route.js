@@ -12,8 +12,10 @@ export async function GET() {
   try {
     const student = await prisma.student.findFirst({
       where: { user_id: session.user.id },
+   
     });
 
+  
     if (!student) {
       return NextResponse.json(
         { message: "Student profile not found" },
@@ -26,8 +28,12 @@ export async function GET() {
         student_id: student.id,
       },
       include: {
-        post: true,
+        post: {include : {
+          company: true,
+        }},
         Interview: true,
+        
+
       },
     });
 

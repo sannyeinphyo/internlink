@@ -174,7 +174,7 @@ export default function Navbar() {
                 }}
                 alt={profile.name}
                 src={
-                  profile.image || "/default-avatar.jpg" || profile.user.image
+                  profile.image || "/default.webp" || profile.user.image
                 }
               />
             </Box>

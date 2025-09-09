@@ -181,8 +181,7 @@ export default function UniversityList() {
   return (
     <Box sx={{ p: 4 }}>
       <ToastContainer />
-      <Box display="flex" justifyContent="space-between" flexWrap="wrap" mb={2} gap={2}>
-        <Typography variant="h5">{t("title")}</Typography>
+      <Box display="flex" justifyContent="flex-end" flexWrap="wrap" mb={2} gap={2}>
 
         <Stack direction="row" spacing={2} flexWrap="wrap">
           <TextField

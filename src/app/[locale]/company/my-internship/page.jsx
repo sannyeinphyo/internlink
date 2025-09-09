@@ -278,7 +278,7 @@ export default function MyInternship() {
                     <Typography variant="body2" noWrap>
                       {t("salary")}:{" "}
                       {post.paid
-                        ? `$${post.salary?.toLocaleString()}`
+                        ? `${post.salary?.toLocaleString()}MMK`
                         : "Unpaid"}
                     </Typography>
                   </Stack>

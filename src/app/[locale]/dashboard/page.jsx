@@ -10,6 +10,7 @@ import { useParams } from "next/navigation";
 import axios from "axios";
 import { Typewriter } from "react-simple-typewriter";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
 export default function Dashboard() {
   const t = useTranslations("StudentDashboard");
   const stepst = useTranslations("steps");
@@ -19,6 +20,7 @@ export default function Dashboard() {
   const { locale } = useParams();
   const [partnerCompany, setPartnerCompany] = useState([]);
   const [Loading, setLoading] = useState(false);
+  const { data: session, status } = useSession();
 
   const linkStyle = {
     textDecoration: "none",
@@ -125,9 +127,16 @@ export default function Dashboard() {
             <Link href={`/${locale}/jobs`} passHref>
               <ButtonPrimary>{t("BrowseJobs")}</ButtonPrimary>
             </Link>
-            <Link href={`/${locale}/register`}>
-              <ButtonOutline>{t("Signup")}</ButtonOutline>
-            </Link>
+            {!session && (
+              <Link href={`/${locale}/register`}>
+                <ButtonOutline>{t("Signup")}</ButtonOutline>
+              </Link>
+            )}
+            {session && (
+              <Link href={`/${locale}/applications`}>
+                <ButtonOutline>{t("applications")}</ButtonOutline>
+              </Link>
+            )}
           </Box>
         </Box>
       </motion.div>
@@ -350,17 +359,11 @@ export default function Dashboard() {
               fontSize: "14px",
             }}
           >
-            <Box component="a" href="/about" sx={linkStyle}>
+            <Box component="a" href={`/${locale}/AboutUs`} sx={linkStyle}>
               {footert("About")}
             </Box>
-            <Box component="a" href="/contact" sx={linkStyle}>
+            <Box component="a" href={`/${locale}/Contact`} sx={linkStyle}>
               {footert("Contact")}
-            </Box>
-            <Box component="a" href="/privacy" sx={linkStyle}>
-              {footert("privacy")}
-            </Box>
-            <Box component="a" href="/terms" sx={linkStyle}>
-              {footert("terms")}
             </Box>
           </Box>
 

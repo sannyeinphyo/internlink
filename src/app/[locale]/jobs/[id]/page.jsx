@@ -44,23 +44,23 @@ export default function JobPage() {
   const [applyLoading, setApplyLoading] = useState(false);
   const alreadyApplied = job?.applications?.length > 0;
 
-  useEffect(() => {
+const fetchJob = async () => {
     if (!id) return;
+    setLoading(true);
+    try {
+      const res = await axios.get(`/api/internship_post/${id}`, {
+        withCredentials: true,
+      });
+      setJob(res.data.data || null);
+    } catch (error) {
+      console.error("Failed to fetch job:", error);
+      setJob(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const fetchJob = async () => {
-      try {
-        const res = await axios.get(`/api/internship_post/${id}`, {
-          withCredentials: true,
-        });
-        setJob(res.data.data || null);
-      } catch (error) {
-        console.error("Failed to fetch job:", error);
-        setJob(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
+  useEffect(() => {
     fetchJob();
   }, [id]);
 
@@ -76,14 +76,11 @@ export default function JobPage() {
 
     try {
       setApplyLoading(true);
-
       await axios.post("/api/internshipapplication", {
         post_id: postId,
       });
-
       toast.success(jobst("success"));
-
-      router.refresh();
+      await fetchJob();
     } catch (error) {
       toast.error(
         jobst("error") ||
@@ -266,7 +263,7 @@ export default function JobPage() {
                       <Box display="flex" alignItems="center" gap={1}>
                         <AttachMoney fontSize="small" />
                         <Typography>
-                          {t("salary")}: ${job.salary}
+                          {t("salary")}: {job.salary}{" "}MMK
                         </Typography>
                       </Box>
                     )}

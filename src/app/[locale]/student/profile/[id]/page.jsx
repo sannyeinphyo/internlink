@@ -85,6 +85,7 @@ const defaultProfile = {
   github: "",
   image: "",
   university: "",
+  studentId : "",
 };
 
 export default function StudentProfileView() {
@@ -105,11 +106,13 @@ export default function StudentProfileView() {
           name: student.user?.name || "",
           email: student.user?.email || "",
           major: student.major || "",
+          studentId: student.student_id_image || "",
           batchYear: student.batch_year || "",
           skills: student.skills
             ? student.skills.split(",").map((s) => s.trim())
             : [],
           linkedin: student.linkedIn || "",
+
          github: student.Github || "",
           image: student.user?.image || "",
           university: student.university?.name || "",

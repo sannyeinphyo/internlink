@@ -34,6 +34,7 @@ export default function Applications() {
     PENDING: { bg: "#ff9800", text: "fff" },
     ACCEPTED: { bg: "#4caf50", text: "fff" },
     REJECTED: { bg: "#e91e63", text: "fff" },
+    CANCELLED: { bg: "#ff0000ff", text: "fff" },
   };
 
   const [applications, setApplications] = useState([]);
@@ -121,6 +122,8 @@ export default function Applications() {
       });
     }
   };
+
+  console.log("Application", applications);
   const columns = [
     {
       field: "id",
@@ -138,6 +141,14 @@ export default function Applications() {
       align: "center",
       width: 250,
       renderCell: (params) => params?.row?.post?.title || "N/A",
+    },
+       {
+      field: "companyName",
+      headerName: t("headers.company_name"),
+      headerAlign: "center",
+      align: "center",
+      width: 250,
+      renderCell: (params) => params?.row?.post?.company.name || "N/A",
     },
     {
       field: "status",
@@ -263,23 +274,23 @@ export default function Applications() {
       headerName: t("headers.actions"),
       headerAlign: "center",
       align: "center",
-      alignItems:"center",
+      alignItems: "center",
       width: 150,
       sortable: false,
       filterable: false,
       renderCell: (params) => (
         <>
-          <Box display={"flex"}
-          justifyContent={"center"}
-          alignItems={"center"}
-          height={"100%"}
+          <Box
+            display={"flex"}
+            justifyContent={"center"}
+            alignItems={"center"}
+            height={"100%"}
           >
             <IconButton
               sx={{
                 display: "flex",
                 flex: "1",
-                justifyContent:"flex-start",
-                
+                justifyContent: "flex-start",
               }}
               color="primary"
               size="small"
@@ -312,7 +323,7 @@ export default function Applications() {
 
   return (
     <Box>
-      <Box mt={10} mx="auto" sx={{ height: 500, width: "90%", maxWidth: 1250 }}>
+      <Box mt={10} mx="auto" sx={{ height: 500, width: "100%", maxWidth: 1250 }}>
         <Typography variant="h6" mb={2}>
           {t("title")}
         </Typography>
@@ -321,7 +332,9 @@ export default function Applications() {
           rows={applications}
           columns={columns}
           loading={loading}
-          pageSizeOptions={[5, 10]}
+          pageSize={10}
+          rowsPerPageOptions={[10]}
+          pagination
           getRowId={(row) => row.id}
           disableRowSelectionOnClick
         />

@@ -167,7 +167,9 @@
     "HeaderText": "Search and Apply",
     "HeaderText2": "Start your internship journey",
     "HowItWorks": "How It Works",
-    "WhatIsLinkIn": "UniJobLink helps you land the right internship step-by-step with ease."
+    "WhatIsLinkIn": "UniJobLink helps you land the right internship step-by-step with ease.",
+    "profile":"Profile",
+    "applications":"Applications"
   },
   "steps": {
     "step1": {
@@ -289,7 +291,8 @@
       "appliedAt": "Applied Date",
       "actions": "Actions",
       "interview_status": "Interview Status",
-      "interview_action": "Interview Actions"
+      "interview_action": "Interview Actions",
+      "company_name":"Company Name"
     },
     "confirmAcceptTitle": "Confirm Acceptance",
     "confirmAcceptMessage": "Are you sure you want to accept this interview?",
@@ -336,6 +339,7 @@
     "interview": "Interview"
   },
   "myintern-ship": {
+    "no_post":"No Post",
     "no": "No",
     "name": "Student Name",
     "email": "Email",
@@ -349,7 +353,7 @@
     "title": "Title",
     "job_type": "Job Type",
     "student_applications": "Student Applications",
-    "salary": "Salary",
+    "salary": "Tip-Money",
     "application_deadline": "Application Deadline",
     "applied": "Applied",
     "description": "Description",
@@ -460,7 +464,7 @@
       "responsibilities": "Responsibilities",
       "requirements": "Requirements",
       "paid": "Paid",
-      "salary": "Salary",
+      "salary": "Tip-Money",
       "remote": "Remote",
       "location": "Location",
       "positions": "Number Of Positions",
@@ -562,7 +566,7 @@
     "Remote": "Remote",
     "Onsite": "Onsite",
     "Location": "Location",
-    "Salary": "Salary",
+    "Salary": "Tip-Money",
     "Deadline": "Deadline",
     "$": "MMK",
     "paid": "Paid",
@@ -653,9 +657,9 @@
     "unpaid": "Unpaid",
     "remote": "Remote",
     "onsite": "On-site",
-    "positions": "Position(s)",
+    "positions": "Position",
     "details": "Details",
-    "salary": "Salary",
+    "salary": "Tip-Money",
     "application_deadline": "Application Deadline",
     "contact_email": "Contact Email",
     "location": "Location",
@@ -850,6 +854,10 @@
     "roll":"Roll",
     "name":"Name",
     "issue_date":"Issued Date",
-    "retry":"Retry ORC"
+    "retry":"Retry OCR"
+  },
+    "jobs":{
+    "apply_now":"Apply Now",
+    "view_details":"View details"
   }
 }

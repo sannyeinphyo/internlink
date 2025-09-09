@@ -125,7 +125,7 @@ model InternshipPost {
   company_id           Int
   title                String
   description          String    @db.MediumText
-  requirements         String
+  requirements         String    @db.MediumText
   paid                 Boolean
   salary               Int?
   location             String
@@ -134,11 +134,11 @@ model InternshipPost {
   createdAt            DateTime  @default(now())
   job_type             String?
   application_deadline DateTime?
-  benefits             String?
+  benefits             String?   @db.MediumText
   contact_email        String?
   remote               Boolean?
   positions            Int?
-  responsibilities     String?
+  responsibilities     String?   @db.MediumText
 
   company      Company                 @relation(fields: [company_id], references: [id], onDelete: Cascade)
   applications InternshipApplication[]

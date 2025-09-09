@@ -114,11 +114,8 @@ export default function AdminDashboard() {
   const barChartData = {
     labels: [
       "Students",
-      "Teachers",
       "Universities",
       "Companies",
-      "Verified Users",
-      "Unverified Users",
       "Posts",
       "Total Applications",
       "Applied",
@@ -131,11 +128,8 @@ export default function AdminDashboard() {
         label: "Counts",
         data: [
           dashboardData?.totalStudents || 0,
-          dashboardData?.totalTeachers || 0,
           dashboardData?.totalUniversity || 0,
           dashboardData?.totalCompanies || 0,
-          dashboardData?.accountVerification?.verified || 0,
-          dashboardData?.accountVerification?.unverified || 0,
           dashboardData?.totalPosts || 0,
           dashboardData?.totalApplications || 0,
           dashboardData?.applicationStatus?.applied || 0,
@@ -158,7 +152,7 @@ export default function AdminDashboard() {
           "#50ef85ff",
         ],
         borderRadius: 2,
-        barThickness: 30,
+        barThickness: 50,
       },
     ],
   };
@@ -176,7 +170,7 @@ export default function AdminDashboard() {
     scales: {
       x: {
         grid: { display: false },
-        ticks: { font: { size: 8, fontWeight: "bold" } },
+        ticks: { font: { size: 12, fontWeight: "bold" } },
       },
       y: {
         beginAtZero: true,

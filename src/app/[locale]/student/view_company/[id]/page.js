@@ -193,12 +193,12 @@ export default function CompanyProfilePage() {
                 <EmailIcon color="action" />
                 <Typography>{company.user.email}</Typography>
               </Box>
-              <Typography
+              {/* <Typography
                 variant="body2"
                 color={company.user.verified ? "green" : "error"}
               >
                 {isVerified}
-              </Typography>
+              </Typography> */}
             </Stack>
 
             <ButtonPrimary

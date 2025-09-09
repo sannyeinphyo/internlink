@@ -87,6 +87,24 @@ export default function CreateInternshipPost() {
     "Able to commit at least 3 months",
   ];
 
+  const responsibilityOptions = [
+    "Assist in software development and testing",
+    "Collaborate with cross-functional teams on IT projects",
+    "Support database design, queries, and maintenance",
+    "Participate in data analysis and reporting",
+    "Research and implement emerging technologies",
+    "Assist in troubleshooting and debugging technical issues",
+    "Prepare technical documentation and reports",
+    "Test and evaluate new software tools",
+    "Support front-end and back-end development tasks",
+    "Assist in network configuration and monitoring",
+    "Contribute to UI/UX design improvements",
+    "Participate in sprint planning and code reviews",
+    "Assist in creating APIs and integrating third-party services",
+    "Support cybersecurity monitoring and incident response",
+    "Help maintain version control repositories (Git)",
+  ];
+
   return (
     <Box sx={{ maxWidth: "900px", mx: "auto", p: 3 }}>
       <Paper
@@ -143,15 +161,33 @@ export default function CreateInternshipPost() {
 
             <Section title={t("sections.expectations")}>
               <FlexRow>
-                <TextField
-                  label={t("fields.responsibilities")}
-                  name="responsibilities"
-                  fullWidth
-                  multiline
-                  rows={2}
+                <Autocomplete
+                  multiple
+                  freeSolo
+                  required
+                  options={responsibilityOptions}
+                  value={
+                    formData.responsibilities
+                      ? formData.responsibilities
+                          .split(",")
+                          .map((r) => r.trim())
+                      : []
+                  }
+                  onChange={(e, newValue) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      responsibilities: newValue.join(", "),
+                    }));
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label={t("fields.responsibilities")}
+                      placeholder="Type or select responsibilities"
+                      fullWidth
+                    />
+                  )}
                   sx={{ flex: 1 }}
-                  value={formData.responsibilities}
-                  onChange={handleChange}
                 />
                 <Autocomplete
                   multiple
